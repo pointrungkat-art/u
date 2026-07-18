@@ -262,7 +262,7 @@ local C={
 
 local Panel=Instance.new("Frame",Gui)
 Panel.Size=UDim2.new(0,165,0,260)
-Panel.Position=UDim2.new(0,10,1,1,-270)
+Panel.Position=UDim2.new(0,10,1,-270)
 Panel.BackgroundColor3=C.BG Panel.BorderSizePixel=0
 Instance.new("UICorner",Panel).CornerRadius=UDim.new(0,10)
 local ps=Instance.new("UIStroke",Panel) ps.Color=C.Accent ps.Thickness=1.5
