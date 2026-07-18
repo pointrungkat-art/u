@@ -20,6 +20,7 @@ local State = {
     AutoHop   = false,
     AutoChest = false,
     AutoFruit = false,
+    Crosshair = false,
 }
 
 -- ┌─────────────────────────┐
@@ -131,8 +132,8 @@ keyError.Font                 = Enum.Font.Gotham
 -- └─────────────────────────┘
 local MainFrame = Instance.new("Frame")
 MainFrame.Name             = "MainHub"
-MainFrame.Size             = UDim2.new(0, 230, 0, 370)
-MainFrame.Position         = UDim2.new(0.5, -115, 0.5, -185)
+MainFrame.Size             = UDim2.new(0, 230, 0, 440)
+MainFrame.Position         = UDim2.new(0.5, -115, 0.5, -220)
 MainFrame.BackgroundColor3 = C.BG
 MainFrame.BorderSizePixel  = 0
 MainFrame.Visible          = false
@@ -300,8 +301,8 @@ local function showHub()
     KeyFrame:Destroy()
     MainFrame.Visible = true
     TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-        Size     = UDim2.new(0, 230, 0, 370),
-        Position = UDim2.new(0.5, -115, 0.5, -185),
+        Size     = UDim2.new(0, 230, 0, 440),
+        Position = UDim2.new(0.5, -115, 0.5, -220),
     }):Play()
     task.wait(2)
     setStatus("XC Hub Ready")
@@ -472,6 +473,156 @@ local function runAutoFruit()
 end
 
 -- ┌─────────────────────────┐
+-- │       CROSSHAIR         │
+-- └─────────────────────────┘
+local CrossConfig = {
+    Style="CrossDot", Color=Color3.fromRGB(255,255,255),
+    OutlineColor=Color3.fromRGB(0,0,0), Outline=true,
+    Size=10, Thickness=1.5, Gap=4, DotRadius=2, CircleRadius=18,
+}
+local AimConfig = {
+    Enabled=true, FOV=90, Strength=0.10,
+    Target="Head", ShowFOV=false, TeamCheck=false,
+}
+local HitConfig = { Enabled=true, Color=Color3.fromRGB(255,60,60), Size=8, Thick=1.5, Duration=0.12 }
+
+local OL2 = CrossConfig.Thickness+2
+local function newLine(col,thick) local d=Drawing.new("Line") d.Color=col d.Thickness=thick d.Visible=false return d end
+local function newCircD(col,thick,fill,rad) local d=Drawing.new("Circle") d.Color=col d.Thickness=thick or 1 d.Filled=fill or false d.Radius=rad or 5 d.Visible=false return d end
+
+local CL={
+    oTop=newLine(CrossConfig.OutlineColor,OL2), oBot=newLine(CrossConfig.OutlineColor,OL2),
+    oLeft=newLine(CrossConfig.OutlineColor,OL2), oRight=newLine(CrossConfig.OutlineColor,OL2),
+    top=newLine(CrossConfig.Color,CrossConfig.Thickness), bot=newLine(CrossConfig.Color,CrossConfig.Thickness),
+    left=newLine(CrossConfig.Color,CrossConfig.Thickness), right=newLine(CrossConfig.Color,CrossConfig.Thickness),
+}
+local TLX={
+    oTop=newLine(CrossConfig.OutlineColor,OL2), oLeft=newLine(CrossConfig.OutlineColor,OL2), oRight=newLine(CrossConfig.OutlineColor,OL2),
+    top=newLine(CrossConfig.Color,CrossConfig.Thickness), left=newLine(CrossConfig.Color,CrossConfig.Thickness), right=newLine(CrossConfig.Color,CrossConfig.Thickness),
+}
+local chDotOut=newCircD(CrossConfig.OutlineColor,1,true,CrossConfig.DotRadius+1.5)
+local chDot=newCircD(CrossConfig.Color,1,true,CrossConfig.DotRadius)
+local chCircOut=newCircD(CrossConfig.OutlineColor,CrossConfig.Thickness+1.5,false,CrossConfig.CircleRadius)
+local chCirc=newCircD(CrossConfig.Color,CrossConfig.Thickness,false,CrossConfig.CircleRadius)
+local fovCirc=newCircD(Color3.fromRGB(200,200,200),1,false,AimConfig.FOV)
+fovCirc.Transparency=0.6
+local HM={
+    oL1=newLine(Color3.fromRGB(0,0,0),HitConfig.Thick+1.5), oL2=newLine(Color3.fromRGB(0,0,0),HitConfig.Thick+1.5),
+    l1=newLine(HitConfig.Color,HitConfig.Thick), l2=newLine(HitConfig.Color,HitConfig.Thick),
+}
+local chAllObjs={CL.oTop,CL.oBot,CL.oLeft,CL.oRight,CL.top,CL.bot,CL.left,CL.right,
+    TLX.oTop,TLX.oLeft,TLX.oRight,TLX.top,TLX.left,TLX.right,
+    chDotOut,chDot,chCircOut,chCirc,fovCirc,HM.oL1,HM.oL2,HM.l1,HM.l2}
+local function hideAllCH() for _,o in ipairs(chAllObjs) do o.Visible=false end end
+
+local function drawCrosshair()
+    if not State.Crosshair then hideAllCH() return end
+    local vp=Camera.ViewportSize ; local cx,cy=vp.X/2,vp.Y/2
+    local g,s=CrossConfig.Gap,CrossConfig.Size ; local ol=CrossConfig.Outline
+    local ctr=Vector2.new(cx,cy) ; local style=CrossConfig.Style
+    CL.oTop.Visible=false CL.oBot.Visible=false CL.oLeft.Visible=false CL.oRight.Visible=false
+    CL.top.Visible=false CL.bot.Visible=false CL.left.Visible=false CL.right.Visible=false
+    TLX.oTop.Visible=false TLX.oLeft.Visible=false TLX.oRight.Visible=false
+    TLX.top.Visible=false TLX.left.Visible=false TLX.right.Visible=false
+    chDotOut.Visible=false chDot.Visible=false chCircOut.Visible=false chCirc.Visible=false
+    if style=="Cross" or style=="CrossDot" then
+        if ol then
+            CL.oTop.From=Vector2.new(cx,cy-g-s) CL.oTop.To=Vector2.new(cx,cy-g) CL.oTop.Visible=true
+            CL.oBot.From=Vector2.new(cx,cy+g) CL.oBot.To=Vector2.new(cx,cy+g+s) CL.oBot.Visible=true
+            CL.oLeft.From=Vector2.new(cx-g-s,cy) CL.oLeft.To=Vector2.new(cx-g,cy) CL.oLeft.Visible=true
+            CL.oRight.From=Vector2.new(cx+g,cy) CL.oRight.To=Vector2.new(cx+g+s,cy) CL.oRight.Visible=true
+        end
+        CL.top.From=Vector2.new(cx,cy-g-s) CL.top.To=Vector2.new(cx,cy-g) CL.top.Visible=true
+        CL.bot.From=Vector2.new(cx,cy+g) CL.bot.To=Vector2.new(cx,cy+g+s) CL.bot.Visible=true
+        CL.left.From=Vector2.new(cx-g-s,cy) CL.left.To=Vector2.new(cx-g,cy) CL.left.Visible=true
+        CL.right.From=Vector2.new(cx+g,cy) CL.right.To=Vector2.new(cx+g+s,cy) CL.right.Visible=true
+    end
+    if style=="Dot" or style=="CrossDot" then
+        if ol then chDotOut.Position=ctr chDotOut.Visible=true end
+        chDot.Position=ctr chDot.Visible=true
+    end
+    if style=="Circle" then
+        if ol then chCircOut.Position=ctr chCircOut.Visible=true end
+        chCirc.Position=ctr chCirc.Visible=true
+    end
+    if style=="TShape" then
+        if ol then
+            TLX.oTop.From=Vector2.new(cx,cy-g-s) TLX.oTop.To=Vector2.new(cx,cy-g) TLX.oTop.Visible=true
+            TLX.oLeft.From=Vector2.new(cx-g-s,cy) TLX.oLeft.To=Vector2.new(cx-g,cy) TLX.oLeft.Visible=true
+            TLX.oRight.From=Vector2.new(cx+g,cy) TLX.oRight.To=Vector2.new(cx+g+s,cy) TLX.oRight.Visible=true
+        end
+        TLX.top.From=Vector2.new(cx,cy-g-s) TLX.top.To=Vector2.new(cx,cy-g) TLX.top.Visible=true
+        TLX.left.From=Vector2.new(cx-g-s,cy) TLX.left.To=Vector2.new(cx-g,cy) TLX.left.Visible=true
+        TLX.right.From=Vector2.new(cx+g,cy) TLX.right.To=Vector2.new(cx+g+s,cy) TLX.right.Visible=true
+    end
+end
+
+local function getClosestAim()
+    local vp=Camera.ViewportSize ; local center=Vector2.new(vp.X/2,vp.Y/2)
+    local bestDist=AimConfig.FOV ; local bestPart=nil
+    for _,player in ipairs(Players:GetPlayers()) do
+        if player==lp then continue end
+        if AimConfig.TeamCheck and player.Team==lp.Team then continue end
+        local char=player.Character
+        local hum=char and char:FindFirstChildOfClass("Humanoid")
+        if not(hum and hum.Health>0) then continue end
+        local part=char:FindFirstChild(AimConfig.Target) if not part then continue end
+        local sp,onScreen=Camera:WorldToViewportPoint(part.Position)
+        if not onScreen or sp.Z<=0 then continue end
+        local dist=(Vector2.new(sp.X,sp.Y)-center).Magnitude
+        if dist<bestDist then bestDist=dist bestPart=part end
+    end
+    return bestPart
+end
+
+local function runAimAssist()
+    if not State.Crosshair or not AimConfig.Enabled then fovCirc.Visible=false return end
+    local vp=Camera.ViewportSize ; local center=Vector2.new(vp.X/2,vp.Y/2)
+    if AimConfig.ShowFOV then fovCirc.Position=center fovCirc.Radius=AimConfig.FOV fovCirc.Visible=true
+    else fovCirc.Visible=false end
+    local tp=getClosestAim() if not tp then return end
+    local cur=Camera.CFrame
+    Camera.CFrame=cur:Lerp(CFrame.lookAt(cur.Position,tp.Position),AimConfig.Strength)
+end
+
+local hitActive=false
+local function showHitMarker()
+    if hitActive then return end ; hitActive=true
+    local vp=Camera.ViewportSize ; local cx,cy=vp.X/2,vp.Y/2 ; local s=HitConfig.Size
+    HM.oL1.From=Vector2.new(cx-s,cy-s) HM.oL1.To=Vector2.new(cx+s,cy+s) HM.oL1.Visible=true
+    HM.oL2.From=Vector2.new(cx+s,cy-s) HM.oL2.To=Vector2.new(cx-s,cy+s) HM.oL2.Visible=true
+    HM.l1.From=Vector2.new(cx-s,cy-s) HM.l1.To=Vector2.new(cx+s,cy+s) HM.l1.Visible=true
+    HM.l2.From=Vector2.new(cx+s,cy-s) HM.l2.To=Vector2.new(cx-s,cy+s) HM.l2.Visible=true
+    task.delay(HitConfig.Duration,function()
+        HM.oL1.Visible=false HM.oL2.Visible=false HM.l1.Visible=false HM.l2.Visible=false ; hitActive=false
+    end)
+end
+
+local hmTracked={}
+local function trackHM(player)
+    if player==lp then return end
+    local function onChar(char)
+        local hum=char:WaitForChild("Humanoid")
+        if hmTracked[player] then hmTracked[player]:Disconnect() end
+        local prevHp=hum.Health
+        hmTracked[player]=hum.HealthChanged:Connect(function(newHp)
+            if not State.Crosshair or not HitConfig.Enabled then return end
+            if newHp<prevHp then
+                local lpR=lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+                local thR=char:FindFirstChild("HumanoidRootPart")
+                if lpR and thR and (lpR.Position-thR.Position).Magnitude<300 then showHitMarker() end
+            end
+            prevHp=newHp
+        end)
+    end
+    if player.Character then onChar(player.Character) end
+    player.CharacterAdded:Connect(onChar)
+end
+for _,p in ipairs(Players:GetPlayers()) do trackHM(p) end
+Players.PlayerAdded:Connect(trackHM)
+Players.PlayerRemoving:Connect(function(p) if hmTracked[p] then hmTracked[p]:Disconnect() hmTracked[p]=nil end end)
+
+-- ┌─────────────────────────┐
 -- │       RENDER LOOP       │
 -- └─────────────────────────┘
 RunService.RenderStepped:Connect(function(dt)
@@ -510,6 +661,8 @@ RunService.RenderStepped:Connect(function(dt)
     if State.AutoHop then hopElapsed+=dt
         if hopElapsed>=HOP_INTERVAL then hopElapsed=0 task.spawn(hopServer) end
     else hopElapsed=0 end
+    drawCrosshair()
+    runAimAssist()
 end)
 
 lp.Idled:Connect(function() VirtualUser:CaptureController() VirtualUser:ClickButton2(Vector2.new()) end)
@@ -536,6 +689,11 @@ createToggle("Auto Fruit","Detect & collect devil fruit",4,function(on)
     if on then task.spawn(runAutoFruit)
     else if fruitConn then fruitConn:Disconnect() fruitConn=nil end end
     setStatus(on and "AutoFruit ON" or "AutoFruit OFF", on and C.Success or C.Error)
+end)
+createToggle("Crosshair","Custom CH + Aim Assist + Hitmarker",5,function(on)
+    State.Crosshair=on
+    if not on then hideAllCH() end
+    setStatus(on and "Crosshair ON" or "Crosshair OFF", on and C.Success or C.Error)
 end)
 
 print("[XC Hub] v2.0 Loaded!")
