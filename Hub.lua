@@ -132,8 +132,8 @@ keyError.Font                 = Enum.Font.Gotham
 -- └─────────────────────────┘
 local MainFrame = Instance.new("Frame")
 MainFrame.Name             = "MainHub"
-MainFrame.Size             = UDim2.new(0, 230, 0, 440)
-MainFrame.Position         = UDim2.new(0.5, -115, 0.5, -220)
+MainFrame.Size             = UDim2.new(0, 230, 0, 510)
+MainFrame.Position         = UDim2.new(0.5, -115, 0.5, -255)
 MainFrame.BackgroundColor3 = C.BG
 MainFrame.BorderSizePixel  = 0
 MainFrame.Visible          = false
@@ -237,7 +237,7 @@ local function setStatus(text, color)
 end
 
 -- Toggle creator
-local function createToggle(name, desc, order, onToggle)
+local function createToggle(name, desc, order, onToggle, initVal)
     local Row = Instance.new("Frame", Content)
     Row.Size             = UDim2.new(1, 0, 0, 60)
     Row.BackgroundColor3 = C.Row
@@ -245,7 +245,7 @@ local function createToggle(name, desc, order, onToggle)
     Row.LayoutOrder      = order
     Instance.new("UICorner", Row).CornerRadius = UDim.new(0, 8)
     local rStroke = Instance.new("UIStroke", Row)
-    rStroke.Color = C.Off ; rStroke.Thickness = 1
+    rStroke.Color = initVal and C.Accent or C.Off ; rStroke.Thickness = 1
 
     local NameLbl = Instance.new("TextLabel", Row)
     NameLbl.Size=UDim2.new(0.72,0,0,24) ; NameLbl.Position=UDim2.new(0,10,0,8)
@@ -261,15 +261,16 @@ local function createToggle(name, desc, order, onToggle)
 
     local TBg = Instance.new("Frame", Row)
     TBg.Size=UDim2.new(0,46,0,25) ; TBg.Position=UDim2.new(1,-56,0.5,-12)
-    TBg.BackgroundColor3=C.Off ; TBg.BorderSizePixel=0
+    TBg.BackgroundColor3=initVal and C.Accent or C.Off ; TBg.BorderSizePixel=0
     Instance.new("UICorner", TBg).CornerRadius = UDim.new(1, 0)
 
     local Circle = Instance.new("Frame", TBg)
-    Circle.Size=UDim2.new(0,19,0,19) ; Circle.Position=UDim2.new(0,3,0.5,-9)
-    Circle.BackgroundColor3=C.Sub ; Circle.BorderSizePixel=0
+    Circle.Size=UDim2.new(0,19,0,19)
+    Circle.Position=initVal and UDim2.new(0,24,0.5,-9) or UDim2.new(0,3,0.5,-9)
+    Circle.BackgroundColor3=initVal and C.Bright or C.Sub ; Circle.BorderSizePixel=0
     Instance.new("UICorner", Circle).CornerRadius = UDim.new(1, 0)
 
-    local enabled = false
+    local enabled = initVal or false
     local function setToggle(val)
         enabled = val
         TweenService:Create(Circle, TweenInfo.new(0.18), {
@@ -301,8 +302,8 @@ local function showHub()
     KeyFrame:Destroy()
     MainFrame.Visible = true
     TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-        Size     = UDim2.new(0, 230, 0, 440),
-        Position = UDim2.new(0.5, -115, 0.5, -220),
+        Size     = UDim2.new(0, 230, 0, 510),
+        Position = UDim2.new(0.5, -115, 0.5, -255),
     }):Play()
     task.wait(2)
     setStatus("XC Hub Ready")
@@ -349,11 +350,6 @@ local function mkESP(player)
         BoxBottom=newDraw("Line",{Color=ESPCfg.BoxColor,Thickness=ESPCfg.BoxThick,Visible=false}),
         BoxLeft=newDraw("Line",{Color=ESPCfg.BoxColor,Thickness=ESPCfg.BoxThick,Visible=false}),
         BoxRight=newDraw("Line",{Color=ESPCfg.BoxColor,Thickness=ESPCfg.BoxThick,Visible=false}),
-        Tracer=newDraw("Line",{Color=ESPCfg.TracerColor,Thickness=ESPCfg.TracerThick,Visible=false}),
-        Name=newDraw("Text",{Text=player.Name,Size=13,Color=ESPCfg.NameColor,Center=true,Outline=true,Visible=false}),
-        Distance=newDraw("Text",{Size=12,Color=ESPCfg.DistColor,Center=true,Outline=true,Visible=false}),
-        HealthBG=newDraw("Line",{Color=Color3.fromRGB(0,0,0),Thickness=4,Visible=false}),
-        HealthBar=newDraw("Line",{Color=Color3.fromRGB(90,255,140),Thickness=3,Visible=false}),
     }
 end
 local function rmESP(p) if ESPObjects[p] then for _,o in next,ESPObjects[p] do o:Remove() end ESPObjects[p]=nil end end
@@ -481,8 +477,8 @@ local CrossConfig = {
     Size=10, Thickness=1.5, Gap=4, DotRadius=2, CircleRadius=18,
 }
 local AimConfig = {
-    Enabled=true, FOV=90, Strength=0.10,
-    Target="Head", ShowFOV=false, TeamCheck=false,
+    Enabled=true, FOV=90, Strength=0.28,
+    Target="Head", ShowFOV=false, TeamCheck=true,
 }
 local HitConfig = { Enabled=true, Color=Color3.fromRGB(255,60,60), Size=8, Thick=1.5, Duration=0.12 }
 
@@ -629,7 +625,6 @@ RunService.RenderStepped:Connect(function(dt)
     if not State.ESP then for _,e in next,ESPObjects do hideESP(e) end
     else
         local vp=Camera.ViewportSize
-        local org=Vector2.new(vp.X/2,vp.Y)
         local lpR=lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
         for player,esp in next,ESPObjects do
             local char=player.Character
@@ -649,13 +644,6 @@ RunService.RenderStepped:Connect(function(dt)
             esp.BoxBottom.From=Vector2.new(x1,y2);esp.BoxBottom.To=Vector2.new(x2,y2);esp.BoxBottom.Visible=true
             esp.BoxLeft.From=Vector2.new(x1,y1);esp.BoxLeft.To=Vector2.new(x1,y2);esp.BoxLeft.Visible=true
             esp.BoxRight.From=Vector2.new(x2,y1);esp.BoxRight.To=Vector2.new(x2,y2);esp.BoxRight.Visible=true
-            esp.Tracer.From=org;esp.Tracer.To=Vector2.new(cx,y2);esp.Tracer.Visible=true
-            esp.Name.Position=Vector2.new(cx,y1-15);esp.Name.Visible=true
-            esp.Distance.Text=string.format("[%.0f]",dist);esp.Distance.Position=Vector2.new(cx,y2+2);esp.Distance.Visible=true
-            local hp=math.clamp(hum.Health/hum.MaxHealth,0,1) ; local bx=x1-5
-            esp.HealthBG.From=Vector2.new(bx,y1);esp.HealthBG.To=Vector2.new(bx,y2);esp.HealthBG.Visible=true
-            esp.HealthBar.From=Vector2.new(bx,y2);esp.HealthBar.To=Vector2.new(bx,y2-h*hp)
-            esp.HealthBar.Color=Color3.fromRGB(math.floor(255*(1-hp)),math.floor(255*hp),80);esp.HealthBar.Visible=true
         end
     end
     if State.AutoHop then hopElapsed+=dt
@@ -670,7 +658,7 @@ lp.Idled:Connect(function() VirtualUser:CaptureController() VirtualUser:ClickBut
 -- ┌─────────────────────────┐
 -- │        TOGGLES          │
 -- └─────────────────────────┘
-createToggle("ESP","Wall-through + Tracer + HP",1,function(on)
+createToggle("ESP","Hitbox ringan — box only",1,function(on)
     State.ESP=on
     if not on then for _,e in next,ESPObjects do hideESP(e) end end
     setStatus(on and "ESP ON" or "ESP OFF", on and C.Success or C.Error)
@@ -695,5 +683,9 @@ createToggle("Crosshair","Custom CH + Aim Assist + Hitmarker",5,function(on)
     if not on then hideAllCH() end
     setStatus(on and "Crosshair ON" or "Crosshair OFF", on and C.Success or C.Error)
 end)
+createToggle("Enemy Only Aim","Aim assist khusus musuh aja",6,function(on)
+    AimConfig.TeamCheck=on
+    setStatus(on and "Enemy Only: ON" or "Enemy Only: OFF", on and C.Success or C.Warn)
+end, true)
 
 print("[XC Hub] v2.0 Loaded!")
