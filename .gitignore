@@ -1,0 +1,9 @@
+# Rojo / Roblox
+*.rbxl
+*.rbxlx
+*.rbxl.lock
+*.rbxlx.lock
+
+# Editor
+.vscode/
+/sourcemap.json
