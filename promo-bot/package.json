@@ -1,0 +1,14 @@
+{
+  "name": "promo-bot",
+  "version": "1.0.0",
+  "description": "Auto promo sender for WhatsApp",
+  "main": "wa_sender.js",
+  "scripts": {
+    "start": "node wa_sender.js",
+    "list-groups": "node wa_list_groups.js"
+  },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.9",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
