@@ -1,6 +1,6 @@
 {
   "telegram": {
-    "bot_token": "ISI_TOKEN_BOT_DISINI",
+    "bot_token": "8978278502:AAF9pOe_8OyzHBcHav_rmQyeC1pS4_UTgMo",
     "groups": [
       {
         "chat_id": "@username_grup_1",
@@ -13,12 +13,6 @@
         "message": "Hai semua! Pesan khusus untuk Grup 2.\n\nJangan kelewatan promo kami! 💥",
         "schedule_hours": 8,
         "gap_seconds": 60
-      },
-      {
-        "chat_id": "-1001234567890",
-        "message": "Pesan untuk grup private (pake ID angka).",
-        "schedule_hours": 12,
-        "gap_seconds": 30
       }
     ]
   },
@@ -29,12 +23,6 @@
         "message": "Halo semua! Ini promo WA Grup 1.\n\nHubungi kami untuk info lebih lanjut! 🙌",
         "schedule_hours": 6,
         "gap_seconds": 50
-      },
-      {
-        "jid": "ISI_JID_GRUP_2_DISINI",
-        "message": "Hai! Pesan khusus WA Grup 2.\n\nPromo terbatas, buruan! ⚡",
-        "schedule_hours": 8,
-        "gap_seconds": 45
       }
     ]
   }
