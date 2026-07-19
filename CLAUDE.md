@@ -66,6 +66,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `scripts/VisibleHitbox_Executor.lua` | Combat testing tool (private server) |
 | `bugbounty/recon.py` | Auto recon tool (DNS, subdomain, port, tech stack) |
 | `bugbounty/checklist.md` | Checklist bug bounty lengkap + report template |
+| `bugbounty/findings.md` | Log findings hasil hunt |
 
 ## Stack
 - Bahasa script: **Luau** (Roblox)

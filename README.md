@@ -38,6 +38,22 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/ma
 
 ---
 
+## Bug Bounty — shiroine.web.id ✅
+
+**2026-07-19** — 5 celah berhasil ditemukan:
+
+| Severity | Finding |
+|----------|---------|
+| 🔴 Critical | Unauthenticated Price Manipulation |
+| 🟠 High | Server Key Metadata Leaked |
+| 🟠 High | Webhook Signature Hash Leaked |
+| 🟡 Medium | Midtrans Sandbox Active on Production |
+| 🟡 Medium | Success Page Client-Side Only |
+
+Detail lengkap → [`bugbounty/findings.md`](bugbounty/findings.md)
+
+---
+
 ## Struktur Repo
 
 ```
@@ -50,6 +66,7 @@ scripts/
 bugbounty/
   recon.py                           ← Auto recon (DNS, subdomain, port, tech stack)
   checklist.md                       ← Checklist bug bounty lengkap + report template
+  findings.md                        ← Log findings hasil hunt
 src/
   shared/HitboxModule.lua
   client/HitboxVisualizer.client.lua
