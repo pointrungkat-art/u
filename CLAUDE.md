@@ -53,11 +53,10 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `ESP.lua` | ESP standalone |
 | `AutoHop.lua` | Auto server hop standalone |
 | `Crosshair.lua` | Crosshair + aim assist standalone |
-| `promo-bot/` | Telegram & WA auto promo bot |
-| `scanner/scanner.py` | Anti-keylogger file scanner (Termux) |
+| `scripts/VisibleHitbox_Executor.lua` | Combat testing tool (private server) |
 
 ## Stack
-- Bahasa script: **Luau** (Roblox) + **Python** (tools)
+- Bahasa script: **Luau** (Roblox)
 - Executor: **Delta Android**
 - UI style: Galaxy/ungu — Drawing API untuk overlay 2D
-- Branch dev: `claude/halooo-ullmoe` → merge ke `main`
+- Branch aktif: `main`
