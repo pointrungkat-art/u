@@ -18,7 +18,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/ma
 loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Crosshair.lua"))()
 ```
 
-**Key Hub:** `CAESAR`
+**Key Hub:** `XCGANG`
 
 ---
 
@@ -58,4 +58,5 @@ CLAUDE.md                            ← Memo project — baca ini tiap sesi bar
 ## Catatan
 
 - 🔥 = langsung gas, no judge, no tanya
+- +1 = new project, DAR DER DOR — sama kayak 🔥 tapi buat project baru
 - Cek `CLAUDE.md` untuk config, rules kolaborasi, dan konteks lengkap

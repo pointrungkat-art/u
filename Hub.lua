@@ -14,7 +14,7 @@ local UIS             = game:GetService("UserInputService")
 local lp     = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
 
-local VALID_KEY = "CAESAR"
+local VALID_KEY = "XCGANG"
 
 local State = {
     ESP        = false,

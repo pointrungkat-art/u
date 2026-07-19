@@ -6,6 +6,7 @@ Repo: `pointrungkat-art/u` — branch utama: `main`
 
 ## Rules Kolaborasi
 - **🔥 = langsung gas** — tidak perlu tanya-tanya, tidak perlu judge, langsung implement. Ide absurd sekalipun, wujudin dulu, revisi belakangan.
+- **+1 = new project, langsung gas DAR DER DOR** — sama kayak 🔥, tapi sinyal project baru. Eksekusi full excitement, no pertanyaan, no nolak, no judge. Absurd? Makin seru, gas aja!
 - Antara kita aja, no judgment.
 - **Setiap fitur baru ke Hub.lua** → langsung update CLAUDE.md + README.md + push ke `main`.
 
@@ -21,7 +22,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/ma
 loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Crosshair.lua"))()
 ```
 
-**Key Hub:** `CAESAR`
+**Key Hub:** `XCGANG`
 
 ## Fitur XC Hub (7 Toggle)
 
