@@ -112,6 +112,25 @@ Detail lengkap → [`bugbounty/findings.md`](bugbounty/findings.md)
 
 ---
 
+## One Tap Drag — FF Config
+
+Config + guide khusus Free Fire untuk **one tap headshot** & **drag headshot**.
+
+| Setting | Value |
+|---------|-------|
+| General | **100** |
+| Red Dot | **85** |
+| 2x Scope | **72** |
+| 4x Scope | **58** |
+| AWM Scope | **42** |
+| Free Look | **95** |
+
+→ Detail lengkap: [`onetapdrag/guide.md`](onetapdrag/guide.md)
+→ Config JSON: [`onetapdrag/config.json`](onetapdrag/config.json)
+→ ADB Script: [`onetapdrag/apply.sh`](onetapdrag/apply.sh)
+
+---
+
 ## Struktur Repo
 
 ```
@@ -121,6 +140,10 @@ XZ.lua                               ← XZ Hub — RPG Farming Automation
 ESP.lua                              ← ESP standalone
 AutoHop.lua                          ← Auto hop standalone
 Crosshair.lua                        ← Crosshair standalone
+onetapdrag/
+  config.json                        ← FF sensitivity + graphics + HUD config
+  apply.sh                           ← ADB auto performance boost script
+  guide.md                           ← Teknik one tap & drag headshot guide
 bugbounty/
   recon.py                           ← Auto recon (DNS, subdomain, port, tech stack)
   checklist.md                       ← Checklist bug bounty lengkap + report template

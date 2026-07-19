@@ -1,0 +1,89 @@
+{
+  "_info": {
+    "project": "One Tap Drag — FF Config",
+    "version": "1.0",
+    "target": "Free Fire / Free Fire MAX",
+    "style": "One Tap Headshot + Drag Headshot",
+    "device_class": "Mid-High Android (4GB+ RAM)"
+  },
+
+  "sensitivity": {
+    "general":      100,
+    "red_dot":       85,
+    "scope_2x":      72,
+    "scope_4x":      58,
+    "scope_awm":     42,
+    "free_look":     95,
+    "gyroscope": {
+      "enabled":       true,
+      "general":       80,
+      "red_dot":       70,
+      "scope_2x":      60,
+      "scope_4x":      45,
+      "scope_awm":     30
+    }
+  },
+
+  "one_tap": {
+    "note": "General 100 → flick cepat ke kepala, drag dari dada ke atas",
+    "technique": "tap dada → seret naik ke kepala dalam 1 swipe",
+    "finger": "1 jari (index)",
+    "timing_ms": 80
+  },
+
+  "drag_headshot": {
+    "note": "Start aim di badan → drag up saat spray → kepala kena burst pertama",
+    "technique": "tahan fire → drag aim ke atas secara diagonal",
+    "finger": "2 jari (claw grip)",
+    "timing_ms": 120,
+    "best_gun": ["MP40", "M1887", "AK", "M4A1"]
+  },
+
+  "hud": {
+    "fire_button": {
+      "size":     130,
+      "position": "right_bottom",
+      "opacity":   80
+    },
+    "aim_button": {
+      "size":     100,
+      "position": "left_middle",
+      "opacity":   75
+    },
+    "crouch": {
+      "size":      80,
+      "position":  "right_middle"
+    },
+    "movement_joystick": {
+      "size":     140,
+      "position": "left_bottom"
+    }
+  },
+
+  "graphics": {
+    "resolution":       "HD",
+    "frame_rate":       "Ultra (60fps)",
+    "quality":          "Smooth",
+    "shadows":          false,
+    "auto_adjust":      false,
+    "bloom":            false,
+    "anti_aliasing":    false,
+    "ambient_occlusion":false,
+    "note": "Smooth + 60fps = max performance, less visual clutter saat fight"
+  },
+
+  "audio": {
+    "effects":   90,
+    "bgm":        0,
+    "footsteps": 100,
+    "note": "BGM off, footsteps max untuk dengar musuh"
+  },
+
+  "controls": {
+    "auto_sprint":   true,
+    "auto_pickup":   false,
+    "aim_assist":    true,
+    "peek_shooting": true,
+    "note": "Auto pickup OFF biar gak nabrak loot saat fight"
+  }
+}

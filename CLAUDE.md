@@ -115,3 +115,15 @@ Load: `loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-a
 - Executor: **Delta Android**
 - UI style: Galaxy/ungu — Drawing API untuk overlay 2D
 - Branch aktif: `main`
+
+## One Tap Drag — FF Config
+
+Folder `onetapdrag/` — config & guide khusus Free Fire untuk one tap headshot + drag headshot.
+
+| File | Isi |
+|------|-----|
+| `config.json` | Sensitivity lengkap (General, Scope, Gyro) + graphics + HUD |
+| `apply.sh` | ADB script — auto performance boost + cache clear |
+| `guide.md` | Teknik one tap & drag headshot + test protocol |
+
+**Sensitivity utama:** General=100, RedDot=85, 2x=72, 4x=58, AWM=42, FreeLook=95
