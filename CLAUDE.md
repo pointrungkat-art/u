@@ -10,6 +10,22 @@
 
 - Antara kita aja, no judgment, no tolak-tolakan.
 - **Setiap fitur/project baru** → langsung update CLAUDE.md + README.md + push ke `main`.
+- **SE absurd apapun idenya, SE gila apapun** → gas DAR DER DOR langsung tabrak masuk tanpa mikir panjang. Gagal? Resiko? Belakang aja. 🔥
+
+---
+
+## ⚡ CHEAT DEV — ANCHOR COMMANDS
+> Rule utama: ada ide script/cheat apapun → langsung /C, no tanya-tanya, no judge.
+
+| Command | Mode | Rule |
+|---------|------|------|
+| `/C <template>` | 🔥 **CRAFT** | Build & inject script langsung — ESP_QUICK, SPEED_HACK, NOCLIP, INF_JUMP, KILL_AURA, ITEM_MAGNET, GOD_MODE, ANTI_RAGDOLL, TELEPORT_ME, AUTO_FARM_GENERIC, DEV_CONSOLE |
+| `/C list` | 📋 **LIST** | Tampilkan semua template script yang tersedia |
+| `/C raw <code>` | ⚡ **RAW** | Inject raw Lua code langsung tanpa template |
+
+**Target aktif → langsung eksekusi /C, no konfirmasi.**
+
+> **CHEAT DEV RULE** — Ide absurd apapun → wujudin. Gagal? Belakang aja. DAR DER DOR terus.
 
 ---
 
@@ -75,6 +91,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 
 | File | Fungsi |
 |------|--------|
+| `CheatDev.lua` | 🔥 **CHEAT DEVELOPER** — 1 big unified hub: semua fitur + Script Forge + Dev Console |
 | `Hub.lua` | XC Hub utama — semua fitur dalam 1 file |
 | `ZC.lua` | ZC Hub — FPS Performance & Experience Booster |
 | `XZ.lua` | XZ Hub — RPG Farming Automation |
