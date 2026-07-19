@@ -1,38 +1,63 @@
-# Project Memory — Combat Game Testing Toolkit
+# Project Memory — XC Hub
 
 ## Konteks Project
-Roblox combat + experience game milik pointrungkat-art. Testing dilakukan via **executor** di **private server sendiri** — bukan cheat di game orang.
+Script hub Roblox milik pointrungkat-art. Semua script diload via executor **Delta Android**.
+Repo: `pointrungkat-art/u` — branch utama: `main`
 
 ## Rules Kolaborasi
 - **🔥 = langsung gas** — tidak perlu tanya-tanya, tidak perlu judge, langsung implement. Ide absurd sekalipun, wujudin dulu, revisi belakangan.
 - Antara kita aja, no judgment.
 
-## Script Utama
-`scripts/VisibleHitbox_Executor.lua` — self-contained, load via executor:
+## Load Script
+
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/claude/yoo-bosku-b3l26m/scripts/VisibleHitbox_Executor.lua"))()
+-- XC Hub (utama)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Hub.lua"))()
+
+-- Standalone scripts
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ESP.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/AutoHop.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Crosshair.lua"))()
 ```
 
-## Fitur Yang Sudah Ada
-| Key | Fitur |
-|-----|-------|
-| `H` | Visible hitbox (box + wireframe). Hijau=self, Merah=enemy |
-| `G` | Cycle ukuran hitbox: Tight / Normal / Wide |
-| `D` | Damage number popup (float + fade) + hit effect sphere |
-| `E` | Chams — highlight karakter tembus dinding (AlwaysOnTop) |
-| `T` | Tracer lines dari bawah layar ke posisi tiap player |
+**Key Hub:** `CAESAR`
 
-Billboard per karakter: nama · HP bar gradient · HP teks · jarak
-Damage color: ⚪→🟡50+→🟠100+→🟣150+
+## Fitur XC Hub (6 Toggle)
 
-## Stack & Struktur
-- Bahasa: **Luau** (Roblox)
-- Executor script: `scripts/` — no Rojo needed
-- Rojo/Studio setup: `src/` + `default.project.json`
-- Branch aktif: `claude/yoo-bosku-b3l26m`
+| # | Toggle | Deskripsi |
+|---|--------|-----------|
+| 1 | **ESP** | Box hitbox ringan — 4 Drawing object per player |
+| 2 | **Auto Hop** | Pindah server tiap 5 menit + anti-AFK |
+| 3 | **Auto Chest** | Collect semua chest → auto hop server |
+| 4 | **Auto Fruit** | Detect & collect devil fruit (Blox Fruits) |
+| 5 | **Crosshair** | Custom crosshair + aim assist + hitmarker |
+| 6 | **Enemy Only Aim** | Aim assist khusus musuh (default ON) |
 
-## Next Ideas (belum diimplementasi)
-- Kill counter
-- Crosshair custom
-- Speed / jump modifier untuk testing movement
-- Combo tracker
+## Config Penting
+
+```lua
+-- Aim Assist (di Hub.lua → AimConfig)
+Strength  = 0.28   -- kekuatan pull (0.05=ringan, 0.5=kuat)
+FOV       = 90     -- radius deteksi pixel dari crosshair
+TeamCheck = true   -- true = musuh aja, false = semua player
+Target    = "Head" -- "Head" / "HumanoidRootPart"
+
+-- Crosshair styles: CrossDot | Cross | Dot | Circle | TShape
+```
+
+## File di Repo
+
+| File | Fungsi |
+|------|--------|
+| `Hub.lua` | XC Hub utama — semua fitur dalam 1 file |
+| `ESP.lua` | ESP standalone |
+| `AutoHop.lua` | Auto server hop standalone |
+| `Crosshair.lua` | Crosshair + aim assist standalone |
+| `promo-bot/` | Telegram & WA auto promo bot |
+| `scanner/scanner.py` | Anti-keylogger file scanner (Termux) |
+
+## Stack
+- Bahasa script: **Luau** (Roblox) + **Python** (tools)
+- Executor: **Delta Android**
+- UI style: Galaxy/ungu — Drawing API untuk overlay 2D
+- Branch dev: `claude/halooo-ullmoe` → merge ke `main`
