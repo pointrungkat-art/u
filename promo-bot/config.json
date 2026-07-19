@@ -1,0 +1,29 @@
+{
+  "telegram": {
+    "bot_token": "8978278502:AAF9pOe_8OyzHBcHav_rmQyeC1pS4_UTgMo",
+    "groups": [
+      {
+        "chat_id": "@username_grup_1",
+        "message": "Halo! Ini pesan promo untuk Grup 1.\n\nCek produk kami ya! 🔥",
+        "schedule_hours": 6,
+        "gap_seconds": 45
+      },
+      {
+        "chat_id": "@username_grup_2",
+        "message": "Hai semua! Pesan khusus untuk Grup 2.\n\nJangan kelewatan promo kami! 💥",
+        "schedule_hours": 8,
+        "gap_seconds": 60
+      }
+    ]
+  },
+  "whatsapp": {
+    "groups": [
+      {
+        "jid": "ISI_JID_GRUP_DARI_wa_list_groups",
+        "message": "Halo semua! Ini promo WA Grup 1.\n\nHubungi kami untuk info lebih lanjut! 🙌",
+        "schedule_hours": 6,
+        "gap_seconds": 50
+      }
+    ]
+  }
+}
