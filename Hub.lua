@@ -9,6 +9,7 @@ local TeleportService = game:GetService("TeleportService")
 local TweenService    = game:GetService("TweenService")
 local HttpService     = game:GetService("HttpService")
 local VirtualUser     = game:GetService("VirtualUser")
+local UIS             = game:GetService("UserInputService")
 
 local lp     = Players.LocalPlayer
 local Camera = workspace.CurrentCamera
@@ -16,11 +17,12 @@ local Camera = workspace.CurrentCamera
 local VALID_KEY = "CAESAR"
 
 local State = {
-    ESP       = false,
-    AutoHop   = false,
-    AutoChest = false,
-    AutoFruit = false,
-    Crosshair = false,
+    ESP        = false,
+    AutoHop    = false,
+    AutoChest  = false,
+    AutoFruit  = false,
+    Crosshair  = false,
+    SilentAim  = false,
 }
 
 -- ┌─────────────────────────┐
@@ -132,8 +134,8 @@ keyError.Font                 = Enum.Font.Gotham
 -- └─────────────────────────┘
 local MainFrame = Instance.new("Frame")
 MainFrame.Name             = "MainHub"
-MainFrame.Size             = UDim2.new(0, 230, 0, 510)
-MainFrame.Position         = UDim2.new(0.5, -115, 0.5, -255)
+MainFrame.Size             = UDim2.new(0, 230, 0, 560)
+MainFrame.Position         = UDim2.new(0.5, -115, 0.5, -280)
 MainFrame.BackgroundColor3 = C.BG
 MainFrame.BorderSizePixel  = 0
 MainFrame.Visible          = false
@@ -302,8 +304,8 @@ local function showHub()
     KeyFrame:Destroy()
     MainFrame.Visible = true
     TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-        Size     = UDim2.new(0, 230, 0, 510),
-        Position = UDim2.new(0.5, -115, 0.5, -255),
+        Size     = UDim2.new(0, 230, 0, 560),
+        Position = UDim2.new(0.5, -115, 0.5, -280),
     }):Play()
     task.wait(2)
     setStatus("XC Hub Ready")
@@ -482,6 +484,29 @@ local AimConfig = {
 }
 local HitConfig = { Enabled=true, Color=Color3.fromRGB(255,60,60), Size=8, Thick=1.5, Duration=0.12 }
 
+-- ┌─────────────────────────┐
+-- │      SILENT AIM         │
+-- └─────────────────────────┘
+local SilentConfig = {
+    FOV    = 280,    -- lebih lebar dari aim assist, detect musuh meski jauh dari crosshair
+    Target = "Head", -- "Head" / "HumanoidRootPart"
+}
+
+local function runSilentAim()
+    if not State.SilentAim then return end
+    local tp = getClosestAim(SilentConfig.FOV, SilentConfig.Target)
+    if not tp then return end
+    Camera.CFrame = CFrame.lookAt(Camera.CFrame.Position, tp.Position)
+end
+
+UIS.InputBegan:Connect(function(input, gp)
+    if gp then return end
+    if input.UserInputType == Enum.UserInputType.MouseButton1
+    or input.UserInputType == Enum.UserInputType.Touch then
+        runSilentAim()
+    end
+end)
+
 local OL2 = CrossConfig.Thickness+2
 local function newLine(col,thick) local d=Drawing.new("Line") d.Color=col d.Thickness=thick d.Visible=false return d end
 local function newCircD(col,thick,fill,rad) local d=Drawing.new("Circle") d.Color=col d.Thickness=thick or 1 d.Filled=fill or false d.Radius=rad or 5 d.Visible=false return d end
@@ -553,16 +578,18 @@ local function drawCrosshair()
     end
 end
 
-local function getClosestAim()
+local function getClosestAim(fovOverride, targetOverride)
+    local fov    = fovOverride    or AimConfig.FOV
+    local tgt    = targetOverride or AimConfig.Target
     local vp=Camera.ViewportSize ; local center=Vector2.new(vp.X/2,vp.Y/2)
-    local bestDist=AimConfig.FOV ; local bestPart=nil
+    local bestDist=fov ; local bestPart=nil
     for _,player in ipairs(Players:GetPlayers()) do
         if player==lp then continue end
         if AimConfig.TeamCheck and player.Team==lp.Team then continue end
         local char=player.Character
         local hum=char and char:FindFirstChildOfClass("Humanoid")
         if not(hum and hum.Health>0) then continue end
-        local part=char:FindFirstChild(AimConfig.Target) if not part then continue end
+        local part=char:FindFirstChild(tgt) if not part then continue end
         local sp,onScreen=Camera:WorldToViewportPoint(part.Position)
         if not onScreen or sp.Z<=0 then continue end
         local dist=(Vector2.new(sp.X,sp.Y)-center).Magnitude
@@ -687,5 +714,9 @@ createToggle("Enemy Only Aim","Aim assist khusus musuh aja",6,function(on)
     AimConfig.TeamCheck=on
     setStatus(on and "Enemy Only: ON" or "Enemy Only: OFF", on and C.Success or C.Warn)
 end, true)
+createToggle("Silent Aim","Snap instan ke musuh saat tap/klik",7,function(on)
+    State.SilentAim=on
+    setStatus(on and "Silent Aim ON" or "Silent Aim OFF", on and C.Success or C.Error)
+end)
 
 print("[XC Hub] v2.0 Loaded!")
