@@ -1,94 +1,145 @@
 #!/usr/bin/env python3
-# XC BugBounty Recon Tool
+# XC BugBounty Recon Tool v1.1
 # Gunakan hanya pada target yang sudah ada izin (bug bounty program / authorized)
 
-import subprocess, sys, os, socket, datetime
+import sys, socket, datetime, subprocess
+import requests
+import dns.resolver
 
 BANNER = """
-╔══════════════════════════════════════╗
-║       XC Bug Bounty Recon v1.0      ║
-║   Authorized testing only — OPSEC   ║
-╚══════════════════════════════════════╝
+╔══════════════════════════════════════════╗
+║      XC Bug Bounty Recon Tool v1.1      ║
+║   Authorized / Bug Bounty targets only  ║
+╚══════════════════════════════════════════╝
 """
+
+SUBDOMAINS = [
+    "www","mail","api","admin","dev","staging","test","app","portal",
+    "vpn","ftp","m","cdn","blog","shop","static","assets","media",
+    "login","auth","oauth","dashboard","panel","manage","console",
+    "beta","demo","support","help","docs","status","monitor",
+]
+
+def section(title):
+    print(f"\n{'═'*46}")
+    print(f"  {title}")
+    print('═'*46)
 
 def run(cmd):
     try:
-        result = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=30)
-        return result.stdout.strip() or result.stderr.strip()
+        r = subprocess.run(cmd, shell=True, capture_output=True, text=True, timeout=20)
+        return r.stdout.strip() or r.stderr.strip() or "[-] no output"
     except subprocess.TimeoutExpired:
-        return "[timeout]"
+        return "[!] timeout"
     except Exception as e:
-        return f"[error: {e}]"
+        return f"[!] error: {e}"
 
-def section(title):
-    print(f"\n{'='*44}")
-    print(f"  {title}")
-    print('='*44)
+def dns_lookup(target):
+    section("DNS Records")
+    for rtype in ["A", "AAAA", "MX", "NS", "TXT", "CNAME"]:
+        try:
+            answers = dns.resolver.resolve(target, rtype)
+            for r in answers:
+                print(f"  {rtype:6} → {r}")
+        except Exception:
+            pass
 
-def recon(target):
-    print(BANNER)
-    print(f"[*] Target  : {target}")
-    print(f"[*] Waktu   : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-
-    # DNS
-    section("DNS Lookup")
-    print(run(f"nslookup {target}"))
-
-    # IP resolve
+def ip_info(target):
     section("IP Address")
     try:
         ip = socket.gethostbyname(target)
-        print(f"IP: {ip}")
-    except:
-        print("[!] Gagal resolve IP")
+        print(f"  IP : {ip}")
+        try:
+            resp = requests.get(f"https://ipinfo.io/{ip}/json", timeout=8)
+            d = resp.json()
+            print(f"  Org: {d.get('org','?')}")
+            print(f"  Loc: {d.get('city','?')}, {d.get('country','?')}")
+        except Exception:
+            pass
+    except Exception:
+        print("  [!] Gagal resolve IP")
 
-    # WHOIS
-    section("WHOIS")
-    print(run(f"whois {target} 2>/dev/null | head -30"))
-
-    # HTTP Headers
+def http_headers(target):
     section("HTTP Headers")
-    print(run(f"curl -sI --max-time 10 https://{target}"))
+    for scheme in ["https", "http"]:
+        try:
+            r = requests.head(f"{scheme}://{target}", timeout=8, allow_redirects=True)
+            print(f"  Status  : {r.status_code}")
+            print(f"  Final URL: {r.url}")
+            interesting = ["server","x-powered-by","x-frame-options","content-security-policy",
+                           "strict-transport-security","x-content-type-options","set-cookie","location"]
+            for h in interesting:
+                if h in r.headers:
+                    print(f"  {h}: {r.headers[h][:120]}")
+            break
+        except Exception:
+            continue
 
-    # Subdomain brute (wordlist kecil)
-    section("Subdomain Check (quick)")
-    subs = ["www","mail","api","admin","dev","staging","test","app","portal","vpn","ftp","m","cdn","blog","shop"]
+def subdomain_enum(target):
+    section(f"Subdomain Brute ({len(SUBDOMAINS)} wordlist)")
     found = []
-    for sub in subs:
+    for sub in SUBDOMAINS:
         full = f"{sub}.{target}"
         try:
             socket.gethostbyname(full)
             found.append(full)
             print(f"  [+] {full}")
-        except:
+        except Exception:
             pass
     if not found:
-        print("  [-] Tidak ada subdomain ditemukan dari wordlist kecil")
+        print("  [-] Tidak ada subdomain ditemukan")
+    return found
 
-    # Open ports (top 20)
-    section("Port Scan — Top 20 (nmap)")
-    print(run(f"nmap -T4 --top-ports 20 -oG - {target} 2>/dev/null | grep 'Ports:'"))
+def robots_sitemap(target):
+    section("robots.txt & sitemap.xml")
+    for path in ["/robots.txt", "/sitemap.xml", "/sitemap_index.xml"]:
+        try:
+            r = requests.get(f"https://{target}{path}", timeout=8)
+            if r.status_code == 200:
+                print(f"\n  [{path}] — {len(r.text)} chars")
+                print("  " + "\n  ".join(r.text.strip().splitlines()[:15]))
+            else:
+                print(f"  [{path}] → {r.status_code}")
+        except Exception:
+            print(f"  [{path}] → error")
 
-    # Tech detection
-    section("Tech Stack (whatweb)")
-    print(run(f"whatweb --no-errors -a 1 https://{target} 2>/dev/null"))
+def juicy_paths(target):
+    section("Juicy Path Check")
+    paths = [
+        "/.git/config", "/.env", "/config.php", "/wp-config.php",
+        "/phpinfo.php", "/admin", "/administrator", "/login",
+        "/api/v1", "/api/v2", "/swagger", "/swagger-ui.html",
+        "/actuator", "/actuator/env", "/.well-known/security.txt",
+        "/backup.zip", "/backup.sql", "/dump.sql",
+    ]
+    for path in paths:
+        try:
+            r = requests.get(f"https://{target}{path}", timeout=6, allow_redirects=False)
+            status = r.status_code
+            if status in [200, 301, 302, 403]:
+                flag = "🔥" if status == 200 else "→"
+                print(f"  {flag} [{status}] {path}")
+        except Exception:
+            pass
 
-    # robots.txt
-    section("robots.txt")
-    print(run(f"curl -s --max-time 10 https://{target}/robots.txt"))
+def recon(target):
+    print(BANNER)
+    print(f"  Target : {target}")
+    print(f"  Waktu  : {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-    # sitemap
-    section("sitemap.xml")
-    out = run(f"curl -s --max-time 10 https://{target}/sitemap.xml | head -20")
-    print(out if out else "[-] Tidak ada sitemap")
+    dns_lookup(target)
+    ip_info(target)
+    http_headers(target)
+    subdomain_enum(target)
+    robots_sitemap(target)
+    juicy_paths(target)
 
-    print(f"\n{'='*44}")
-    print("  Recon selesai! Cek hasil di atas.")
-    print('='*44)
+    section("Recon Selesai!")
+    print("  Next step: manual test, Burp Suite, atau run checklist.md\n")
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print(f"Usage: python3 recon.py <target-domain>")
-        print(f"Contoh: python3 recon.py example.com")
+        print(f"Usage  : python3 recon.py <domain>")
+        print(f"Contoh : python3 recon.py example.com")
         sys.exit(1)
-    recon(sys.argv[1])
+    recon(sys.argv[1].replace("https://","").replace("http://","").strip("/"))
