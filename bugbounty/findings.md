@@ -76,3 +76,46 @@
 - **[TECH_LEAK]** `https://sidegigx.id/`
   - X-Powered-By: Next.js
 
+
+
+---
+
+## https://sidegigx.id/ · 2026-07-19 23:18:07
+
+**Total:** 7 findings &nbsp;|&nbsp; 1 Critical &nbsp;·&nbsp; 0 High &nbsp;·&nbsp; 3 Medium &nbsp;·&nbsp; 3 Low
+
+### 🔴 CRITICAL
+
+- **[JUICY_FILE]** `https://sidegigx.id/wp-config.php`
+  - HTTP 403 → wp-config.php
+
+### 🟡 MED
+
+- **[JUICY_FILE]** `https://sidegigx.id/sitemap.xml`
+  - HTTP 200 → sitemap.xml
+  - Evidence: `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<url>
+<loc>https://sidegigx.id/</loc>
+<lastmod>2026-07-19T22:22:07.710Z</lastmod>
+<changefreq>weekly`
+- **[JUICY_FILE]** `https://sidegigx.id/robots.txt`
+  - HTTP 200 → robots.txt
+  - Evidence: `# As a condition of accessing this website, you agree to abide by the following
+# content signals:
+
+# (a)  If a Content-Signal = yes, you may collect content for the corresponding
+#      use.
+# (b)  I`
+- **[NO_RATE_LIMIT]** `https://sidegigx.id/`
+  - 15 rapid requests — no 429/503 detected. Potential brute-force vector.
+
+### 🔵 LOW
+
+- **[MISSING_SECURITY_HEADERS]** `https://sidegigx.id/`
+  - Missing: X-Frame-Options, X-Content-Type-Options, Content-Security-Policy, Strict-Transport-Security, X-XSS-Protection, Referrer-Policy, Permissions-Policy
+- **[TECH_LEAK]** `https://sidegigx.id/`
+  - Server: cloudflare
+- **[TECH_LEAK]** `https://sidegigx.id/`
+  - X-Powered-By: Next.js
+
