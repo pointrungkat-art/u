@@ -1,0 +1,82 @@
+# ═══════════════════════════════════════════════════════════
+#  ANTI REALM KILLER v1.0 — Server Defense System
+#  Counteract: TNT spam, Wither flood, CB minecart, terrain wipe
+#  Paste semua ke Repeated Command Block chain (always active)
+# ═══════════════════════════════════════════════════════════
+
+# ── LAYER 0: HARDENING (jalanin sekali saat server start) ──
+
+# Lock gamerules penting
+/gamerule tntexplodes false
+/gamerule commandBlocksEnabled true
+/gamerule commandblockoutput true
+/gamerule doEntityDrops false
+/gamerule maxCommandChainLength 65535
+
+# Matiin mob griefing (wither gak bisa destroy terrain)
+/gamerule mobGriefing false
+
+# ── LAYER 1: DETECT & KILL TNT SPAM ───────────────────────
+# (Repeated CB, setiap tick)
+
+# Count TNT entities — kalau > 10 langsung kill semua
+/execute if entity @e[type=tnt,c=10] run kill @e[type=tnt]
+/execute if entity @e[type=tnt,c=10] run tellraw @a {"rawtext":[{"text":"§c[DEFENSE] TNT Spam detected & cleared!"}]}
+
+# Kill tnt_minecart juga
+/kill @e[type=tnt_minecart]
+
+# ── LAYER 2: DETECT & KILL WITHER FLOOD ───────────────────
+
+# Kill semua Wither yang spawn (Wither gak boleh ada di server)
+/execute if entity @e[type=wither,c=1] run kill @e[type=wither]
+/execute if entity @e[type=wither,c=1] run tellraw @a {"rawtext":[{"text":"§c[DEFENSE] Wither spawn blocked & killed!"}]}
+
+# Kill wither skulls sebelum terrain kena
+/kill @e[type=wither_skull]
+/kill @e[type=wither_skull_dangerous]
+
+# ── LAYER 3: DETECT CB MINECART ATTACK ────────────────────
+
+# Kill command_block_minecart yang bukan milik server
+# (Realm killer load via CBM yang di-spawn attacker)
+/execute if entity @e[type=command_block_minecart,tag=!server_cbm,c=1] run kill @e[type=command_block_minecart,tag=!server_cbm]
+/execute if entity @e[type=command_block_minecart,tag=!server_cbm,c=1] run tellraw @a {"rawtext":[{"text":"§c[DEFENSE] Malicious CB minecart detected & removed!"}]}
+
+# ── LAYER 4: ENTITY COUNT LIMITER ─────────────────────────
+
+# Kill berlebih item entities (item spam buat trigger TNT summon)
+/execute if entity @e[type=item,c=50] run kill @e[type=item]
+
+# Limit mob count keseluruhan
+/execute if entity @e[type=!player,type=!item_frame,c=200] run kill @e[type=!player,type=!item_frame,r=128,c=100]
+
+# ── LAYER 5: PLAYER PROTECTION ────────────────────────────
+
+# Jaga gamemode admin (tag: op)
+/gamemode c @a[tag=op]
+
+# Jaga gamemode member (tag: member) = survival tapi protected
+/effect give @a[tag=member] resistance 10 255 true
+/effect give @a[tag=member] fire_resistance 10 255 true
+/effect give @a[tag=member] saturation 10 255 true
+
+# Prevent kick — teleport player balik kalau kena kick attempt
+# (Ini jalan via external plugin/addon, command sendiri gak bisa prevent kick)
+
+# ── LAYER 6: TERRAIN PROTECTION ───────────────────────────
+
+# Re-enable proteksi setelah mungkin diubah attacker
+/gamerule tntexplodes false
+/gamerule mobGriefing false
+/gamerule fireDamage false
+/gamerule doFireTick false
+
+# ── LAYER 7: ALERT SYSTEM ─────────────────────────────────
+
+# Cek kalau ada player yang tiba-tiba masuk creative (possible attacker)
+# (Jalanin tiap 5 detik via chain CB)
+/tag @a[m=creative,tag=!op] add suspicious
+/execute if entity @a[tag=suspicious] run tellraw @a[tag=op] {"rawtext":[{"text":"§e[ALERT] Non-OP player in creative mode detected!"}]}
+/gamemode s @a[tag=suspicious,tag=!op]
+/tag @a remove suspicious

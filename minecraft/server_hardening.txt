@@ -1,0 +1,59 @@
+# ═══════════════════════════════════════════════════════════
+#  SERVER HARDENING — Setup awal sebelum buka realm/server
+#  Jalanin SEKALI saat world baru / setelah reset
+# ═══════════════════════════════════════════════════════════
+
+# ── GAMERULE LOCKDOWN ─────────────────────────────────────
+/gamerule tntexplodes false
+/gamerule mobGriefing false
+/gamerule commandblockoutput true
+/gamerule fireDamage false
+/gamerule doFireTick false
+/gamerule keepInventory true
+/gamerule naturalRegeneration true
+/gamerule doEntityDrops true
+/gamerule pvp false
+
+# ── TAG ADMIN ─────────────────────────────────────────────
+# Ganti "NamaAdmin" dengan username admin yang beneran
+/tag NamaAdmin add op
+/tag NamaAdmin add dontkillme
+/tag NamaAdmin add server_cbm
+
+# ── TAG CB MINECART MILIK SERVER ──────────────────────────
+# Jalanin ini setelah spawn CBM resmi server
+/tag @e[type=command_block_minecart] add server_cbm
+
+# ── SETUP DEFENSE LOOP ────────────────────────────────────
+# Setelah ini, aktifkan Repeated CB chain dari anti_realm_killer.txt
+
+# ── ARMOR PROTECTION MEMBER ───────────────────────────────
+# Kasih resistance permanent ke semua member
+/effect give @a resistance 999999 5 true
+/effect give @a fire_resistance 999999 1 true
+
+# ── BROADCAST READY ───────────────────────────────────────
+/tellraw @a {"rawtext":[{"text":"§a[SERVER] Defense system active. Realm protected!"}]}
+
+# ── STRESS TEST CHECKLIST ─────────────────────────────────
+# Setelah apply anti_realm_killer.txt, test dengan urutan:
+#
+# [TEST 1] TNT Spam
+#   → /execute @e[type=item] ~ ~ ~ summon tnt ~ ~ ~
+#   → Expected: semua TNT langsung ke-kill, alert muncul
+#
+# [TEST 2] Wither Flood
+#   → /summon wither ~ ~ ~  (ulangi 5x)
+#   → Expected: Wither ke-kill sebelum sempat attack
+#
+# [TEST 3] CB Minecart Attack
+#   → Spawn CBM tanpa tag server_cbm
+#   → Expected: auto-killed, alert ke op
+#
+# [TEST 4] Forced Gamemode
+#   → /gamemode s @a[tag=op]
+#   → Expected: gamemode C kembali dalam 1 tick
+#
+# [TEST 5] Terrain Wipe Simulation
+#   → /gamerule tntexplodes true (via command)
+#   → Expected: gamerule langsung di-reset ke false oleh defense loop

