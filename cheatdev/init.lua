@@ -61,15 +61,17 @@ if not Core then error("[CheatDev] Core failed to load. Check internet.") end
 local Config = Core.Config
 
 -- ── 3. Modules ──────────────────────────────────────────────────
-local ESPMod  = load("modules/esp.lua")
-local MoveMod = load("modules/movement.lua")
-local CombMod = load("modules/combat.lua")
-local VisMod  = load("modules/visual.lua")
+local ESPMod   = load("modules/esp.lua")
+local MoveMod  = load("modules/movement.lua")
+local CombMod  = load("modules/combat.lua")
+local VisMod   = load("modules/visual.lua")
+local HabitMod = load("modules/habit.lua")
 
-local ESP     = ESPMod  and ESPMod(Core)
-local Move    = MoveMod and MoveMod(Core)
-local Combat  = CombMod and CombMod(Core)
-local Visual  = VisMod  and VisMod(Core)
+local ESP    = ESPMod   and ESPMod(Core)
+local Move   = MoveMod  and MoveMod(Core)
+local Combat = CombMod  and CombMod(Core)
+local Visual = VisMod   and VisMod(Core)
+local Habit  = HabitMod and HabitMod(Core)
 
 -- ── 4. Script Forge ─────────────────────────────────────────────
 local rawTemplates = load("forge/templates.lua")
@@ -258,12 +260,45 @@ local function buildGUI()
     toggle(scroll, "🍎 Auto Fruit",    Config.FRUIT.enabled, lo_(), function(v) Config.FRUIT.enabled=v end)
     button(scroll, "💀 TP Kill All",   lo_(), function() Move.TPKill.Run() end, Color3.fromRGB(80,20,20))
 
+    section(scroll,"HABIT SYSTEM 🔁",  Color3.fromRGB(80,255,200), lo_())
+    local habStatus = Instance.new("TextLabel")
+    habStatus.Text = "⚫ Idle"; habStatus.TextSize = 11
+    habStatus.TextColor3 = COL.DIM; habStatus.BackgroundTransparency = 1
+    habStatus.Font = Enum.Font.GothamBold; habStatus.TextXAlignment = Enum.TextXAlignment.Left
+    habStatus.Position = UDim2.new(0,8,0,0); habStatus.Size = UDim2.new(1,-16,0,18)
+    habStatus.LayoutOrder = lo_(); habStatus.Parent = scroll
+    task.spawn(function()
+        while GUI._open do
+            if Habit then
+                if Habit.IsRec() then
+                    habStatus.Text = "🔴 REC — " .. Habit.RecCount() .. " pts"
+                    habStatus.TextColor3 = COL.ERR
+                elseif Habit.IsPlaying() then
+                    habStatus.Text = "▶ " .. (Habit.CurHabit() or "playing")
+                    habStatus.TextColor3 = COL.OK
+                else
+                    habStatus.Text = "⚫ Idle"; habStatus.TextColor3 = COL.DIM
+                end
+            end
+            task.wait(0.5)
+        end
+    end)
+    toggle(scroll, "🔁 Enable Habit",    Config.HABIT.enabled, lo_(), function(v) Config.HABIT.enabled=v end)
+    button(scroll, "⏺ Start Record",     lo_(), function() if Habit then Habit.Record("my_habit") end end)
+    button(scroll, "⏹ Stop Record",      lo_(), function() if Habit then Habit.StopRec() end end)
+    button(scroll, "▶ Play ∞ Loop",      lo_(), function() if Habit then Habit.PlayLast(0) end end)
+    button(scroll, "▶ Play 1×",          lo_(), function() if Habit then Habit.PlayLast(1) end end)
+    button(scroll, "⏹ Stop Habit",       lo_(), function() if Habit then Habit.Stop() end end)
+    button(scroll, "🍎 Patrol Fruits",   lo_(), function() if Habit then Habit.Patrol.Fruit() end end, Color3.fromRGB(20,60,20))
+    button(scroll, "📦 Patrol Chests",   lo_(), function() if Habit then Habit.Patrol.Chest() end end, Color3.fromRGB(30,20,60))
+
     section(scroll,"SCRIPT FORGE 🔥",  COL.FIRE,     lo_())
     local forgeTemplates = {
         "ESP_QUICK","CHAMS","SPEED_HACK","NOCLIP","FLY_HACK","INF_JUMP",
         "GRAVITY_MOD","LOW_GRAVITY","ZERO_GRAVITY","KILL_AURA","HITBOX_EXPAND",
         "TP_KILL","FLING","GOD_MODE","INF_STAMINA","ANTI_RAGDOLL","SPIN_BOT",
         "TELEPORT_ME","ITEM_MAGNET","AUTO_FARM_GENERIC","AUTO_QUEST",
+        "HABIT_RECORDER","AUTO_PATROL",
         "DEV_CONSOLE","REMOTE_SPY_LITE","EXECUTOR_INFO","INFINITE_YIELD","DEX_EXPLORER",
     }
     for _, k in ipairs(forgeTemplates) do
@@ -327,4 +362,4 @@ task.wait(0.8)
 buildGUI()
 DevCon.Open()
 
-return { Core=Core, Forge=Forge, GUI=GUI, DevCon=DevCon }
+return { Core=Core, Forge=Forge, GUI=GUI, DevCon=DevCon, Habit=Habit }

@@ -144,6 +144,13 @@ return {
         hitmark  = true,
     },
 
+    HABIT = {
+        enabled       = false,
+        recInterval   = 0.5,    -- seconds between waypoint captures
+        playSpeed     = 1.0,    -- playback speed multiplier (future use)
+        hopAfterPetrol= true,   -- auto-hop server after patrol finishes
+    },
+
     DEVMODE = {
         logLevel    = "ALL",    -- ALL | INFO | WARN | ERR
         hotkeys = {

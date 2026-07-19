@@ -337,6 +337,70 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/infyiff/backup/main/d
 print("[CD] DEX_EXPLORER loading...")
 ]],
 
+    -- ── HABIT / MACRO ────────────────────────────────────────────
+    HABIT_RECORDER = [[
+-- Standalone Habit Recorder — record your path, replay on demand
+-- _HabitStart()  → start recording
+-- _HabitStop()   → save recording
+-- _HabitPlay(n)  → replay n times (0 = infinite)
+local LP=game:GetService("Players").LocalPlayer; local RS=game:GetService("RunService")
+_HabitFrames={}; _HabitRec=false; _HabitTimer=0
+function _HabitStart() _HabitFrames={}; _HabitRec=true; print("[Habit] 🔴 Recording — move around!") end
+function _HabitStop()
+  _HabitRec=false
+  print("[Habit] ⏹ Saved "..(#_HabitFrames).." waypoints — _HabitPlay(loops) to replay")
+end
+function _HabitPlay(loops)
+  loops=loops or 0; local done=0
+  task.spawn(function()
+    while true do
+      for _,wp in ipairs(_HabitFrames) do
+        local r=LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+        if r then r.CFrame=wp end; task.wait(0.5)
+      end
+      done=done+1; if loops>0 and done>=loops then break end; task.wait(0.2)
+    end
+    print("[Habit] ✅ Playback done")
+  end)
+end
+RS.RenderStepped:Connect(function(dt)
+  if not _HabitRec then return end
+  _HabitTimer=_HabitTimer+dt
+  if _HabitTimer>=0.5 then
+    _HabitTimer=0
+    local r=LP.Character and LP.Character:FindFirstChild("HumanoidRootPart")
+    if r then table.insert(_HabitFrames,r.CFrame) end
+  end
+end)
+print("[CD] HABIT_RECORDER — _HabitStart() / _HabitStop() / _HabitPlay(loops)")
+]],
+
+    AUTO_PATROL = [[
+-- Auto Patrol — TP ke semua object dengan tag di workspace, loop sampai habis
+-- Edit TAG sesuai game: "Chest","Fruit","Enemy","NPC","Boss", dll
+local LP=game:GetService("Players").LocalPlayer; local running=true
+local TAG="Chest"   -- ← EDIT INI
+task.spawn(function()
+  while running do
+    local r=LP.Character and LP.Character:FindFirstChild("HumanoidRootPart"); if not r then task.wait(1); continue end
+    local found=false
+    for _,obj in ipairs(workspace:GetDescendants()) do
+      if not running then return end
+      local part=nil
+      if obj:IsA("BasePart") and obj.Name:lower():find(TAG:lower()) then part=obj
+      elseif obj:IsA("Model") and obj.Name:lower():find(TAG:lower()) then
+        part=obj.PrimaryPart or obj:FindFirstChildWhichIsA("BasePart")
+      end
+      if part and (r.Position-part.Position).Magnitude<2000 then
+        r.CFrame=CFrame.new(part.Position+Vector3.new(0,3,0)); found=true; task.wait(1.2)
+      end
+    end
+    if not found then task.wait(2) end; task.wait(0.3)
+  end
+end)
+print("[CD] AUTO_PATROL TAG="..TAG.." — running=false to stop")
+]],
+
     DARK_DAGGER = [[
 -- Dark Dagger GUI (generic)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Hub.lua"))()

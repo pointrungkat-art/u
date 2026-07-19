@@ -98,6 +98,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `cheatdev/modules/movement.lua` | Fly, Speed, Noclip, InfJump, SpinBot, TPKill |
 | `cheatdev/modules/combat.lua` | Aim, SilentAim, KillAura, Hitbox, GodMode, AntiKick, AntiRagdoll |
 | `cheatdev/modules/visual.lua` | Radar, Crosshair Dev, Wallhack/X-Ray, FPS Boost |
+| `cheatdev/modules/habit.lua` | Habit/Macro system — Record path, Play loop, Patrol presets (Fruit/Chest) |
 | `cheatdev/forge/templates.lua` | 26 script templates siap inject |
 | `cheatdev/forge/builder.lua` | Script Forge engine — craft, raw, add, remove |
 | `cheatdev/ui/devConsole.lua` | Dev Console overlay — command input + live log |
