@@ -1,41 +1,60 @@
-# Combat Game — Testing Toolkit
+# XC Hub — Roblox Script Hub
 
-Roblox combat game project. Testing tools dijalankan via executor di private server.
+Script hub untuk Roblox, diload via executor **Delta Android**.
 
-## Script Utama
+> **Setiap sesi baru:** selalu baca `CLAUDE.md` dulu buat konteks lengkap project ini.
 
-`scripts/VisibleHitbox_Executor.lua` — load via:
+---
+
+## Load Script
+
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/claude/yoo-bosku-b3l26m/scripts/VisibleHitbox_Executor.lua"))()
+-- XC Hub (utama — semua fitur)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Hub.lua"))()
+
+-- Standalone scripts
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ESP.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/AutoHop.lua"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Crosshair.lua"))()
 ```
 
-## Fitur
+**Key Hub:** `CAESAR`
 
-| Fitur | Key | Keterangan |
-|-------|-----|------------|
-| Visible Hitbox | `H` | Box + wireframe per karakter. Hijau=self, Merah=enemy |
-| Hitbox Size | `G` | Cycle: Tight / Normal / Wide |
-| Damage Popup | `D` | Angka damage float + hit effect sphere |
-| Chams (ESP) | `E` | Highlight tembus dinding via DepthMode.AlwaysOnTop |
-| Tracer | `T` | Garis dari bawah layar ke posisi player |
+---
 
-**Billboard per karakter:** Nama · HP bar (hijau→merah) · HP teks · Jarak
+## Fitur XC Hub
 
-**Damage color:** ⚪ kecil → 🟡 50+ → 🟠 100+ → 🟣 150+
+| Toggle | Deskripsi |
+|--------|-----------|
+| ESP | Box hitbox ringan — 4 Drawing object per player |
+| Auto Hop | Pindah server tiap 5 menit + anti-AFK |
+| Auto Chest | Collect semua chest → auto hop server |
+| Auto Fruit | Detect & collect devil fruit (Blox Fruits) |
+| Crosshair | Custom crosshair + aim assist + hitmarker |
+| Enemy Only Aim | Aim assist khusus musuh (default ON) |
+
+---
 
 ## Struktur Repo
 
 ```
+Hub.lua                              ← XC Hub utama
+ESP.lua                              ← ESP standalone
+AutoHop.lua                          ← Auto hop standalone
+Crosshair.lua                        ← Crosshair standalone
 scripts/
-  VisibleHitbox_Executor.lua   ← executor script (self-contained)
+  VisibleHitbox_Executor.lua         ← Combat testing tool (private server)
 src/
-  shared/HitboxModule.lua      ← core hitbox logic (Rojo)
+  shared/HitboxModule.lua
   client/HitboxVisualizer.client.lua
   server/HitboxService.server.lua
-default.project.json           ← Rojo sync config
+default.project.json                 ← Rojo sync config
+CLAUDE.md                            ← Memo project — baca ini tiap sesi baru!
 ```
+
+---
 
 ## Catatan
 
-- Branch aktif: `claude/yoo-bosku-b3l26m`
 - 🔥 = langsung gas, no judge, no tanya
+- Cek `CLAUDE.md` untuk config, rules kolaborasi, dan konteks lengkap
