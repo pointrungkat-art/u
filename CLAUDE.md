@@ -91,7 +91,17 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 
 | File | Fungsi |
 |------|--------|
-| `CheatDev.lua` | 🔥 **CHEAT DEVELOPER** — 1 big unified hub: semua fitur + Script Forge + Dev Console |
+| `cheatdev/init.lua` | 🔥 **HABITAT ENTRY POINT** — masuk sini = Dev Mode ON, load semua modul |
+| `cheatdev/core.lua` | Engine utama — services, logger, event bus, module registry, hotkeys |
+| `cheatdev/config.lua` | Semua config terpusat — live editable |
+| `cheatdev/modules/esp.lua` | ESP module — box, name, HP, dist, tracer |
+| `cheatdev/modules/movement.lua` | Fly, Speed, Noclip, InfJump, SpinBot, TPKill |
+| `cheatdev/modules/combat.lua` | Aim, SilentAim, KillAura, Hitbox, GodMode, AntiKick, AntiRagdoll |
+| `cheatdev/modules/visual.lua` | Radar, Crosshair Dev, Wallhack/X-Ray, FPS Boost |
+| `cheatdev/forge/templates.lua` | 26 script templates siap inject |
+| `cheatdev/forge/builder.lua` | Script Forge engine — craft, raw, add, remove |
+| `cheatdev/ui/devConsole.lua` | Dev Console overlay — command input + live log |
+| `CheatDev.lua` | 🔥 **CHEAT DEVELOPER v1** — monolithic version (standalone) |
 | `Hub.lua` | XC Hub utama — semua fitur dalam 1 file |
 | `ZC.lua` | ZC Hub — FPS Performance & Experience Booster |
 | `XZ.lua` | XZ Hub — RPG Farming Automation |
