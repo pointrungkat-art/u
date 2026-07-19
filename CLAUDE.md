@@ -55,6 +55,18 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 -- Crosshair styles: CrossDot | Cross | Dot | Circle | TShape
 ```
 
+## Hacking XC Hub — Commands
+
+Project hacking pribadi. Kalau ada target domain → langsung gas DAR DER DOR black-box style, no tanya-tanya.
+
+| Command | Mode | Artinya |
+|---------|------|---------|
+| `/F` | 🔥 JACKPOT | Full insane black-box — gas semua angle, cari celah terbesar, no limit |
+| `/F Vul` | 🎯 VULN | Hunt Medium vulnerability aja — targeted, efisien |
+| `/WP` | 🌊 WARM-UP | Surface recon dulu — quick wins, info gathering, simple findings |
+
+**Rule:** Target domain disebut → langsung eksekusi command aktif, DAR DER DOR!
+
 ## File di Repo
 
 | File | Fungsi |

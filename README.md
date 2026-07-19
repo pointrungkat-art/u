@@ -38,7 +38,19 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/ma
 
 ---
 
-## Bug Bounty — shiroine.web.id ✅
+## Hacking XC Hub 🔥
+
+Commands aktif:
+
+| Command | Mode |
+|---------|------|
+| `/F` | JACKPOT — full insane black-box, semua angle |
+| `/F Vul` | VULN — hunt Medium vulnerability |
+| `/WP` | WARM-UP — surface recon, quick wins |
+
+---
+
+## Hunt Log — shiroine.web.id ✅
 
 **2026-07-19** — 5 celah berhasil ditemukan:
 
