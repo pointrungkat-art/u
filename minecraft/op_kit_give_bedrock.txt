@@ -1,0 +1,56 @@
+# OP Kit Omega — Bedrock Edition (MCBE)
+# Paste ke chat atau command block (butuh OP/cheats ON)
+# Level 32767 = MAX bypass limit vanilla
+# ─────────────────────────────────────────────────────────
+
+# ── WEAPONS ──────────────────────────────────────────────
+
+/give @s diamond_sword 1 0 {"minecraft:enchantments":{"enchantments":{"sharpness":32767,"smite":32767,"bane_of_arthropods":32767,"knockback":32767,"fire_aspect":32767,"looting":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s bow 1 0 {"minecraft:enchantments":{"enchantments":{"power":32767,"punch":32767,"flame":32767,"infinity":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s arrow 64
+
+# ── ARMOR ─────────────────────────────────────────────────
+
+/give @s diamond_helmet 1 0 {"minecraft:enchantments":{"enchantments":{"protection":32767,"blast_protection":32767,"projectile_protection":32767,"fire_protection":32767,"respiration":32767,"aqua_affinity":32767,"thorns":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s diamond_chestplate 1 0 {"minecraft:enchantments":{"enchantments":{"protection":32767,"blast_protection":32767,"projectile_protection":32767,"fire_protection":32767,"thorns":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s diamond_leggings 1 0 {"minecraft:enchantments":{"enchantments":{"protection":32767,"blast_protection":32767,"projectile_protection":32767,"fire_protection":32767,"thorns":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s diamond_boots 1 0 {"minecraft:enchantments":{"enchantments":{"protection":32767,"blast_protection":32767,"projectile_protection":32767,"fire_protection":32767,"feather_falling":32767,"depth_strider":32767,"thorns":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s elytra 1 0 {"minecraft:enchantments":{"enchantments":{"unbreaking":32767,"mending":32767}}}
+
+/give @s shield 1 0 {"minecraft:enchantments":{"enchantments":{"unbreaking":32767,"mending":32767}}}
+
+# ── TOOLS ─────────────────────────────────────────────────
+
+/give @s diamond_pickaxe 1 0 {"minecraft:enchantments":{"enchantments":{"efficiency":32767,"fortune":32767,"silk_touch":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s diamond_shovel 1 0 {"minecraft:enchantments":{"enchantments":{"efficiency":32767,"fortune":32767,"silk_touch":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s diamond_axe 1 0 {"minecraft:enchantments":{"enchantments":{"efficiency":32767,"fortune":32767,"silk_touch":32767,"sharpness":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s fishing_rod 1 0 {"minecraft:enchantments":{"enchantments":{"luck_of_the_sea":32767,"lure":32767,"unbreaking":32767,"mending":32767}}}
+
+/give @s flint_and_steel 1 0 {"minecraft:enchantments":{"enchantments":{"unbreaking":32767,"mending":32767}}}
+
+/give @s shears 1 0 {"minecraft:enchantments":{"enchantments":{"efficiency":32767,"unbreaking":32767,"mending":32767}}}
+
+# ── CONSUMABLES ───────────────────────────────────────────
+
+/give @s enchanted_golden_apple 64
+/give @s enchanted_golden_apple 64
+/give @s enchanted_golden_apple 64
+/give @s enchanted_golden_apple 64
+/give @s enchanted_golden_apple 64
+/give @s experience_bottle 64
+
+# ── SPAWN EGGS ────────────────────────────────────────────
+
+/give @s wither_spawn_egg 64
+/give @s ender_dragon_spawn_egg 64
+/give @s elder_guardian_spawn_egg 64
+/give @s tnt 64

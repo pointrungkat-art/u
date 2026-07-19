@@ -1,0 +1,187 @@
+{
+  Items: [
+    {
+      Count: 1b, Slot: 0b, Damage: 0s,
+      Name: "minecraft:diamond_shovel",
+      tag: { Damage: 0, ench: [
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:18s,lvl:32767s}, // Fortune
+        {id:17s,lvl:32767s}, // Silk Touch
+        {id:32s,lvl:32767s}, // Channeling
+        {id:15s,lvl:32767s}  // Looting
+      ]}
+    },
+    {
+      Count: 64b, Slot: 1b, Damage: 0s,
+      Name: "minecraft:arrow",
+      tag: { ench: [
+        {id:0s,lvl:32767s},{id:2s,lvl:32767s},{id:5s,lvl:32767s},
+        {id:6s,lvl:32767s},{id:7s,lvl:32767s},{id:8s,lvl:32767s},
+        {id:9s,lvl:32767s},{id:13s,lvl:32767s},{id:14s,lvl:32767s},
+        {id:16s,lvl:32767s},{id:17s,lvl:32767s},{id:21s,lvl:32767s},
+        {id:23s,lvl:32767s},{id:29s,lvl:32767s},{id:12s,lvl:32767s},
+        {id:15s,lvl:32767s},{id:19s,lvl:32767s},{id:20s,lvl:32767s},
+        {id:22s,lvl:32767s},{id:24s,lvl:32767s},{id:27s,lvl:32767s},
+        {id:28s,lvl:32767s},{id:30s,lvl:32767s},{id:33s,lvl:32767s},
+        {id:35s,lvl:32767s}
+      ]}
+    },
+    {
+      Count: 1b, Slot: 2b, Damage: 0s,
+      Name: "minecraft:bow",
+      tag: { Damage: 0, ench: [
+        {id:19s,lvl:32767s}, // Power
+        {id:20s,lvl:32767s}, // Punch
+        {id:21s,lvl:32767s}, // Flame
+        {id:22s,lvl:32767s}, // Infinity
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {
+      Count: 1b, Slot: 3b, Damage: 0s,
+      Name: "minecraft:diamond_pickaxe",
+      tag: { Damage: 0, ench: [
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:18s,lvl:32767s}, // Fortune
+        {id:17s,lvl:32767s}, // Silk Touch
+        {id:32s,lvl:32767s}, // Channeling
+        {id:15s,lvl:32767s}  // Looting
+      ]}
+    },
+    {
+      Count: 1b, Slot: 4b, Damage: 0s,
+      Name: "minecraft:diamond_sword",
+      tag: { Damage: 0, ench: [
+        {id:10s,lvl:32767s}, // Sharpness
+        {id:11s,lvl:32767s}, // Smite
+        {id:12s,lvl:32767s}, // Bane of Arthropods
+        {id:13s,lvl:32767s}, // Knockback
+        {id:14s,lvl:32767s}, // Fire Aspect
+        {id:15s,lvl:32767s}, // Looting
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}, // Mending
+        {id:7s,lvl:32767s}   // Thorns
+      ]}
+    },
+    {
+      Count: 1b, Slot: 5b, Damage: 0s,
+      Name: "minecraft:diamond_boots",
+      tag: { Damage: 0, ench: [
+        {id:0s,lvl:32767s},  // Protection
+        {id:3s,lvl:32767s},  // Blast Protection
+        {id:4s,lvl:32767s},  // Projectile Protection
+        {id:7s,lvl:32767s},  // Thorns
+        {id:8s,lvl:32767s},  // Depth Strider
+        {id:2s,lvl:32767s},  // Feather Falling
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {
+      Count: 1b, Slot: 6b, Damage: 0s,
+      Name: "minecraft:diamond_leggings",
+      tag: { Damage: 0, ench: [
+        {id:0s,lvl:32767s},  // Protection
+        {id:3s,lvl:32767s},  // Blast Protection
+        {id:4s,lvl:32767s},  // Projectile Protection
+        {id:7s,lvl:32767s},  // Thorns
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {
+      Count: 1b, Slot: 7b, Damage: 0s,
+      Name: "minecraft:diamond_chestplate",
+      tag: { Damage: 0, ench: [
+        {id:0s,lvl:32767s},  // Protection
+        {id:3s,lvl:32767s},  // Blast Protection
+        {id:4s,lvl:32767s},  // Projectile Protection
+        {id:7s,lvl:32767s},  // Thorns
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {
+      Count: 1b, Slot: 8b, Damage: 0s,
+      Name: "minecraft:diamond_helmet",
+      tag: { Damage: 0, ench: [
+        {id:0s,lvl:32767s},  // Protection
+        {id:3s,lvl:32767s},  // Blast Protection
+        {id:4s,lvl:32767s},  // Projectile Protection
+        {id:5s,lvl:32767s},  // Respiration
+        {id:6s,lvl:32767s},  // Aqua Affinity
+        {id:7s,lvl:32767s},  // Thorns
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {Count: 64b, Slot: 9b,  Damage: 0s, Name: "minecraft:appleenchanted"},
+    {Count: 64b, Slot: 10b, Damage: 0s, Name: "minecraft:appleenchanted"},
+    {Count: 64b, Slot: 11b, Damage: 0s, Name: "minecraft:appleenchanted"},
+    {
+      Count: 1b, Slot: 12b, Damage: 0s,
+      Name: "minecraft:elytra",
+      tag: { Damage: 0, ench: [
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}, // Mending
+        {id:0s,lvl:32767s}   // Protection
+      ]}
+    },
+    {
+      Count: 1b, Slot: 13b, Damage: 0s,
+      Name: "minecraft:shield",
+      tag: { Damage: 0, ench: [
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {Count: 64b, Slot: 14b, Damage: 0s, Name: "minecraft:appleenchanted"},
+    {Count: 64b, Slot: 15b, Damage: 0s, Name: "minecraft:appleenchanted"},
+    {Count: 64b, Slot: 16b, Damage: 0s, Name: "minecraft:experience_bottle"},
+    {Count: 1b,  Slot: 17b, Damage: 2s, Name: "minecraft:emptymap", tag: {map_scale: 3}},
+    {
+      Count: 1b, Slot: 18b, Damage: 0s,
+      Name: "minecraft:fishing_rod",
+      tag: { Damage: 0, ench: [
+        {id:23s,lvl:32767s}, // Luck of the Sea
+        {id:24s,lvl:32767s}, // Lure
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {
+      Count: 1b, Slot: 19b, Damage: 0s,
+      Name: "minecraft:flint_and_steel",
+      tag: { Damage: 0, ench: [
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {
+      Count: 1b, Slot: 20b, Damage: 0s,
+      Name: "minecraft:shears",
+      tag: { Damage: 0, ench: [
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:16s,lvl:32767s}, // Efficiency
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {
+      Count: 1b, Slot: 21b, Damage: 0s,
+      Name: "minecraft:diamond_axe",
+      tag: { Damage: 0, ench: [
+        {id:9s,lvl:32767s},  // Unbreaking
+        {id:18s,lvl:32767s}, // Fortune
+        {id:17s,lvl:32767s}, // Silk Touch
+        {id:16s,lvl:32767s}, // Efficiency
+        {id:26s,lvl:32767s}  // Mending
+      ]}
+    },
+    {Count:64b, Slot:22b, Damage:257s, ItemIdentifier:"minecraft:player",        Name:"minecraft:spawn_egg"},
+    {Count:64b, Slot:23b, Damage:52s,  ItemIdentifier:"minecraft:wither",         Name:"minecraft:spawn_egg"},
+    {Count:64b, Slot:24b, Damage:53s,  ItemIdentifier:"minecraft:ender_dragon",   Name:"minecraft:spawn_egg"},
+    {Count:64b, Slot:25b, Damage:65s,  ItemIdentifier:"minecraft:tnt",            Name:"minecraft:spawn_egg"},
+    {Count:64b, Slot:26b, Damage:120s, ItemIdentifier:"minecraft:elder_guardian_ghost", Name:"minecraft:spawn_egg"}
+  ]
+}
