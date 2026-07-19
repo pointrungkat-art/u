@@ -52,13 +52,15 @@ Commands aktif:
 
 ## Hunt Log — shiroine.web.id ✅
 
-**2026-07-19** — 5 celah berhasil ditemukan:
+**2026-07-19** — 7 celah berhasil ditemukan:
 
 | Severity | Finding |
 |----------|---------|
 | 🔴 Critical | Unauthenticated Price Manipulation |
+| 🔴 Critical | Broken Authentication / Auth Bypass (`Bearer null`) |
 | 🟠 High | Server Key Metadata Leaked |
 | 🟠 High | Webhook Signature Hash Leaked |
+| 🟠 High | Sensitive Data Exposure via Auth Bypass |
 | 🟡 Medium | Midtrans Sandbox Active on Production |
 | 🟡 Medium | Success Page Client-Side Only |
 
