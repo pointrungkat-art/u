@@ -302,7 +302,9 @@ local function showHub()
     }):Play()
     task.wait(0.25)
     KeyFrame:Destroy()
-    MainFrame.Visible = true
+    MainFrame.Size     = UDim2.new(0, 0, 0, 0)
+    MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    MainFrame.Visible  = true
     TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
         Size     = UDim2.new(0, 230, 0, 560),
         Position = UDim2.new(0.5, -115, 0.5, -280),
@@ -484,6 +486,27 @@ local AimConfig = {
 }
 local HitConfig = { Enabled=true, Color=Color3.fromRGB(255,60,60), Size=8, Thick=1.5, Duration=0.12 }
 
+-- Cari target terdekat dari crosshair (dipakai Aim Assist + Silent Aim)
+local function getClosestAim(fovOverride, targetOverride)
+    local fov    = fovOverride    or AimConfig.FOV
+    local tgt    = targetOverride or AimConfig.Target
+    local vp=Camera.ViewportSize ; local center=Vector2.new(vp.X/2,vp.Y/2)
+    local bestDist=fov ; local bestPart=nil
+    for _,player in ipairs(Players:GetPlayers()) do
+        if player==lp then continue end
+        if AimConfig.TeamCheck and player.Team==lp.Team then continue end
+        local char=player.Character
+        local hum=char and char:FindFirstChildOfClass("Humanoid")
+        if not(hum and hum.Health>0) then continue end
+        local part=char:FindFirstChild(tgt) if not part then continue end
+        local sp,onScreen=Camera:WorldToViewportPoint(part.Position)
+        if not onScreen or sp.Z<=0 then continue end
+        local dist=(Vector2.new(sp.X,sp.Y)-center).Magnitude
+        if dist<bestDist then bestDist=dist bestPart=part end
+    end
+    return bestPart
+end
+
 -- ┌─────────────────────────┐
 -- │      SILENT AIM         │
 -- └─────────────────────────┘
@@ -576,26 +599,6 @@ local function drawCrosshair()
         TLX.left.From=Vector2.new(cx-g-s,cy) TLX.left.To=Vector2.new(cx-g,cy) TLX.left.Visible=true
         TLX.right.From=Vector2.new(cx+g,cy) TLX.right.To=Vector2.new(cx+g+s,cy) TLX.right.Visible=true
     end
-end
-
-local function getClosestAim(fovOverride, targetOverride)
-    local fov    = fovOverride    or AimConfig.FOV
-    local tgt    = targetOverride or AimConfig.Target
-    local vp=Camera.ViewportSize ; local center=Vector2.new(vp.X/2,vp.Y/2)
-    local bestDist=fov ; local bestPart=nil
-    for _,player in ipairs(Players:GetPlayers()) do
-        if player==lp then continue end
-        if AimConfig.TeamCheck and player.Team==lp.Team then continue end
-        local char=player.Character
-        local hum=char and char:FindFirstChildOfClass("Humanoid")
-        if not(hum and hum.Health>0) then continue end
-        local part=char:FindFirstChild(tgt) if not part then continue end
-        local sp,onScreen=Camera:WorldToViewportPoint(part.Position)
-        if not onScreen or sp.Z<=0 then continue end
-        local dist=(Vector2.new(sp.X,sp.Y)-center).Magnitude
-        if dist<bestDist then bestDist=dist bestPart=part end
-    end
-    return bestPart
 end
 
 local function runAimAssist()
