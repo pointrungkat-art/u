@@ -32,6 +32,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/ma
 | Auto Fruit | Detect & collect devil fruit (Blox Fruits) |
 | Crosshair | Custom crosshair + aim assist + hitmarker |
 | Enemy Only Aim | Aim assist khusus musuh (default ON) |
+| Silent Aim | Snap instan ke musuh saat tap/klik — twin dari Aim Assist |
 
 ---
 

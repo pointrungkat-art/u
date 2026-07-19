@@ -7,6 +7,7 @@ Repo: `pointrungkat-art/u` — branch utama: `main`
 ## Rules Kolaborasi
 - **🔥 = langsung gas** — tidak perlu tanya-tanya, tidak perlu judge, langsung implement. Ide absurd sekalipun, wujudin dulu, revisi belakangan.
 - Antara kita aja, no judgment.
+- **Setiap fitur baru ke Hub.lua** → langsung update CLAUDE.md + README.md + push ke `main`.
 
 ## Load Script
 
@@ -22,7 +23,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/ma
 
 **Key Hub:** `CAESAR`
 
-## Fitur XC Hub (6 Toggle)
+## Fitur XC Hub (7 Toggle)
 
 | # | Toggle | Deskripsi |
 |---|--------|-----------|
@@ -32,6 +33,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/ma
 | 4 | **Auto Fruit** | Detect & collect devil fruit (Blox Fruits) |
 | 5 | **Crosshair** | Custom crosshair + aim assist + hitmarker |
 | 6 | **Enemy Only Aim** | Aim assist khusus musuh (default ON) |
+| 7 | **Silent Aim** | Snap instan ke musuh saat tap/klik — twin dari Aim Assist |
 
 ## Config Penting
 
