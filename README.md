@@ -18,8 +18,14 @@
 ## Load Script
 
 ```lua
--- XC Hub (utama — semua fitur)
+-- XC Hub (utama — semua fitur, Blox Fruits & general)
 loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Hub.lua"))()
+
+-- ZC Hub (FPS Performance & Experience)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ZC.lua"))()
+
+-- XZ Hub (RPG Farming Automation)
+loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/XZ.lua"))()
 
 -- Standalone scripts
 loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ESP.lua"))()
@@ -27,7 +33,11 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/ma
 loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Crosshair.lua"))()
 ```
 
-**Key Hub:** `XCGANG`
+| Hub | Key | Target Game |
+|-----|-----|-------------|
+| XC Hub | `XCGANG` | Blox Fruits & general |
+| ZC Hub | `ZCFPS` | FPS games |
+| XZ Hub | `XZRPG` | RPG farming games |
 
 ---
 
@@ -42,6 +52,33 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/ma
 | Crosshair | Custom crosshair + aim assist + hitmarker |
 | Enemy Only Aim | Aim assist khusus musuh (default ON) |
 | Silent Aim | Snap instan ke musuh saat tap/klik — twin dari Aim Assist |
+
+---
+
+## Fitur ZC Hub (FPS)
+
+| Toggle | Deskripsi |
+|--------|-----------|
+| ESP | Box + HP Bar + Name + Distance label per player |
+| Crosshair | Custom CH biru + hitmarker |
+| Aim Assist | Smooth pull ke head dengan FOV ring |
+| Silent Aim | Snap instan ke musuh saat tap/klik |
+| No Recoil | Redam recoil kamera — anti kickback |
+| FPS Boost | Strip shadows, particles & visual effects |
+
+---
+
+## Fitur XZ Hub (RPG Farming)
+
+| Toggle | Deskripsi |
+|--------|-----------|
+| Enemy ESP | Highlight mob/enemy + HP bar + distance |
+| Item ESP | Highlight drops & loot + tracer ke item |
+| Auto Farm | TP ke mob terdekat & serang otomatis |
+| Auto Collect | Auto ambil drop & loot dari lantai |
+| Auto Quest | TP ke NPC quest & interact otomatis |
+| Auto Chest | Collect chest → hop server jika kosong |
+| Auto Hop | Pindah server tiap 5 menit + anti-AFK |
 
 ---
 
@@ -78,7 +115,9 @@ Detail lengkap → [`bugbounty/findings.md`](bugbounty/findings.md)
 ## Struktur Repo
 
 ```
-Hub.lua                              ← XC Hub utama
+Hub.lua                              ← XC Hub utama (Blox Fruits & general)
+ZC.lua                               ← ZC Hub — FPS Performance & Experience
+XZ.lua                               ← XZ Hub — RPG Farming Automation
 ESP.lua                              ← ESP standalone
 AutoHop.lua                          ← Auto hop standalone
 Crosshair.lua                        ← Crosshair standalone
