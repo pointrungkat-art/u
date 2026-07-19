@@ -1,0 +1,33 @@
+{
+  "name": "CombatGame",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+      "Shared": {
+        "$className": "Folder",
+        "HitboxModule": {
+          "$path": "src/shared/HitboxModule.lua"
+        }
+      }
+    },
+
+    "StarterPlayer": {
+      "$className": "StarterPlayer",
+      "StarterPlayerScripts": {
+        "$className": "StarterPlayerScripts",
+        "HitboxVisualizer": {
+          "$path": "src/client/HitboxVisualizer.client.lua"
+        }
+      }
+    },
+
+    "ServerScriptService": {
+      "$className": "ServerScriptService",
+      "HitboxService": {
+        "$path": "src/server/HitboxService.server.lua"
+      }
+    }
+  }
+}
