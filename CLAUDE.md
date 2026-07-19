@@ -79,7 +79,6 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `ESP.lua` | ESP standalone |
 | `AutoHop.lua` | Auto server hop standalone |
 | `Crosshair.lua` | Crosshair + aim assist standalone |
-| `scripts/VisibleHitbox_Executor.lua` | Combat testing tool (private server) |
 | `bugbounty/recon.py` | Auto recon tool (DNS, subdomain, port, tech stack) |
 | `bugbounty/checklist.md` | Checklist bug bounty lengkap + report template |
 | `bugbounty/findings.md` | Log findings hasil hunt |

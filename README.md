@@ -81,16 +81,9 @@ Hub.lua                              ← XC Hub utama
 ESP.lua                              ← ESP standalone
 AutoHop.lua                          ← Auto hop standalone
 Crosshair.lua                        ← Crosshair standalone
-scripts/
-  VisibleHitbox_Executor.lua         ← Combat testing tool (private server)
 bugbounty/
   recon.py                           ← Auto recon (DNS, subdomain, port, tech stack)
   checklist.md                       ← Checklist bug bounty lengkap + report template
   findings.md                        ← Log findings hasil hunt
-src/
-  shared/HitboxModule.lua
-  client/HitboxVisualizer.client.lua
-  server/HitboxService.server.lua
-default.project.json                 ← Rojo sync config
 CLAUDE.md                            ← Kontrak kolaborasi + konteks project — WAJIB BACA!
 ```
