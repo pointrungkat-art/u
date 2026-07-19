@@ -76,12 +76,39 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | File | Fungsi |
 |------|--------|
 | `Hub.lua` | XC Hub utama — semua fitur dalam 1 file |
+| `ZC.lua` | ZC Hub — FPS Performance & Experience Booster |
+| `XZ.lua` | XZ Hub — RPG Farming Automation |
 | `ESP.lua` | ESP standalone |
 | `AutoHop.lua` | Auto server hop standalone |
 | `Crosshair.lua` | Crosshair + aim assist standalone |
 | `bugbounty/recon.py` | Auto recon tool (DNS, subdomain, port, tech stack) |
 | `bugbounty/checklist.md` | Checklist bug bounty lengkap + report template |
 | `bugbounty/findings.md` | Log findings hasil hunt |
+
+## Sub-Hub ZC & XZ
+
+### ZC Hub — FPS (`ZCFPS`)
+Khusus game FPS, tema biru/cyan, 6 fitur:
+- ESP: Box + HP Bar + Name + Distance
+- Crosshair: biru + hitmarker
+- Aim Assist: smooth pull + FOV ring
+- Silent Aim: snap instan saat tap
+- No Recoil: anti kickback kamera
+- FPS Boost: strip shadows, particles, effects
+
+Load: `loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ZC.lua"))()`
+
+### XZ Hub — RPG Farming (`XZRPG`)
+Khusus RPG farming, tema hijau/gold, 7 fitur:
+- Enemy ESP: mob highlight + HP bar + distance
+- Item ESP: drop/loot highlight + tracer
+- Auto Farm: TP ke mob terdekat + serang
+- Auto Collect: auto ambil drop dari lantai
+- Auto Quest: TP ke NPC quest + interact
+- Auto Chest: collect chest → hop server
+- Auto Hop: pindah server tiap 5 menit
+
+Load: `loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/XZ.lua"))()`
 
 ## Stack
 - Bahasa script: **Luau** (Roblox)
