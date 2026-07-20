@@ -1,0 +1,12 @@
+{
+  "name": "xcbrain-mcp-server",
+  "version": "1.0.0",
+  "description": "XC Second Brain MCP Server — persistent file storage for the Second Brain artifact",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "engines": { "node": ">=18" }
+}

@@ -1,0 +1,52 @@
+name: bugbounty-recon
+description: Full black-box recon workflow — auto gather intel, log findings
+trigger: manual
+params:
+  target:
+    type: string
+    description: Target domain (e.g. target.com)
+    required: true
+
+steps:
+  - id: recon_run
+    action: bash
+    command: "python3 bugbounty/recon.py {{params.target}}"
+    description: Run automated recon (DNS, subdomain, port, tech stack)
+
+  - id: analyze_attack_surface
+    action: claude_analyze
+    prompt: |
+      You are a bug bounty researcher. Analyze this recon output for {{params.target}}:
+
+      {{recon_run.output}}
+
+      Identify:
+      1. Highest-value attack vectors (ranked)
+      2. Tech stack vulnerabilities to check
+      3. Subdomains worth probing
+      4. Quick wins (exposed admin panels, login pages, API endpoints)
+      5. Top 3 manual test cases to prioritize
+
+      Be specific and actionable.
+    description: AI attack surface analysis
+
+  - id: capture_insights
+    action: brain_capture
+    params:
+      text: "Recon {{params.target}} — {{analyze_attack_surface.summary}}"
+      type: vuln
+      tag: "{{params.target}}"
+    description: Capture analysis to inbox
+
+  - id: create_tasks
+    action: brain_create_task
+    foreach: "{{analyze_attack_surface.top_tests}}"
+    params:
+      title: "[{{params.target}}] {{item.title}}"
+      desc: "{{item.desc}}"
+      priority: "{{item.priority}}"
+      col: todo
+    description: Create tasks for top test cases
+
+output:
+  message: "Recon complete — {{analyze_attack_surface.vector_count}} vectors found, {{create_tasks.count}} tasks created"
