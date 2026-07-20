@@ -17,35 +17,48 @@ BANNER = f"""
 """
 
 TOOLS = [
+    # Tier Base
     ('recon',    'recon.py',   'Full recon — DNS, HTTP, WAF, tech, paths'),
     ('waf',      'waf.py',     'WAF bypass & real IP hunter'),
     ('cors',     'cors.py',    'CORS misconfiguration tester'),
     ('headers',  'headers.py', 'Security headers auditor'),
     ('jshunt',   'js_hunt.py', 'JS secret harvester (API keys, tokens)'),
     ('sqli',     'sqli.py',    'SQL injection fuzzer'),
+    # Tier S — RCE / Full Takeover
+    ('ssti',     'ssti.py',    'SSTI hunter + RCE payload generator'),
+    ('cmdi',     'cmdi.py',    'Command injection fuzzer (inline + time-based)'),
+    ('jwt',      'jwt.py',     'JWT attacks — alg:none, brute, kid, RS256→HS256'),
+    ('ssrf',     'ssrf.py',    'SSRF — internal service scan + bypass'),
+    ('upload',   'upload.py',  'File upload bypass — ext/MIME/magic/SVG/dotfile'),
 ]
 
 MENU = f"""
-{BOLD}TOOLS:{RST}
-  {G}recon{RST}    <target>            — DNS + HTTP + WAF + tech fingerprint
-  {G}waf{RST}      <target> [--full]   — WAF bypass attempts + real IP hunt
-  {G}cors{RST}     <target> [--full]   — CORS misconfiguration test
-  {G}headers{RST}  <target> [--full]   — Security headers audit + CSP analysis
-  {G}jshunt{RST}   <target> [--inline] — JS secret harvester
-  {G}sqli{RST}     <target> [--full]   — SQLi error/boolean/time fuzzer
+{BOLD}TIER BASE — RECON & ANALYSIS:{RST}
+  {G}recon{RST}    <target>              — DNS + HTTP + WAF + tech fingerprint
+  {G}waf{RST}      <target> [--full]     — WAF bypass + real IP hunt
+  {G}cors{RST}     <target> [--full]     — CORS misconfiguration test
+  {G}headers{RST}  <target> [--full]     — Security headers audit + CSP
+  {G}jshunt{RST}   <target> [--inline]   — JS secret harvester
+  {G}sqli{RST}     <target> [--full]     — SQLi error/boolean/time fuzzer
+
+{BOLD}TIER S — RCE / FULL TAKEOVER:{RST}
+  {R}ssti{RST}     <target> [--rce Jinja2] — SSTI detection + RCE payloads
+  {R}cmdi{RST}     <target> [--full]       — Command injection inline + time-based
+  {R}jwt{RST}      <token>  [--full]       — JWT alg:none, brute, kid, RS256→HS256
+  {R}ssrf{RST}     <target> [--scan]       — SSRF + internal service scan
+  {R}upload{RST}   <url>    [--full]       — File upload bypass → webshell
 
 {BOLD}EXAMPLES:{RST}
-  {DIM}python3 xc.py recon https://target.com{RST}
   {DIM}python3 xc.py recon https://target.com --paths{RST}
-  {DIM}python3 xc.py waf https://target.com/admin --full{RST}
-  {DIM}python3 xc.py cors https://api.target.com --endpoints{RST}
-  {DIM}python3 xc.py headers https://target.com --full{RST}
-  {DIM}python3 xc.py jshunt https://target.com --inline{RST}
-  {DIM}python3 xc.py sqli "https://target.com/page?id=1" --time{RST}
-
-  {DIM}# Or run directly:{RST}
-  {DIM}python3 recon.py https://target.com --full{RST}
-  {DIM}python3 sqli.py "https://target.com/search?q=test" --full{RST}
+  {DIM}python3 xc.py ssti "https://target.com/page?name=test"{RST}
+  {DIM}python3 xc.py ssti <url> --rce Jinja2{RST}
+  {DIM}python3 xc.py cmdi "https://target.com/ping?ip=1.1.1.1" --full{RST}
+  {DIM}python3 xc.py jwt eyJhbGc... --full{RST}
+  {DIM}python3 xc.py jwt eyJhbGc... --brute --wordlist secrets.txt{RST}
+  {DIM}python3 xc.py ssrf "https://target.com/fetch?url=http://x" --scan{RST}
+  {DIM}python3 xc.py upload https://target.com/upload --field file --full{RST}
+  {DIM}python3 xc.py upload --shells{RST}
+  {DIM}python3 xc.py sqli "https://target.com/search?q=test" --time --full{RST}
 """
 
 def main():
