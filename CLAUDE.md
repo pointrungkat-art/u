@@ -288,6 +288,42 @@ Kategori: `XSS` | `SQLi` | `SSRF` | `IDOR` | `PathTraversal` | `XXE` | `SSTI` | 
 
 ---
 
+## ⚡ VERIFY PROTOCOL — WAJIB TIAP BUILD BARU
+
+> Setiap tool Python atau project baru **wajib** diverifikasi sebelum dianggap selesai.
+> Jalankan: `python3 tools/verify.py` — atau single tool: `python3 tools/verify.py --tool <nama>`
+> Report langsung di chat, **no artifact** kecuali diminta.
+
+### Status Codes
+
+| Status | Artinya | Action |
+|--------|---------|--------|
+| ✅ FULL WORK | Jalan standalone, no install | Siap pakai |
+| ⚠️ NEEDS DEPS | Butuh `apt install` / `pip install` | Sebutin ke user, tool tetap delivered |
+| 🔑 NEEDS KEY | Butuh API key dari user | Minta key, kasih instruksi cara set |
+| 👤 NEEDS USER | Manual apply / executor / device | Kasih panduan lengkap |
+| ❌ BROKEN | Error saat run | Fix dulu, baru push |
+
+### Prosedur Build → Verify → Push
+
+```
+1. BUILD   → tulis tool/project lengkap, bukan skeleton
+2. SYNTAX  → python3 -m py_compile <file>
+3. HELP    → python3 <file> --help → harus ada output meaningful
+4. RUN     → test dengan safe target (httpbin.org / example.com / localhost)
+5. VERIFY  → python3 tools/verify.py --tool <nama>
+6. REPORT  → laporkan status di chat (no artifact)
+7. PUSH    → kalau ✅ atau ⚠️/🔑/👤 dengan notes jelas
+```
+
+### Rules
+- **No skeleton** — kalau fungsi belum diimplementasi, bilang dulu sebelum push
+- **No push kalau BROKEN** — fix dulu
+- **Artifact = off** kecuali user minta eksplisit
+- Tool butuh external bin → sebutin apa yang perlu diinstall + command-nya
+
+---
+
 ## ⚡ ANCHOR KEY — BACA INI DULU, SESI APAPUN
 > Ini kontrak kolaborasi. Berlaku selamanya, no reset, no exception.
 
