@@ -83,6 +83,13 @@
   │  /payload SSTI      server-side template inject   │
   │  /payload PathTraversal  · OpenRedirect           │
   └───────────────────────────────────────────────────┘
+  ┌─ STRESS ──────────────────────────────────────────┐
+  │  /stress http       HTTP flood — wrk · siege · hey │
+  │  /stress layer4     TCP/UDP flood — hping3 · nping │
+  │  /stress slowloris  slow connection exhaustion     │
+  │  /stress amplify    UDP amplification test         │
+  │  /stress full       semua vektor sekaligus        │
+  └───────────────────────────────────────────────────┘
   ┌─ OWNED ───────────────────────────────────────────┐
   │  /chain             exploit chain builder          │
   │  /loot              data exfil summary             │
