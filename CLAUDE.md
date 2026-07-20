@@ -1,5 +1,94 @@
 # Project Memory — XC Hub
 
+## ⚡ /menu — MASTER COMMAND HUB
+> Ketik `/menu` → tampilkan semua command yang tersedia dari semua hub/workspace.
+
+### RESPONSE FORMAT untuk `/menu`:
+
+```
+╔══════════════════════════════════════════╗
+║         XC HUB — MASTER MENU            ║
+╚══════════════════════════════════════════╝
+
+🔴 CHEAT DEV
+  /C <template>     → craft & inject script (ESP_QUICK, NOCLIP, GOD_MODE, dll)
+  /C list           → tampilkan semua 26 template
+  /C raw <code>     → inject raw Lua langsung
+
+🔴 HACKING HUB
+  /F <target>       → full JACKPOT black-box recon → exploit
+  /F Vul <target>   → targeted vuln hunt
+  /WP <target>      → warm-up surface recon
+  /payload <cat>    → tampilkan payloads (XSS/SQLi/SSRF/IDOR/XXE/SSTI/PathTraversal/OpenRedirect)
+  /tools <tool>     → tampilkan commands untuk tool (nmap/ffuf/nuclei/sqlmap/dll)
+  /chain            → buat vuln chain baru
+  /methodology      → tampilkan OWASP checklist progress
+  /report           → generate bug bounty report
+
+🔴 OSINT — /DOX
+  /DOX <target>     → full OSINT: username, email, domain, socials, leaks, image
+  /DOX user <name>  → username hunt across platforms
+  /DOX email <e>    → email intel + breach check
+  /DOX domain <d>   → domain recon (WHOIS, DNS, subdomains, tech)
+  /DOX ip <ip>      → IP/network intel
+  /DOX leaks <q>    → leak/paste hunt
+
+🟣 XC HUB SCRIPTS
+  /load xc          → loadstring XC Hub (key: XCGANG)
+  /load zc          → loadstring ZC Hub (key: ZCFPS)
+  /load xz          → loadstring XZ Hub (key: XZRPG)
+  /load esp         → loadstring ESP standalone
+  /load autohop     → loadstring AutoHop standalone
+  /load crosshair   → loadstring Crosshair standalone
+  /load cheatdev    → loadstring CheatDev suite
+
+🟣 SECOND BRAIN
+  /brain            → ringkasan status Second Brain (notes, tasks, vulns)
+  /capture <text>   → tambah capture ke inbox
+  /note <title>     → buat note baru
+  /task <title>     → tambah task ke kanban
+
+⚙️ META
+  /menu             → tampilkan menu ini
+  /status           → status repo, branch, last commit
+  /push             → commit + push perubahan terbaru
+```
+
+> **RULE** — Setiap command yang masuk → langsung eksekusi tanpa tanya, tanpa konfirmasi.
+> `/menu` bisa dipanggil kapan saja untuk lihat semua opsi.
+
+---
+
+## ⚡ /payload — PAYLOAD LAB (Chat)
+> `/payload <kategori>` → tampilkan payloads siap pakai untuk kategori tersebut.
+
+Kategori: `XSS` | `SQLi` | `SSRF` | `IDOR` | `PathTraversal` | `XXE` | `SSTI` | `OpenRedirect`
+
+**Rule**: tampilkan semua payload dalam format code block, langsung bisa copy-paste.
+
+---
+
+## ⚡ /tools — TOOL CHEATSHEET (Chat)
+> `/tools <nama_tool>` → tampilkan semua command penting untuk tool tersebut.
+
+Tools: `nmap` | `subfinder` | `httpx` | `ffuf` | `nuclei` | `sqlmap` | `gobuster` | `amass` | `gau` | `waybackurls` | `nikto` | `whatweb` | `wfuzz` | `dirb`
+
+**Rule**: format sebagai code block siap eksekusi, ganti `{target}` dengan target aktif kalau ada.
+
+---
+
+## ⚡ /load — SCRIPT LOADER (Chat)
+> `/load <hub>` → tampilkan loadstring siap paste ke executor.
+
+**Rule**: langsung output code block loadstring, no basa-basi.
+
+---
+
+## ⚡ /brain — BRAIN STATUS (Chat)
+> `/brain` → ringkasan state Second Brain dari context yang ada.
+
+---
+
 ## ⚡ ANCHOR KEY — BACA INI DULU, SESI APAPUN
 > Ini kontrak kolaborasi. Berlaku selamanya, no reset, no exception.
 
