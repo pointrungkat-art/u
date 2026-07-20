@@ -288,6 +288,281 @@ Kategori: `XSS` | `SQLi` | `SSRF` | `IDOR` | `PathTraversal` | `XXE` | `SSTI` | 
 
 ---
 
+## ⚡ /guide — XC AGENT INSTALL & COMMAND REFERENCE
+
+> Ketik `/guide` di chat → tampilkan full guide install + semua command siap paste terminal/termux.
+
+**BANNER OUTPUT:**
+```
+╔══════════════════════════════════════════════════════╗
+║   ██████╗ ██╗   ██╗██╗██████╗ ███████╗              ║
+║  ██╔════╝ ██║   ██║██║██╔══██╗██╔════╝              ║
+║  ██║  ███╗██║   ██║██║██║  ██║█████╗                ║
+║  ██║   ██║██║   ██║██║██║  ██║██╔══╝                ║
+║  ╚██████╔╝╚██████╔╝██║██████╔╝███████╗              ║
+║   ╚═════╝  ╚═════╝ ╚═╝╚═════╝ ╚══════╝              ║
+╠══════════════════════════════════════════════════════╣
+║  📖  XC AGENT · FULL INSTALL & COMMAND REFERENCE   ║
+╚══════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════
+  📱 STEP 0 — INSTALL TERMUX (ANDROID ONLY, SKIP KALO PC)
+═══════════════════════════════════════════════════════
+
+  1. Download Termux dari F-Droid (JANGAN Play Store, versinya obsolete):
+     https://f-droid.org/en/packages/com.termux/
+
+  2. Install Termux → buka → jalanin:
+
+     pkg update && pkg upgrade -y
+     pkg install python git nano curl -y
+
+  3. Cek Python jalan:
+
+     python3 --version
+
+═══════════════════════════════════════════════════════
+  🔑 STEP 1 — AMBIL API KEY ANTHROPIC (SEKALI SEUMUR HIDUP)
+═══════════════════════════════════════════════════════
+
+  1. Buka: https://console.anthropic.com/settings/keys
+  2. Login (bikin akun kalo belum)
+  3. Klik "Create Key" → nama: "xc-agent"
+  4. Copy key (format: sk-ant-xxxxxxxxxxxxxxxx...)
+  5. Simpen di notes — kalo ilang harus bikin baru
+
+  💰 Cost: $5 gratis buat coba. Setelahnya ~$3/1M token.
+     Pemakaian normal seharian: $0.50 - $1.
+
+═══════════════════════════════════════════════════════
+  📥 STEP 2 — CLONE REPO & SETUP (SEKALI DOANG)
+═══════════════════════════════════════════════════════
+
+  # Clone repo ke home directory
+  cd ~
+  git clone https://github.com/pointrungkat-art/u.git
+  cd u
+
+  # Jalanin setup script — auto install anthropic SDK + smoke test
+  bash agents/setup.sh
+
+  # Kalo muncul "✓ SETUP DONE · ready to gas 🔥" = berhasil
+
+═══════════════════════════════════════════════════════
+  🔐 STEP 3 — SET API KEY (PERMANENT)
+═══════════════════════════════════════════════════════
+
+  # Ganti sk-ant-KEYNYA pake key lu dari Step 1
+  echo 'export ANTHROPIC_API_KEY=sk-ant-KEYNYA' >> ~/.bashrc
+  source ~/.bashrc
+
+  # Verify — harus tampil key lu
+  echo $ANTHROPIC_API_KEY
+
+  # Kalo pake zsh (bukan bash), ganti ~/.bashrc → ~/.zshrc
+
+═══════════════════════════════════════════════════════
+  🚀 STEP 4 — GAS AGENT (COMMAND CHEAT SHEET)
+═══════════════════════════════════════════════════════
+
+  ┌─ HACKING MODE ─────────────────────────────────────┐
+  │  # Full auto: recon → ipfind → vuln fuzz → report │
+  │  python3 agents/xc_agent.py --mode hack "TARGET"  │
+  │                                                    │
+  │  # Contoh nyata:                                   │
+  │  python3 agents/xc_agent.py --mode hack "shiroine.web.id"
+  │  python3 agents/xc_agent.py --mode hack "pb.app.web.id"
+  └────────────────────────────────────────────────────┘
+
+  ┌─ OSINT / DOX MODE ─────────────────────────────────┐
+  │  python3 agents/xc_agent.py --mode dox "TARGET"   │
+  │                                                    │
+  │  # Contoh:                                         │
+  │  python3 agents/xc_agent.py --mode dox "example.com"
+  │  python3 agents/xc_agent.py --mode dox "username123"
+  └────────────────────────────────────────────────────┘
+
+  ┌─ BRAIN MODE (capture/task/note otomatis) ──────────┐
+  │  python3 agents/xc_agent.py --mode brain "TEXT"   │
+  │                                                    │
+  │  # Contoh:                                         │
+  │  python3 agents/xc_agent.py --mode brain "ide: bikin tool CORS scanner"
+  │  python3 agents/xc_agent.py --mode brain "task besok: report bug"
+  │  python3 agents/xc_agent.py --mode brain "hari ini stuck di SSRF"
+  └────────────────────────────────────────────────────┘
+
+  ┌─ CHEATDEV MODE (Lua script craft) ─────────────────┐
+  │  python3 agents/xc_agent.py --mode cheatdev "DESC" │
+  │                                                    │
+  │  # Contoh:                                         │
+  │  python3 agents/xc_agent.py --mode cheatdev "auto farm RPG, TP + attack"
+  │  python3 agents/xc_agent.py --mode cheatdev "ESP box merah semua enemy"
+  │  python3 agents/xc_agent.py --mode cheatdev "auto ambil coin, skip yang deket enemy"
+  └────────────────────────────────────────────────────┘
+
+  ┌─ REPL MODE (chat bebas, semua tools tersedia) ─────┐
+  │  python3 agents/xc_agent.py                        │
+  │                                                    │
+  │  # Di dalam REPL:                                  │
+  │  /mode hack        → ganti mode                    │
+  │  /modes            → list semua mode               │
+  │  /tools            → list tools mode current       │
+  │  /quit             → keluar                        │
+  └────────────────────────────────────────────────────┘
+
+═══════════════════════════════════════════════════════
+  🔍 STEP 5 — INFO & DIAGNOSTIC COMMANDS
+═══════════════════════════════════════════════════════
+
+  # List semua 23 tools yang tersedia
+  python3 agents/xc_agent.py --list-tools
+
+  # List semua 5 workflow mode
+  python3 agents/xc_agent.py --list-modes
+
+  # Test satu tool langsung (tanpa agent)
+  python3 agents/tool_registry.py --call recon --args '{"target":"example.com"}'
+  python3 agents/tool_registry.py --call brain_capture --args '{"text":"tes"}'
+  python3 agents/tool_registry.py --call cheatdev_list --args '{}'
+
+  # Cek run traces (agent history)
+  ls brain/data/runs/
+  cat brain/data/runs/<session_id>.jsonl
+
+═══════════════════════════════════════════════════════
+  🔌 STEP 6 — CONNECT MCP KE CLAUDE DESKTOP / CURSOR / CLINE
+═══════════════════════════════════════════════════════
+
+  # Cari absolute path
+  cd ~/u && pwd
+  # Contoh output: /data/data/com.termux/files/home/u
+  # → jadi path agent: /data/data/com.termux/files/home/u/agents/mcp_server.py
+
+  # Edit config MCP client:
+  # Claude Desktop: ~/Library/Application Support/Claude/claude_desktop_config.json (Mac)
+  # Cursor: Settings → MCP
+  # Cline: Settings → MCP Servers
+
+  # Paste config ini:
+  {
+    "mcpServers": {
+      "xc-hub": {
+        "command": "python3",
+        "args": ["/absolute/path/tadi/agents/mcp_server.py"]
+      }
+    }
+  }
+
+  # Restart client → 23 tools XC Hub langsung tersedia di chat
+
+═══════════════════════════════════════════════════════
+  🔄 STEP 7 — UPDATE REPO (KALO ADA FEATURE BARU)
+═══════════════════════════════════════════════════════
+
+  cd ~/u
+  git pull origin main
+
+  # Kalo ada dep baru, re-run setup:
+  bash agents/setup.sh
+
+═══════════════════════════════════════════════════════
+  ⚙️  STEP 8 — TWEAK CONFIG (OPSIONAL)
+═══════════════════════════════════════════════════════
+
+  # Edit config default
+  nano agents/config.yaml
+
+  # Atau pake env var:
+  export XC_AGENT_MODEL=claude-opus-4-8      # ganti model
+  export XC_AGENT_MAX_TURNS=50               # max iterasi lebih tinggi
+
+═══════════════════════════════════════════════════════
+  🚨 TROUBLESHOOTING — KALO ERROR
+═══════════════════════════════════════════════════════
+
+  ❌ "anthropic SDK belum keinstall"
+     → pip install anthropic
+     → atau: pip install --break-system-packages anthropic
+
+  ❌ "ANTHROPIC_API_KEY belum di-set"
+     → export ANTHROPIC_API_KEY=sk-ant-...
+     → cek dulu: echo $ANTHROPIC_API_KEY
+
+  ❌ "python3: command not found"
+     → Termux: pkg install python
+     → Linux: sudo apt install python3 python3-pip
+
+  ❌ "git: command not found"
+     → Termux: pkg install git
+     → Linux: sudo apt install git
+
+  ❌ "Permission denied" saat bash agents/setup.sh
+     → chmod +x agents/setup.sh
+     → coba: sh agents/setup.sh
+
+  ❌ "API rate limit" / "credit exhausted"
+     → cek balance: https://console.anthropic.com/settings/billing
+     → top-up minimum $5
+
+  ❌ Agent stuck / gak berhenti
+     → Ctrl+C buat cancel
+     → set env: export XC_AGENT_MAX_TURNS=10 (biar cepet stop)
+
+  ❌ Tool subprocess timeout
+     → default 240s per tool
+     → edit agents/config.yaml → timeout_per_tool: 600
+
+═══════════════════════════════════════════════════════
+  📋 QUICK REFERENCE — COMMAND YANG PALING SERING DIPAKE
+═══════════════════════════════════════════════════════
+
+  # PALING SERING:
+  python3 agents/xc_agent.py --mode hack "TARGET"
+  python3 agents/xc_agent.py --mode dox "TARGET"
+  python3 agents/xc_agent.py --mode brain "TEXT"
+  python3 agents/xc_agent.py --mode cheatdev "DESC"
+  python3 agents/xc_agent.py                          # REPL
+
+  # UPDATE:
+  cd ~/u && git pull
+
+  # LIST:
+  python3 agents/xc_agent.py --list-tools
+  python3 agents/xc_agent.py --list-modes
+
+═══════════════════════════════════════════════════════
+  🎁 BONUS — ALIAS SHORTCUT (BIAR NGETIK CEPET)
+═══════════════════════════════════════════════════════
+
+  # Tambahin ke ~/.bashrc
+  cat >> ~/.bashrc << 'EOF'
+  alias xc='python3 ~/u/agents/xc_agent.py'
+  alias xchack='python3 ~/u/agents/xc_agent.py --mode hack'
+  alias xcdox='python3 ~/u/agents/xc_agent.py --mode dox'
+  alias xcbrain='python3 ~/u/agents/xc_agent.py --mode brain'
+  alias xccheat='python3 ~/u/agents/xc_agent.py --mode cheatdev'
+  EOF
+
+  source ~/.bashrc
+
+  # Sekarang tinggal:
+  xchack "target.com"
+  xcdox "username"
+  xcbrain "ide baru"
+  xccheat "auto farm"
+  xc                           # REPL
+
+═══════════════════════════════════════════════════════
+
+  🔥 GITHUB REPO: https://github.com/pointrungkat-art/u
+  🔑 API KEY:     https://console.anthropic.com/settings/keys
+  📖 DOCS:        agents/README.md · CLAUDE.md
+
+═══════════════════════════════════════════════════════
+```
+
+---
+
 ## ⚡ /agent — XC AGENT (Agentic AI Orchestrator)
 
 **BANNER OUTPUT:**
