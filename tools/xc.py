@@ -19,6 +19,7 @@ BANNER = f"""
 TOOLS = [
     # Tier Base
     ('recon',    'recon.py',   'Full recon — DNS, HTTP, WAF, tech, paths'),
+    ('ipfind',   'ipfind.py',  'Real IP hunter — CF bypass, history, geo, ports'),
     ('waf',      'waf.py',     'WAF bypass & real IP hunter'),
     ('cors',     'cors.py',    'CORS misconfiguration tester'),
     ('headers',  'headers.py', 'Security headers auditor'),
@@ -30,9 +31,13 @@ TOOLS = [
     ('jwt',      'jwt.py',     'JWT attacks — alg:none, brute, kid, RS256→HS256'),
     ('ssrf',     'ssrf.py',    'SSRF — internal service scan + bypass'),
     ('upload',   'upload.py',  'File upload bypass — ext/MIME/magic/SVG/dotfile'),
+    ('stress',   'stress.py',  'Server stress test — HTTP flood, L4, slowloris'),
 ]
 
 MENU = f"""
+{BOLD}TIER JACKPOT — IP & RECON:{RST}
+  {M}ipfind{RST}   <target> [--full]     — {M}Real IP hunter · CF bypass · geo · ports{RST}
+
 {BOLD}TIER BASE — RECON & ANALYSIS:{RST}
   {G}recon{RST}    <target>              — DNS + HTTP + WAF + tech fingerprint
   {G}waf{RST}      <target> [--full]     — WAF bypass + real IP hunt
@@ -48,17 +53,20 @@ MENU = f"""
   {R}ssrf{RST}     <target> [--scan]       — SSRF + internal service scan
   {R}upload{RST}   <url>    [--full]       — File upload bypass → webshell
 
+{BOLD}TIER STRESS — SERVER RESILIENCE:{RST}
+  {Y}stress{RST}   <host> http|layer4|slowloris|amplify|full
+
 {BOLD}EXAMPLES:{RST}
+  {DIM}python3 xc.py ipfind target.com{RST}
+  {DIM}python3 xc.py ipfind target.com --full{RST}
   {DIM}python3 xc.py recon https://target.com --paths{RST}
-  {DIM}python3 xc.py ssti "https://target.com/page?name=test"{RST}
-  {DIM}python3 xc.py ssti <url> --rce Jinja2{RST}
+  {DIM}python3 xc.py ssti "https://target.com/page?name=test" --rce Jinja2{RST}
   {DIM}python3 xc.py cmdi "https://target.com/ping?ip=1.1.1.1" --full{RST}
   {DIM}python3 xc.py jwt eyJhbGc... --full{RST}
-  {DIM}python3 xc.py jwt eyJhbGc... --brute --wordlist secrets.txt{RST}
   {DIM}python3 xc.py ssrf "https://target.com/fetch?url=http://x" --scan{RST}
   {DIM}python3 xc.py upload https://target.com/upload --field file --full{RST}
-  {DIM}python3 xc.py upload --shells{RST}
   {DIM}python3 xc.py sqli "https://target.com/search?q=test" --time --full{RST}
+  {DIM}python3 xc.py stress 192.168.1.1 full -d 30{RST}
 """
 
 def main():

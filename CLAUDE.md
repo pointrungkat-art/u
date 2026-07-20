@@ -439,8 +439,17 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `ESP.lua` | ESP standalone |
 | `AutoHop.lua` | Auto server hop standalone |
 | `Crosshair.lua` | Crosshair + aim assist standalone |
-| `bugbounty/recon.py` | Auto recon tool (DNS, subdomain, port, tech stack) |
-| `bugbounty/checklist.md` | Checklist bug bounty lengkap + report template |
+| `tools/xc.py` | 🔥 **XC Tool Hub** — runner semua hacking tools |
+| `tools/ipfind.py` | 🎯 **IP Finder** — real IP hunter, CF bypass, history, geo, ports |
+| `tools/recon.py` | Full recon — DNS, HTTP, WAF, tech fingerprint |
+| `tools/stress.py` | Server stress test — HTTP flood, L4, slowloris, amplify |
+| `tools/ssti.py` | SSTI hunter + RCE payload generator |
+| `tools/cmdi.py` | Command injection fuzzer |
+| `tools/jwt.py` | JWT attacks — alg:none, brute, kid |
+| `tools/ssrf.py` | SSRF + internal service scan |
+| `tools/upload.py` | File upload bypass → webshell |
+| `tools/sqli.py` | SQL injection fuzzer |
+| `tools/waf.py` | WAF bypass & detection |
 | `bugbounty/findings.md` | Log findings hasil hunt |
 | `brain/index.html` | 🧠 **XC Second Brain** — full agentic workflow hub (artifact) |
 | `brain/mcp-server/index.js` | Brain MCP server — 12 tools, persistent storage ke brain/data/ |
