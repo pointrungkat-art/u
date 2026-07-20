@@ -1,0 +1,49 @@
+name: daily-review
+description: Daily brain review — proses inbox, update tasks, write journal
+trigger: manual  # atau schedule: "0 9 * * *" untuk 9am tiap hari
+
+steps:
+  - id: dump_inbox
+    action: brain_get_captures
+    params:
+      processed: false
+    description: Ambil semua unprocessed captures
+
+  - id: triage_captures
+    action: claude_analyze
+    prompt: |
+      Review these unprocessed captures and categorize each one:
+      - Is it a task? → brain_create_task
+      - Is it a note? → brain_write_note
+      - Is it a resource to save? → mark as resource
+      - Is it done/irrelevant? → mark processed
+
+      Captures: {{dump_inbox.captures}}
+    description: AI triage semua captures
+
+  - id: review_open_tasks
+    action: brain_get_tasks
+    params:
+      col: doing
+    description: Cek tasks yang sedang dikerjakan
+
+  - id: daily_summary
+    action: claude_analyze
+    prompt: |
+      Generate a daily review summary:
+      - Open inbox: {{dump_inbox.total}} items
+      - Tasks in progress: {{review_open_tasks.count}}
+      - Suggest 3 priorities for today based on open tasks
+      Format as a concise journal entry.
+    description: Generate daily summary
+
+  - id: save_journal
+    action: brain_save_journal
+    params:
+      date: "{{today}}"
+      priorities: "{{daily_summary.priorities}}"
+      braindump: "{{daily_summary.summary}}"
+    description: Auto-save journal entry
+
+output:
+  message: "Daily review complete — {{dump_inbox.total}} captures triaged, journal saved"

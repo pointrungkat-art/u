@@ -1,0 +1,61 @@
+name: script-review
+description: Review a Roblox script for bugs, detection risk, and optimizations
+trigger: manual
+params:
+  file:
+    type: string
+    description: Script file path (e.g. Hub.lua, CheatDev.lua)
+    required: true
+
+steps:
+  - id: read_script
+    action: file_read
+    path: "{{params.file}}"
+    description: Read the script content
+
+  - id: review
+    action: claude_analyze
+    prompt: |
+      You are reviewing a Roblox executor script. Analyze {{params.file}}:
+
+      ```lua
+      {{read_script.content}}
+      ```
+
+      Check for:
+      1. Detection vectors — anything that flags anti-cheat (remotes called too fast, suspicious patterns)
+      2. Performance issues — Drawing objects not cleaned up, runService loops that should be Heartbeat
+      3. Logic bugs — nil checks missing, race conditions, memory leaks
+      4. Aim assist accuracy — FOV/strength calibration
+      5. Silent aim reliability — snap timing issues
+
+      Output: severity-ranked list of issues + specific fixes.
+    description: AI security + quality review
+
+  - id: create_fix_tasks
+    action: brain_create_task
+    foreach: "{{review.issues}}"
+    params:
+      title: "[{{params.file}}] {{item.title}}"
+      desc: "{{item.fix}}"
+      priority: "{{item.severity}}"
+      col: todo
+    description: Create tasks for each issue found
+
+  - id: write_review_note
+    action: brain_write_note
+    params:
+      title: "Code Review — {{params.file}} — {{today}}"
+      content: |
+        # Review: {{params.file}}
+        Date: {{today}}
+
+        ## Issues Found
+        {{review.issues_markdown}}
+
+        ## Summary
+        {{review.summary}}
+    description: Save review as note
+
+output:
+  message: "Review complete — {{review.issue_count}} issues in {{params.file}}, {{create_fix_tasks.count}} tasks created"

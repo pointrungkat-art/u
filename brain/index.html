@@ -1,994 +1,381 @@
 <title>XC Second Brain</title>
 <style>
-/* ── TOKEN SYSTEM ── */
 :root {
-  --bg:       #f4f3fa;
-  --raised:   #ffffff;
-  --overlay:  #ece9f8;
-  --border:   #d0cce8;
-  --border-subtle: #e4e1f4;
+  --bg:      #f4f3fa; --raised: #ffffff; --overlay: #ece9f8;
+  --border:  #d0cce8; --border-s: #e4e1f4;
+  --accent:  #6d28d9; --am: rgba(109,40,217,.1); --at: #5b21b6; --ah: #7c3aed;
+  --cyan:    #0891b2; --cb: rgba(8,145,178,.08);
+  --em:      #059669; --eb: rgba(5,150,105,.08);
+  --amber:   #b45309; --ab: rgba(180,83,9,.08);
+  --rose:    #be123c; --rb: rgba(190,18,60,.08);
+  --tx:  #1a1827; --tx2: #5a556e; --tx3: #9491a8;
+  --mono: ui-monospace,'Cascadia Code','Fira Code','SF Mono',monospace;
+  --sans: system-ui,-apple-system,'Segoe UI',sans-serif;
+  --r: 5px; --rl: 8px; --rs: 3px;
+}
+@media (prefers-color-scheme:dark) { :root {
+  --bg:#08080f; --raised:#0f0f1c; --overlay:#181828;
+  --border:#242438; --border-s:#1c1c2e;
+  --accent:#8b5cf6; --am:rgba(139,92,246,.12); --at:#a78bfa; --ah:#7c3aed;
+  --cyan:#06b6d4; --cb:rgba(6,182,212,.09);
+  --em:#10b981; --eb:rgba(16,185,129,.09);
+  --amber:#f59e0b; --ab:rgba(245,158,11,.09);
+  --rose:#f43f5e; --rb:rgba(244,63,94,.09);
+  --tx:#e8e6f0; --tx2:#8882a8; --tx3:#4a4668;
+}}
+:root[data-theme=dark]  { --bg:#08080f;--raised:#0f0f1c;--overlay:#181828;--border:#242438;--border-s:#1c1c2e;--accent:#8b5cf6;--am:rgba(139,92,246,.12);--at:#a78bfa;--ah:#7c3aed;--cyan:#06b6d4;--cb:rgba(6,182,212,.09);--em:#10b981;--eb:rgba(16,185,129,.09);--amber:#f59e0b;--ab:rgba(245,158,11,.09);--rose:#f43f5e;--rb:rgba(244,63,94,.09);--tx:#e8e6f0;--tx2:#8882a8;--tx3:#4a4668; }
+:root[data-theme=light] { --bg:#f4f3fa;--raised:#ffffff;--overlay:#ece9f8;--border:#d0cce8;--border-s:#e4e1f4;--accent:#6d28d9;--am:rgba(109,40,217,.1);--at:#5b21b6;--ah:#7c3aed;--cyan:#0891b2;--cb:rgba(8,145,178,.08);--em:#059669;--eb:rgba(5,150,105,.08);--amber:#b45309;--ab:rgba(180,83,9,.08);--rose:#be123c;--rb:rgba(190,18,60,.08);--tx:#1a1827;--tx2:#5a556e;--tx3:#9491a8; }
 
-  --accent:         #6d28d9;
-  --accent-muted:   rgba(109,40,217,.1);
-  --accent-text:    #5b21b6;
-  --accent-hi:      #7c3aed;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);color:var(--tx);font-family:var(--sans);font-size:13px;line-height:1.5;}
 
-  --cyan:     #0891b2;
-  --cyan-bg:  rgba(8,145,178,.08);
-  --emerald:  #059669;
-  --em-bg:    rgba(5,150,105,.08);
-  --amber:    #b45309;
-  --am-bg:    rgba(180,83,9,.08);
-  --rose:     #be123c;
-  --ro-bg:    rgba(190,18,60,.08);
+.shell{display:flex;height:100vh;}
 
-  --tx:   #1a1827;
-  --tx2:  #5a556e;
-  --tx3:  #9491a8;
+/* SIDEBAR */
+.sb{width:212px;min-width:212px;background:var(--raised);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;scrollbar-width:none;}
+.sb::-webkit-scrollbar{display:none;}
+.sb-logo{padding:14px 16px;border-bottom:1px solid var(--border);}
+.sb-mark{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);display:flex;align-items:center;gap:7px;}
+.sb-mark::before{content:'';width:7px;height:7px;background:var(--accent);border-radius:2px;flex-shrink:0;}
+.sb-sub{font-family:var(--mono);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;margin-top:2px;}
 
-  --mono: ui-monospace, 'Cascadia Code', 'Fira Code', 'SF Mono', 'Consolas', monospace;
-  --sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+/* MCP status pills in sidebar */
+.mcp-pills{padding:8px 16px;display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid var(--border);}
+.mcp-pill{font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 6px;border-radius:var(--rs);border:1px solid;display:flex;align-items:center;gap:3px;cursor:default;}
+.mcp-pill::before{content:'';width:5px;height:5px;border-radius:50%;}
+.pill-on{color:var(--em);border-color:var(--eb);background:var(--eb);}
+.pill-on::before{background:var(--em);}
+.pill-off{color:var(--tx3);border-color:var(--border);background:transparent;}
+.pill-off::before{background:var(--tx3);opacity:.4;}
+.pill-err{color:var(--rose);border-color:var(--rb);background:var(--rb);}
+.pill-err::before{background:var(--rose);}
 
-  --r-sm: 3px;
-  --r:    5px;
-  --r-lg: 8px;
-}
+.sb-grp{padding:10px 0 2px;}
+.sb-lbl{padding:0 16px 5px;font-family:var(--mono);font-size:9px;font-weight:600;color:var(--tx3);letter-spacing:1.2px;text-transform:uppercase;}
+.si{display:flex;align-items:center;gap:9px;padding:6px 16px;font-size:12px;color:var(--tx2);cursor:pointer;border-left:2px solid transparent;transition:all .13s;user-select:none;}
+.si:hover{color:var(--tx);background:var(--overlay);}
+.si.active{color:var(--accent);border-left-color:var(--accent);background:var(--am);font-weight:500;}
+.si-ico{width:15px;text-align:center;font-size:13px;opacity:.8;}
+.si-badge{margin-left:auto;background:var(--accent);color:#fff;font-family:var(--mono);font-size:9px;padding:1px 5px;border-radius:var(--rs);display:none;}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg:      #08080f;
-    --raised:  #0f0f1c;
-    --overlay: #181828;
-    --border:  #242438;
-    --border-subtle: #1c1c2e;
+.sb-foot{margin-top:auto;padding:10px 16px;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.sb-date{font-family:var(--mono);font-size:10px;color:var(--tx3);}
+.th-btn{background:var(--overlay);border:1px solid var(--border);border-radius:var(--rs);padding:3px 7px;font-size:11px;cursor:pointer;color:var(--tx2);transition:all .13s;}
+.th-btn:hover{border-color:var(--accent);color:var(--accent);}
 
-    --accent:       #8b5cf6;
-    --accent-muted: rgba(139,92,246,.12);
-    --accent-text:  #a78bfa;
-    --accent-hi:    #7c3aed;
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+.topbar{height:44px;background:var(--raised);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 18px;flex-shrink:0;}
+.tb-title{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--tx);text-transform:uppercase;letter-spacing:.3px;}
+.sw{margin-left:auto;position:relative;}
+.si-input{background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:5px 10px 5px 28px;font-size:12px;color:var(--tx);outline:none;width:200px;transition:all .15s;}
+.si-input:focus{border-color:var(--accent);width:260px;}
+.si-input::placeholder{color:var(--tx3);}
+.si-ico2{position:absolute;left:8px;top:50%;transform:translateY(-50%);color:var(--tx3);font-size:12px;pointer-events:none;}
 
-    --cyan:     #06b6d4;
-    --cyan-bg:  rgba(6,182,212,.09);
-    --emerald:  #10b981;
-    --em-bg:    rgba(16,185,129,.09);
-    --amber:    #f59e0b;
-    --am-bg:    rgba(245,158,11,.09);
-    --rose:     #f43f5e;
-    --ro-bg:    rgba(244,63,94,.09);
+.btn{padding:5px 11px;border-radius:var(--r);border:1px solid transparent;cursor:pointer;font-size:12px;font-weight:500;font-family:var(--sans);transition:all .13s;white-space:nowrap;}
+.btn-p{background:var(--accent);color:#fff;border-color:var(--ah);}
+.btn-p:hover{opacity:.88;}
+.btn-g{background:transparent;border-color:var(--border);color:var(--tx2);}
+.btn-g:hover{border-color:var(--accent);color:var(--accent);background:var(--am);}
+.btn-sm{padding:3px 8px;font-size:11px;}
 
-    --tx:   #e8e6f0;
-    --tx2:  #8882a8;
-    --tx3:  #4a4668;
-  }
-}
+.content{flex:1;overflow-y:auto;padding:18px;}
+.content::-webkit-scrollbar{width:4px;}
+.content::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
-:root[data-theme="dark"] {
-  --bg:      #08080f;
-  --raised:  #0f0f1c;
-  --overlay: #181828;
-  --border:  #242438;
-  --border-subtle: #1c1c2e;
-  --accent:       #8b5cf6;
-  --accent-muted: rgba(139,92,246,.12);
-  --accent-text:  #a78bfa;
-  --accent-hi:    #7c3aed;
-  --cyan:     #06b6d4;
-  --cyan-bg:  rgba(6,182,212,.09);
-  --emerald:  #10b981;
-  --em-bg:    rgba(16,185,129,.09);
-  --amber:    #f59e0b;
-  --am-bg:    rgba(245,158,11,.09);
-  --rose:     #f43f5e;
-  --ro-bg:    rgba(244,63,94,.09);
-  --tx:   #e8e6f0;
-  --tx2:  #8882a8;
-  --tx3:  #4a4668;
-}
+/* PAGES */
+.page{display:none;}
+.page.active{display:block;animation:fu .2s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(prefers-reduced-motion:reduce){.page.active{animation:none;}}
 
-:root[data-theme="light"] {
-  --bg:       #f4f3fa;
-  --raised:   #ffffff;
-  --overlay:  #ece9f8;
-  --border:   #d0cce8;
-  --border-subtle: #e4e1f4;
-  --accent:         #6d28d9;
-  --accent-muted:   rgba(109,40,217,.1);
-  --accent-text:    #5b21b6;
-  --accent-hi:      #7c3aed;
-  --cyan:     #0891b2;
-  --cyan-bg:  rgba(8,145,178,.08);
-  --emerald:  #059669;
-  --em-bg:    rgba(5,150,105,.08);
-  --amber:    #b45309;
-  --am-bg:    rgba(180,83,9,.08);
-  --rose:     #be123c;
-  --ro-bg:    rgba(190,18,60,.08);
-  --tx:   #1a1827;
-  --tx2:  #5a556e;
-  --tx3:  #9491a8;
-}
+/* COMPONENTS */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}
+.stat{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:13px 15px;}
+.stat-n{font-family:var(--mono);font-size:26px;font-weight:700;color:var(--accent);font-variant-numeric:tabular-nums;line-height:1;letter-spacing:-1px;}
+.stat-l{font-size:10px;color:var(--tx3);margin-top:3px;text-transform:uppercase;letter-spacing:.7px;font-family:var(--mono);}
 
-/* ── RESET ── */
-*,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { height: 100%; }
-body {
-  background: var(--bg);
-  color: var(--tx);
-  font-family: var(--sans);
-  font-size: 13px;
-  line-height: 1.5;
-  height: 100%;
-  overflow: hidden;
-}
+.sec{font-family:var(--mono);font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.2px;color:var(--tx3);margin-bottom:9px;padding-bottom:7px;border-bottom:1px solid var(--border-s);display:flex;align-items:center;justify-content:space-between;}
 
-/* ── LAYOUT ── */
-.shell { display: flex; height: 100vh; }
+.panel{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;}
+.ph{padding:10px 13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:var(--overlay);}
+.ph-t{font-family:var(--mono);font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.8px;}
+.pb{padding:11px 13px;}
 
-/* ── SIDEBAR ── */
-.sidebar {
-  width: 212px;
-  min-width: 212px;
-  background: var(--raised);
-  border-right: 1px solid var(--border);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
-  scrollbar-width: none;
-}
-.sidebar::-webkit-scrollbar { display: none; }
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px;}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px;margin-bottom:14px;}
+.mb{margin-bottom:14px;}
 
-.sb-logo {
-  padding: 16px 16px 14px;
-  border-bottom: 1px solid var(--border);
-}
-.sb-logo-mark {
-  font-family: var(--mono);
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: -.3px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.sb-logo-mark::before {
-  content: '';
-  display: inline-block;
-  width: 8px; height: 8px;
-  background: var(--accent);
-  border-radius: 2px;
-  flex-shrink: 0;
-}
-.sb-logo sub {
-  display: block;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--tx3);
-  letter-spacing: .5px;
-  margin-top: 2px;
-  text-transform: uppercase;
-}
+/* row items */
+.rl{display:flex;flex-direction:column;gap:1px;}
+.ri{display:flex;align-items:flex-start;gap:9px;padding:8px 11px;border-radius:var(--r);cursor:pointer;transition:background .12s;border-left:2px solid transparent;}
+.ri:hover{background:var(--overlay);}
+.ri .rb{flex:1;min-width:0;}
+.ri .rt{font-size:12px;font-weight:500;color:var(--tx);margin-bottom:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.ri .rs2{font-size:11px;color:var(--tx3);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.ri .rm{display:flex;gap:5px;margin-top:4px;flex-wrap:wrap;align-items:center;}
+.ri .rtime{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-left:auto;flex-shrink:0;}
+.ri-live{border-left-color:var(--cyan);}
 
-.sb-group { padding: 12px 0 4px; }
-.sb-group-label {
-  padding: 0 16px 6px;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--tx3);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-.sb-item {
-  display: flex;
-  align-items: center;
-  gap: 9px;
-  padding: 6px 16px;
-  font-size: 13px;
-  color: var(--tx2);
-  cursor: pointer;
-  border-left: 2px solid transparent;
-  transition: color .15s, border-color .15s, background .15s;
-  user-select: none;
-}
-.sb-item:hover { color: var(--tx); background: var(--overlay); }
-.sb-item.active {
-  color: var(--accent);
-  border-left-color: var(--accent);
-  background: var(--accent-muted);
-  font-weight: 500;
-}
-.sb-item .si-icon { width: 16px; text-align: center; font-size: 14px; opacity: .85; }
-.sb-badge {
-  margin-left: auto;
-  background: var(--accent);
-  color: #fff;
-  font-family: var(--mono);
-  font-size: 9px;
-  font-weight: 700;
-  padding: 1px 5px;
-  border-radius: var(--r-sm);
-  min-width: 16px;
-  text-align: center;
-}
+/* chips */
+.chip{display:inline-flex;align-items:center;font-family:var(--mono);font-size:10px;font-weight:500;padding:1px 6px;border-radius:var(--rs);letter-spacing:.2px;}
+.ch-a{background:var(--am);color:var(--accent);border:1px solid var(--am);}
+.ch-c{background:var(--cb);color:var(--cyan);border:1px solid var(--cb);}
+.ch-e{background:var(--eb);color:var(--em);border:1px solid var(--eb);}
+.ch-m{background:var(--ab);color:var(--amber);border:1px solid var(--ab);}
+.ch-r{background:var(--rb);color:var(--rose);border:1px solid var(--rb);}
+.ch-g{background:transparent;color:var(--tx3);border:1px solid var(--border);}
 
-.sb-footer {
-  margin-top: auto;
-  padding: 12px 16px;
-  border-top: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-.sb-footer-date {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--tx3);
-}
+.prio{font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 5px;border-radius:var(--rs);text-transform:uppercase;letter-spacing:.5px;}
+.ph{background:var(--rb);color:var(--rose);}
+.pm{background:var(--ab);color:var(--amber);}
+.pl{background:var(--eb);color:var(--em);}
 
-/* theme toggle */
-.theme-toggle {
-  background: var(--overlay);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  padding: 3px 7px;
-  font-size: 11px;
-  cursor: pointer;
-  color: var(--tx2);
-  transition: all .15s;
-}
-.theme-toggle:hover { color: var(--tx); border-color: var(--accent); }
+.field{width:100%;background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:7px 10px;font-size:13px;color:var(--tx);font-family:var(--sans);outline:none;transition:border-color .13s;resize:none;}
+.field:focus{border-color:var(--accent);}
+.field::placeholder{color:var(--tx3);}
 
-/* ── MAIN ── */
-.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+/* Kanban */
+.kanban{display:flex;gap:9px;overflow-x:auto;padding-bottom:4px;min-height:calc(100vh - 170px);}
+.kanban::-webkit-scrollbar{height:3px;}
+.kanban::-webkit-scrollbar-thumb{background:var(--border);}
+.kc{min-width:235px;background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);display:flex;flex-direction:column;overflow:hidden;}
+.kch{padding:9px 11px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:7px;background:var(--overlay);}
+.kcd{width:6px;height:6px;border-radius:50%;}
+.kct{font-family:var(--mono);font-size:9px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.8px;}
+.kcn{margin-left:auto;font-family:var(--mono);font-size:9px;color:var(--tx3);}
+.kcb{padding:7px;flex:1;overflow-y:auto;}
+.kcard{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:9px 10px;margin-bottom:5px;cursor:pointer;transition:border-color .13s;}
+.kcard:hover{border-color:var(--accent);}
+.kcard .ktt{font-size:12px;font-weight:600;margin-bottom:3px;}
+.kcard .kds{font-size:11px;color:var(--tx3);margin-bottom:7px;line-height:1.4;}
+.kcard .kft{display:flex;align-items:center;gap:5px;}
+.kmv{background:transparent;border:1px solid var(--border);border-radius:var(--rs);padding:2px 5px;font-size:10px;cursor:pointer;color:var(--tx3);transition:all .12s;}
+.kmv:hover{border-color:var(--accent);color:var(--accent);background:var(--am);}
+.kdl{background:transparent;border:none;color:var(--tx3);cursor:pointer;font-size:11px;margin-left:auto;padding:2px 4px;border-radius:var(--rs);}
+.kdl:hover{color:var(--rose);background:var(--rb);}
 
-/* topbar */
-.topbar {
-  height: 46px;
-  background: var(--raised);
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 0 20px;
-  flex-shrink: 0;
-}
-.topbar-title {
-  font-family: var(--mono);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--tx);
-  letter-spacing: .2px;
-  text-transform: uppercase;
-}
-.topbar-crumb { color: var(--tx3); font-size: 11px; }
+/* Notes editor */
+.editor-shell{display:grid;grid-template-columns:210px 1fr;gap:9px;height:calc(100vh - 82px);}
+.nlp{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;display:flex;flex-direction:column;}
+.nlb{overflow-y:auto;flex:1;padding:5px;}
+.nli{padding:8px 10px;border-radius:var(--r);cursor:pointer;transition:background .12s;border-left:2px solid transparent;margin-bottom:2px;}
+.nli:hover{background:var(--overlay);}
+.nli.active{background:var(--am);border-left-color:var(--accent);}
+.nli .nt{font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.nli .np{font-size:11px;color:var(--tx3);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-top:1px;}
+.nli .nd{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:3px;}
+.ep{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;display:flex;flex-direction:column;}
+.etb{padding:7px 11px;border-bottom:1px solid var(--border);display:flex;gap:4px;align-items:center;background:var(--overlay);}
+.tbtn{background:transparent;border:1px solid transparent;border-radius:var(--rs);padding:3px 7px;font-size:12px;cursor:pointer;color:var(--tx3);transition:all .12s;font-family:var(--sans);}
+.tbtn:hover{background:var(--raised);border-color:var(--border);color:var(--tx);}
+.nti{width:100%;background:transparent;border:none;border-bottom:1px solid var(--border-s);color:var(--tx);font-size:18px;font-weight:700;padding:13px 15px;outline:none;font-family:var(--sans);}
+.nca{flex:1;width:100%;background:transparent;border:none;color:var(--tx);font-size:13px;line-height:1.8;padding:13px 15px;outline:none;resize:none;font-family:var(--sans);}
 
-.search-wrap { margin-left: auto; position: relative; }
-.search-input {
-  background: var(--overlay);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 5px 10px 5px 30px;
-  font-size: 12px;
-  color: var(--tx);
-  outline: none;
-  width: 220px;
-  font-family: var(--sans);
-  transition: border-color .15s, width .2s;
-}
-.search-input:focus { border-color: var(--accent); width: 280px; }
-.search-input::placeholder { color: var(--tx3); }
-.search-icon {
-  position: absolute; left: 9px; top: 50%; transform: translateY(-50%);
-  color: var(--tx3); font-size: 12px; pointer-events: none;
-}
+/* Journal */
+.je{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);overflow:hidden;margin-bottom:14px;}
+.jh{padding:12px 16px;border-bottom:1px solid var(--border);background:var(--overlay);display:flex;align-items:baseline;gap:8px;}
+.jdate{font-family:var(--mono);font-size:13px;font-weight:700;color:var(--accent);}
+.jday{font-size:11px;color:var(--tx3);}
+.jb{padding:16px;display:flex;flex-direction:column;gap:14px;}
+.js h4{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tx3);margin-bottom:6px;}
+.mood-row{display:flex;gap:7px;}
+.mbt{flex:1;background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:7px;cursor:pointer;font-size:19px;text-align:center;transition:all .13s;}
+.mbt:hover{border-color:var(--accent);transform:translateY(-1px);}
+.mbt.sel{border-color:var(--accent);background:var(--am);}
 
-.btn {
-  padding: 6px 12px;
-  border-radius: var(--r);
-  border: 1px solid transparent;
-  cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  font-family: var(--sans);
-  transition: all .15s;
-  white-space: nowrap;
-}
-.btn-primary {
-  background: var(--accent);
-  color: #fff;
-  border-color: var(--accent-hi);
-}
-.btn-primary:hover { opacity: .88; }
-.btn-ghost {
-  background: transparent;
-  border-color: var(--border);
-  color: var(--tx2);
-}
-.btn-ghost:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-muted); }
-.btn-sm { padding: 4px 9px; font-size: 11px; }
+/* Focus */
+.fc{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:24px;text-align:center;margin-bottom:13px;}
+.fp{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--tx3);margin-bottom:5px;}
+.tn{font-family:var(--mono);font-size:60px;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);letter-spacing:-2px;line-height:1;margin:6px 0;}
+.ttl{font-size:11px;color:var(--tx3);margin-bottom:14px;}
+.tc{display:flex;justify-content:center;gap:7px;}
+.prog{height:3px;background:var(--overlay);border-radius:2px;overflow:hidden;margin-top:9px;}
+.pf{height:100%;border-radius:2px;background:var(--accent);transition:width .5s ease;}
 
-/* ── CONTENT ── */
-.content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-}
-.content::-webkit-scrollbar { width: 5px; }
-.content::-webkit-scrollbar-track { background: transparent; }
-.content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+/* Habits */
+.hr{display:flex;align-items:center;gap:11px;padding:9px 13px;border-bottom:1px solid var(--border-s);}
+.hr:last-child{border-bottom:none;}
+.hn{font-size:13px;font-weight:500;flex:1;}
+.hst{font-family:var(--mono);font-size:11px;color:var(--amber);font-weight:700;font-variant-numeric:tabular-nums;min-width:36px;text-align:right;}
+.hdays{display:flex;gap:3px;}
+.hday{width:15px;height:15px;border-radius:var(--rs);background:var(--overlay);border:1px solid var(--border);cursor:pointer;transition:all .12s;}
+.hday.done{background:var(--accent);border-color:var(--accent);}
+.hday:hover{border-color:var(--accent);}
+.dlbl{display:flex;gap:3px;}
+.dl{width:15px;font-family:var(--mono);font-size:9px;color:var(--tx3);text-align:center;}
 
-/* pages */
-.page { display: none; }
-.page.active { display: block; animation: fadeUp .2s ease; }
-@keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-@media (prefers-reduced-motion: reduce) { .page.active { animation: none; } }
+/* Scripts */
+.sgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;}
+.scard{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:13px;transition:border-color .13s;}
+.scard:hover{border-color:var(--accent);}
+.sch{display:flex;align-items:flex-start;gap:9px;margin-bottom:7px;}
+.sdot{width:7px;height:7px;border-radius:50%;background:var(--accent);margin-top:4px;flex-shrink:0;}
+.sn{font-size:13px;font-weight:700;}
+.sh{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:1px;}
+.sk{color:var(--accent);font-weight:700;}
+.sd{font-size:11px;color:var(--tx2);line-height:1.5;margin-bottom:9px;}
+.scode{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:6px 9px;font-family:var(--mono);font-size:11px;color:var(--cyan);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-bottom:7px;}
+.cpbtn{width:100%;background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:5px;font-size:11px;font-family:var(--mono);color:var(--tx2);cursor:pointer;transition:all .13s;}
+.cpbtn:hover{border-color:var(--accent);color:var(--accent);background:var(--am);}
+.cpbtn.ok{border-color:var(--em);color:var(--em);background:var(--eb);}
 
-/* ── COMPONENTS ── */
+/* Bug bounty */
+.vc{background:var(--raised);border:1px solid var(--border);border-left-width:3px;border-radius:var(--rl);padding:12px 13px;margin-bottom:7px;transition:opacity .13s;}
+.vc:hover{opacity:.88;}
+.vcc{border-left-color:var(--rose);}
+.vch{border-left-color:var(--amber);}
+.vcm{border-left-color:var(--accent);}
+.vcl{border-left-color:var(--em);}
+.vhd{display:flex;align-items:flex-start;gap:7px;margin-bottom:4px;}
+.vtt{font-size:13px;font-weight:700;flex:1;}
+.sev{font-family:var(--mono);font-size:9px;font-weight:800;padding:2px 6px;border-radius:var(--rs);text-transform:uppercase;letter-spacing:.5px;}
+.sc{background:var(--rb);color:var(--rose);}
+.sh2{background:var(--ab);color:var(--amber);}
+.sm{background:var(--am);color:var(--accent);}
+.sl{background:var(--eb);color:var(--em);}
+.vtg{font-family:var(--mono);font-size:11px;color:var(--tx3);margin-bottom:4px;}
+.vds{font-size:12px;color:var(--tx2);line-height:1.5;}
+.vft{display:flex;align-items:center;gap:7px;margin-top:7px;}
+.vst{font-family:var(--mono);font-size:10px;color:var(--tx3);background:var(--overlay);border:1px solid var(--border);padding:2px 7px;border-radius:var(--rs);}
 
-/* stat row */
-.stats-row {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 10px;
-  margin-bottom: 18px;
-}
-.stat {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 14px 16px;
-}
-.stat-n {
-  font-family: var(--mono);
-  font-size: 28px;
-  font-weight: 700;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-  letter-spacing: -1px;
-}
-.stat-l {
-  font-size: 11px;
-  color: var(--tx3);
-  margin-top: 4px;
-  text-transform: uppercase;
-  letter-spacing: .6px;
-  font-family: var(--mono);
-}
+/* PARA */
+.pgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-bottom:14px;}
+.pc{background:var(--raised);border:1px solid var(--border);border-top-width:3px;border-radius:var(--rl);padding:14px;cursor:pointer;transition:border-color .13s;}
+.pc:hover{border-color:var(--accent);}
+.pn{font-family:var(--mono);font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1;}
+.pl2{font-family:var(--mono);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;margin-top:3px;}
+.pd{font-size:11px;color:var(--tx3);margin-top:5px;line-height:1.5;}
+.pp{border-top-color:var(--accent);}  .pp .pn,.pp .pl2{color:var(--accent);}
+.pa{border-top-color:var(--cyan);}    .pa .pn,.pa .pl2{color:var(--cyan);}
+.pr{border-top-color:var(--em);}      .pr .pn,.pr .pl2{color:var(--em);}
+.parch{border-top-color:var(--tx3);} .parch .pn,.parch .pl2{color:var(--tx3);}
 
-/* section label */
-.sec-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1.2px;
-  color: var(--tx3);
-  margin-bottom: 10px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid var(--border-subtle);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
+/* Quick actions */
+.qa-row{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px;}
+.qa{background:var(--raised);border:1px solid var(--border);border-radius:var(--r);padding:6px 12px;font-size:12px;font-weight:500;cursor:pointer;color:var(--tx2);transition:all .12s;display:flex;align-items:center;gap:6px;}
+.qa:hover{border-color:var(--accent);color:var(--accent);background:var(--am);}
 
-/* panel */
-.panel {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-}
-.panel-head {
-  padding: 11px 14px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background: var(--overlay);
-}
-.panel-head-title {
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--tx2);
-  text-transform: uppercase;
-  letter-spacing: .8px;
-}
-.panel-body { padding: 12px 14px; }
+/* LIVE FEED page */
+.live-header{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--em);animation:blink 2s ease-in-out infinite;}
+@keyframes blink{0%,100%{opacity:.4}50%{opacity:1}}
+.live-label{font-family:var(--mono);font-size:11px;color:var(--em);font-weight:700;text-transform:uppercase;letter-spacing:.8px;}
+.live-ts{font-family:var(--mono);font-size:10px;color:var(--tx3);margin-left:auto;}
 
-/* grid helpers */
-.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.g3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
-.mb { margin-bottom: 16px; }
+.event-card{background:var(--raised);border:1px solid var(--border);border-radius:var(--r);padding:10px 13px;margin-bottom:6px;display:flex;gap:10px;transition:border-color .13s;}
+.event-card:hover{border-color:var(--accent);}
+.ev-type{font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 6px;border-radius:var(--rs);text-transform:uppercase;letter-spacing:.5px;flex-shrink:0;margin-top:1px;}
+.ev-pr{background:var(--am);color:var(--accent);}
+.ev-issue{background:var(--rb);color:var(--rose);}
+.ev-commit{background:var(--cb);color:var(--cyan);}
+.ev-body{flex:1;min-width:0;}
+.ev-title{font-size:12px;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;margin-bottom:2px;}
+.ev-meta{font-size:11px;color:var(--tx3);}
+.ev-time{font-family:var(--mono);font-size:10px;color:var(--tx3);flex-shrink:0;margin-top:1px;}
 
-/* row items (capture, notes, tasks) */
-.row-list { display: flex; flex-direction: column; gap: 1px; }
-.row-item {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 9px 12px;
-  border-radius: var(--r);
-  cursor: pointer;
-  transition: background .12s;
-  border-left: 2px solid transparent;
-}
-.row-item:hover { background: var(--overlay); }
-.row-item .ri-body { flex: 1; min-width: 0; }
-.row-item .ri-title {
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--tx);
-  margin-bottom: 2px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.row-item .ri-sub {
-  font-size: 11px;
-  color: var(--tx3);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-.row-item .ri-meta { display: flex; gap: 5px; margin-top: 5px; flex-wrap: wrap; align-items: center; }
-.row-item .ri-time { font-family: var(--mono); font-size: 10px; color: var(--tx3); margin-left: auto; flex-shrink: 0; }
+/* AGENTS page */
+.agent-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.agent-card{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:15px;transition:border-color .13s;}
+.agent-card:hover{border-color:var(--accent);}
+.ac-head{display:flex;align-items:flex-start;gap:8px;margin-bottom:8px;}
+.ac-icon{font-size:22px;}
+.ac-name{font-size:13px;font-weight:700;}
+.ac-desc{font-size:11px;color:var(--tx2);line-height:1.5;margin-bottom:10px;}
+.ac-params{display:flex;flex-direction:column;gap:6px;margin-bottom:10px;}
+.ac-params input,.ac-params select{background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:12px;color:var(--tx);font-family:var(--sans);outline:none;}
+.ac-params input:focus,.ac-params select:focus{border-color:var(--accent);}
+.run-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:var(--r);padding:7px;font-size:12px;font-weight:600;cursor:pointer;transition:opacity .13s;font-family:var(--sans);}
+.run-btn:hover{opacity:.88;}
+.run-btn:disabled{opacity:.4;cursor:default;}
+.ac-log{margin-top:8px;font-family:var(--mono);font-size:10px;color:var(--tx3);background:var(--overlay);border-radius:var(--r);padding:6px 8px;min-height:30px;white-space:pre-wrap;word-break:break-all;}
 
-/* chips/tags */
-.chip {
-  display: inline-flex;
-  align-items: center;
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 500;
-  padding: 1px 6px;
-  border-radius: var(--r-sm);
-  letter-spacing: .3px;
-}
-.chip-accent { background: var(--accent-muted); color: var(--accent); border: 1px solid var(--accent-muted); }
-.chip-cyan   { background: var(--cyan-bg); color: var(--cyan); border: 1px solid var(--cyan-bg); }
-.chip-em     { background: var(--em-bg); color: var(--emerald); border: 1px solid var(--em-bg); }
-.chip-am     { background: var(--am-bg); color: var(--amber); border: 1px solid var(--am-bg); }
-.chip-ro     { background: var(--ro-bg); color: var(--rose); border: 1px solid var(--ro-bg); }
-.chip-ghost  { background: transparent; color: var(--tx3); border: 1px solid var(--border); }
+/* MCP SETUP page */
+.setup-hero{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:24px;margin-bottom:14px;text-align:center;}
+.setup-hero h2{font-size:18px;font-weight:800;margin-bottom:6px;}
+.setup-hero p{font-size:13px;color:var(--tx2);max-width:440px;margin:0 auto;}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:14px;}
+.setup-card{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:16px;}
+.setup-card h3{font-size:14px;font-weight:700;margin-bottom:6px;display:flex;align-items:center;gap:7px;}
+.setup-card h3 .sh-status{font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 6px;border-radius:var(--rs);margin-left:auto;}
+.setup-card p{font-size:12px;color:var(--tx2);line-height:1.6;margin-bottom:10px;}
+.setup-card code{font-family:var(--mono);font-size:11px;background:var(--overlay);border:1px solid var(--border);padding:8px 10px;border-radius:var(--r);display:block;margin:6px 0;white-space:pre;overflow-x:auto;}
 
-/* priority */
-.prio { font-family: var(--mono); font-size: 9px; font-weight: 700; padding: 2px 5px; border-radius: var(--r-sm); text-transform: uppercase; letter-spacing: .5px; }
-.prio-high { background: var(--ro-bg); color: var(--rose); }
-.prio-med  { background: var(--am-bg); color: var(--amber); }
-.prio-low  { background: var(--em-bg); color: var(--emerald); }
+/* modal */
+.modal-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;display:none;align-items:center;justify-content:center;}
+.modal-ov.open{display:flex;}
+.modal{background:var(--raised);border:1px solid var(--border);border-radius:var(--rl);padding:20px;width:90%;max-width:440px;box-shadow:0 20px 50px rgba(0,0,0,.35);}
+.modal h3{font-size:15px;font-weight:700;margin-bottom:4px;}
+.modal p{font-size:12px;color:var(--tx3);margin-bottom:14px;}
+.mact{display:flex;gap:7px;justify-content:flex-end;margin-top:10px;}
 
-/* textarea/input base */
-.field {
-  width: 100%;
-  background: var(--overlay);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 8px 10px;
-  font-size: 13px;
-  color: var(--tx);
-  font-family: var(--sans);
-  outline: none;
-  transition: border-color .15s;
-  resize: none;
-}
-.field:focus { border-color: var(--accent); }
-.field::placeholder { color: var(--tx3); }
-select.field { cursor: pointer; }
+.toast{position:fixed;bottom:18px;right:18px;background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:8px 14px;font-size:12px;font-family:var(--mono);color:var(--tx);z-index:300;transform:translateY(50px);opacity:0;transition:all .22s;box-shadow:0 6px 20px rgba(0,0,0,.2);}
+.toast.show{transform:translateY(0);opacity:1;}
 
-/* ── CAPTURE ── */
-.capture-block {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 14px;
-  margin-bottom: 18px;
-}
-.capture-row {
-  display: flex;
-  gap: 8px;
-  margin-top: 10px;
-  align-items: center;
-  flex-wrap: wrap;
-}
-.cap-select {
-  background: var(--overlay);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 5px 8px;
-  font-size: 11px;
-  font-family: var(--mono);
-  color: var(--tx2);
-  outline: none;
-  cursor: pointer;
-}
-
-/* ── KANBAN ── */
-.kanban {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 6px;
-  min-height: calc(100vh - 180px);
-}
-.kanban::-webkit-scrollbar { height: 4px; }
-.kanban::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-.k-col {
-  min-width: 240px;
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.k-col-head {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--overlay);
-}
-.k-col-dot { width: 7px; height: 7px; border-radius: 50%; }
-.k-col-title { font-family: var(--mono); font-size: 10px; font-weight: 700; color: var(--tx2); text-transform: uppercase; letter-spacing: .8px; }
-.k-col-count { margin-left: auto; font-family: var(--mono); font-size: 10px; color: var(--tx3); }
-.k-col-body { padding: 8px; flex: 1; overflow-y: auto; }
-.k-card {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 10px 11px;
-  margin-bottom: 6px;
-  cursor: pointer;
-  transition: border-color .15s;
-}
-.k-card:hover { border-color: var(--accent); }
-.k-card-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: var(--tx); }
-.k-card-desc { font-size: 11px; color: var(--tx3); margin-bottom: 8px; line-height: 1.4; }
-.k-card-foot { display: flex; align-items: center; gap: 6px; }
-.k-move { background: transparent; border: 1px solid var(--border); border-radius: var(--r-sm); padding: 2px 5px; font-size: 10px; cursor: pointer; color: var(--tx3); transition: all .12s; }
-.k-move:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-muted); }
-.k-del { background: transparent; border: none; color: var(--tx3); cursor: pointer; font-size: 11px; margin-left: auto; padding: 2px 5px; border-radius: var(--r-sm); }
-.k-del:hover { color: var(--rose); background: var(--ro-bg); }
-
-/* ── NOTES EDITOR ── */
-.editor-shell {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 10px;
-  height: calc(100vh - 90px);
-}
-.notes-list-panel {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.nlist-body { overflow-y: auto; flex: 1; padding: 6px; }
-.nlist-item {
-  padding: 8px 10px;
-  border-radius: var(--r);
-  cursor: pointer;
-  transition: background .12s;
-  border-left: 2px solid transparent;
-  margin-bottom: 2px;
-}
-.nlist-item:hover { background: var(--overlay); }
-.nlist-item.active { background: var(--accent-muted); border-left-color: var(--accent); }
-.nlist-item .ni-title { font-size: 12px; font-weight: 600; color: var(--tx); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
-.nlist-item .ni-preview { font-size: 11px; color: var(--tx3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; margin-top: 1px; }
-.nlist-item .ni-date { font-family: var(--mono); font-size: 10px; color: var(--tx3); margin-top: 3px; }
-
-.editor-panel {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-.editor-toolbar {
-  padding: 8px 12px;
-  border-bottom: 1px solid var(--border);
-  display: flex;
-  gap: 4px;
-  align-items: center;
-  background: var(--overlay);
-}
-.tool-btn {
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: var(--r-sm);
-  padding: 3px 7px;
-  font-size: 12px;
-  cursor: pointer;
-  color: var(--tx3);
-  transition: all .12s;
-  font-family: var(--sans);
-}
-.tool-btn:hover { background: var(--raised); border-color: var(--border); color: var(--tx); }
-.note-title-input {
-  width: 100%;
-  background: transparent;
-  border: none;
-  border-bottom: 1px solid var(--border-subtle);
-  color: var(--tx);
-  font-size: 18px;
-  font-weight: 700;
-  padding: 14px 16px;
-  outline: none;
-  font-family: var(--sans);
-}
-.note-content-area {
-  flex: 1;
-  width: 100%;
-  background: transparent;
-  border: none;
-  color: var(--tx);
-  font-size: 13px;
-  line-height: 1.8;
-  padding: 14px 16px;
-  outline: none;
-  resize: none;
-  font-family: var(--sans);
-}
-
-/* ── JOURNAL ── */
-.journal-entry {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-  margin-bottom: 18px;
-}
-.journal-head {
-  padding: 14px 18px;
-  border-bottom: 1px solid var(--border);
-  background: var(--overlay);
-  display: flex;
-  align-items: baseline;
-  gap: 10px;
-}
-.journal-date-display {
-  font-family: var(--mono);
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--accent);
-  letter-spacing: -.2px;
-}
-.journal-day { font-size: 11px; color: var(--tx3); }
-.journal-body { padding: 18px; display: flex; flex-direction: column; gap: 16px; }
-.j-section h4 {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--tx3);
-  margin-bottom: 7px;
-}
-
-/* mood */
-.mood-row { display: flex; gap: 8px; }
-.mood-btn {
-  flex: 1;
-  background: var(--overlay);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 8px;
-  cursor: pointer;
-  font-size: 20px;
-  text-align: center;
-  transition: all .15s;
-}
-.mood-btn:hover { border-color: var(--accent); background: var(--accent-muted); transform: translateY(-1px); }
-.mood-btn.selected { border-color: var(--accent); background: var(--accent-muted); }
-
-/* ── FOCUS TIMER ── */
-.focus-card {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 28px;
-  text-align: center;
-  margin-bottom: 14px;
-}
-.focus-phase {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--tx3);
-  margin-bottom: 6px;
-}
-.timer-num {
-  font-family: var(--mono);
-  font-size: 64px;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  color: var(--accent);
-  letter-spacing: -2px;
-  line-height: 1;
-  margin: 8px 0;
-}
-.timer-task-label { font-size: 12px; color: var(--tx3); margin-bottom: 18px; }
-.timer-controls { display: flex; justify-content: center; gap: 8px; }
-
-/* progress */
-.progress { height: 3px; background: var(--overlay); border-radius: 2px; overflow: hidden; margin-top: 10px; }
-.progress-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width .5s ease; }
-
-/* ── HABITS ── */
-.habit-row {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 14px;
-  border-bottom: 1px solid var(--border-subtle);
-}
-.habit-row:last-child { border-bottom: none; }
-.habit-name { font-size: 13px; font-weight: 500; flex: 1; }
-.habit-streak {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--amber);
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-  min-width: 40px;
-  text-align: right;
-}
-.habit-days { display: flex; gap: 3px; }
-.habit-day {
-  width: 16px; height: 16px;
-  border-radius: var(--r-sm);
-  background: var(--overlay);
-  border: 1px solid var(--border);
-  cursor: pointer;
-  transition: all .12s;
-}
-.habit-day.done { background: var(--accent); border-color: var(--accent); }
-.habit-day:hover { border-color: var(--accent); }
-.day-labels { display: flex; gap: 3px; }
-.day-lbl { width: 16px; font-family: var(--mono); font-size: 9px; color: var(--tx3); text-align: center; }
-
-/* ── SCRIPTS ── */
-.script-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.script-card {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 14px;
-  transition: border-color .15s;
-}
-.script-card:hover { border-color: var(--accent); }
-.sc-head { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 8px; }
-.sc-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--accent);
-  margin-top: 4px;
-  flex-shrink: 0;
-}
-.sc-name { font-size: 13px; font-weight: 700; color: var(--tx); }
-.sc-hub { font-family: var(--mono); font-size: 10px; color: var(--tx3); margin-top: 1px; }
-.sc-key { color: var(--accent); font-weight: 700; }
-.sc-desc { font-size: 12px; color: var(--tx2); line-height: 1.5; margin-bottom: 10px; }
-.sc-code-wrap {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 7px 10px;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--cyan);
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  margin-bottom: 8px;
-}
-.copy-btn {
-  width: 100%;
-  background: var(--overlay);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 5px;
-  font-size: 11px;
-  font-family: var(--mono);
-  color: var(--tx2);
-  cursor: pointer;
-  transition: all .15s;
-}
-.copy-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-muted); }
-.copy-btn.ok { border-color: var(--emerald); color: var(--emerald); background: var(--em-bg); }
-
-/* ── BUG BOUNTY ── */
-.vuln-card {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-left-width: 3px;
-  border-radius: var(--r-lg);
-  padding: 13px 14px;
-  margin-bottom: 8px;
-  transition: opacity .15s;
-}
-.vuln-card:hover { opacity: .9; }
-.vc-critical { border-left-color: var(--rose); }
-.vc-high     { border-left-color: var(--amber); }
-.vc-medium   { border-left-color: var(--accent); }
-.vc-low      { border-left-color: var(--emerald); }
-.vc-head { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 5px; }
-.vc-title { font-size: 13px; font-weight: 700; flex: 1; }
-.sev-chip { font-family: var(--mono); font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: var(--r-sm); text-transform: uppercase; letter-spacing: .5px; }
-.sev-critical { background: var(--ro-bg); color: var(--rose); }
-.sev-high     { background: var(--am-bg); color: var(--amber); }
-.sev-medium   { background: var(--accent-muted); color: var(--accent); }
-.sev-low      { background: var(--em-bg); color: var(--emerald); }
-.vc-target { font-family: var(--mono); font-size: 11px; color: var(--tx3); margin-bottom: 5px; }
-.vc-desc { font-size: 12px; color: var(--tx2); line-height: 1.5; }
-.vc-foot { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-.vc-status { font-family: var(--mono); font-size: 10px; color: var(--tx3); background: var(--overlay); border: 1px solid var(--border); padding: 2px 7px; border-radius: var(--r-sm); }
-
-/* ── PARA ── */
-.para-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-bottom: 16px; }
-.para-card {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-top-width: 3px;
-  border-radius: var(--r-lg);
-  padding: 16px;
-  cursor: pointer;
-  transition: border-color .15s;
-}
-.para-card:hover { border-color: var(--accent); }
-.para-n { font-family: var(--mono); font-size: 32px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
-.para-label { font-family: var(--mono); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; margin-top: 4px; }
-.para-desc { font-size: 11px; color: var(--tx3); margin-top: 6px; line-height: 1.5; }
-.para-projects { border-top-color: var(--accent); }
-.para-projects .para-n, .para-projects .para-label { color: var(--accent); }
-.para-areas { border-top-color: var(--cyan); }
-.para-areas .para-n, .para-areas .para-label { color: var(--cyan); }
-.para-resources { border-top-color: var(--emerald); }
-.para-resources .para-n, .para-resources .para-label { color: var(--emerald); }
-.para-archive { border-top-color: var(--tx3); }
-.para-archive .para-n, .para-archive .para-label { color: var(--tx3); }
-
-/* activity */
-.act-item { display: flex; gap: 10px; align-items: flex-start; padding: 8px 0; border-bottom: 1px solid var(--border-subtle); }
-.act-item:last-child { border-bottom: none; }
-.act-dot { width: 6px; height: 6px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
-.act-text { font-size: 12px; color: var(--tx2); }
-.act-time { font-family: var(--mono); font-size: 10px; color: var(--tx3); margin-top: 1px; }
-
-/* quick actions */
-.qa-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
-.qa {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 6px 12px;
-  font-size: 12px;
-  font-weight: 500;
-  cursor: pointer;
-  color: var(--tx2);
-  transition: all .12s;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-.qa:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-muted); }
-.qa-icon { font-size: 13px; }
-
-/* ── MODAL ── */
-.modal-overlay {
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.55);
-  z-index: 200;
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-.modal-overlay.open { display: flex; }
-.modal {
-  background: var(--raised);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  padding: 22px;
-  width: 90%;
-  max-width: 460px;
-  box-shadow: 0 24px 60px rgba(0,0,0,.4);
-}
-.modal h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
-.modal p { font-size: 12px; color: var(--tx3); margin-bottom: 16px; }
-.modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
-
-/* ── TOAST ── */
-.toast {
-  position: fixed;
-  bottom: 20px; right: 20px;
-  background: var(--overlay);
-  border: 1px solid var(--border);
-  border-radius: var(--r);
-  padding: 9px 16px;
-  font-size: 12px;
-  font-family: var(--mono);
-  color: var(--tx);
-  z-index: 300;
-  transform: translateY(60px);
-  opacity: 0;
-  transition: all .25s;
-  box-shadow: 0 8px 24px rgba(0,0,0,.2);
-}
-.toast.show { transform: translateY(0); opacity: 1; }
-
-/* ── MISC ── */
-.empty {
-  padding: 24px;
-  text-align: center;
-  font-size: 12px;
-  color: var(--tx3);
-  font-family: var(--mono);
-}
-.divider { border: none; border-top: 1px solid var(--border-subtle); margin: 12px 0; }
+.empty{padding:22px;text-align:center;font-size:12px;color:var(--tx3);font-family:var(--mono);}
 </style>
 
-<!-- SHELL -->
 <div class="shell">
-
   <!-- SIDEBAR -->
-  <nav class="sidebar">
+  <nav class="sb">
     <div class="sb-logo">
-      <div class="sb-logo-mark">XC Brain</div>
-      <sub>Second Brain v1.0</sub>
+      <div class="sb-mark">XC Brain</div>
+      <div class="sb-sub">Agentic Workflow v2</div>
     </div>
 
-    <div class="sb-group">
-      <div class="sb-group-label">Core</div>
-      <div class="sb-item active" onclick="goto('dashboard')"><span class="si-icon">▪</span> Dashboard</div>
-      <div class="sb-item" onclick="goto('capture')"><span class="si-icon">↓</span> Inbox <span class="sb-badge" id="inboxBadge" style="display:none">0</span></div>
-      <div class="sb-item" onclick="goto('notes')"><span class="si-icon">≡</span> Notes</div>
-      <div class="sb-item" onclick="goto('kanban')"><span class="si-icon">▦</span> Projects</div>
+    <!-- MCP status pills -->
+    <div class="mcp-pills" id="mcpPills">
+      <div class="mcp-pill pill-off" id="pill-gh">GH</div>
+      <div class="mcp-pill pill-off" id="pill-brain">BRAIN</div>
+      <div class="mcp-pill pill-off" id="pill-mcp" style="display:none;">MCP</div>
     </div>
 
-    <div class="sb-group">
-      <div class="sb-group-label">Workflow</div>
-      <div class="sb-item" onclick="goto('journal')"><span class="si-icon">◉</span> Daily Journal</div>
-      <div class="sb-item" onclick="goto('focus')"><span class="si-icon">◎</span> Focus Mode</div>
-      <div class="sb-item" onclick="goto('habits')"><span class="si-icon">▸</span> Habits</div>
+    <div class="sb-grp">
+      <div class="sb-lbl">Core</div>
+      <div class="si active" onclick="goto('dashboard')"><span class="si-ico">▪</span>Dashboard</div>
+      <div class="si" onclick="goto('capture')"><span class="si-ico">↓</span>Inbox<span class="si-badge" id="inboxBadge">0</span></div>
+      <div class="si" onclick="goto('notes')"><span class="si-ico">≡</span>Notes</div>
+      <div class="si" onclick="goto('kanban')"><span class="si-ico">▦</span>Projects</div>
+    </div>
+    <div class="sb-grp">
+      <div class="sb-lbl">Live</div>
+      <div class="si" onclick="goto('live')"><span class="si-ico">◉</span>Activity Feed<span class="si-badge" id="liveBadge" style="background:var(--em);">live</span></div>
+      <div class="si" onclick="goto('agents')"><span class="si-ico">⚡</span>Agents</div>
+    </div>
+    <div class="sb-grp">
+      <div class="sb-lbl">Workflow</div>
+      <div class="si" onclick="goto('journal')"><span class="si-ico">◎</span>Daily Journal</div>
+      <div class="si" onclick="goto('focus')"><span class="si-ico">○</span>Focus Mode</div>
+      <div class="si" onclick="goto('habits')"><span class="si-ico">▸</span>Habits</div>
+    </div>
+    <div class="sb-grp">
+      <div class="sb-lbl">Dev</div>
+      <div class="si" onclick="goto('scripts')"><span class="si-ico">⟨/⟩</span>Scripts Hub</div>
+      <div class="si" onclick="goto('bugbounty')"><span class="si-ico">◈</span>Bug Bounty</div>
+    </div>
+    <div class="sb-grp">
+      <div class="sb-lbl">System</div>
+      <div class="si" onclick="goto('para')"><span class="si-ico">⊞</span>PARA</div>
+      <div class="si" onclick="goto('setup')"><span class="si-ico">⚙</span>MCP Setup</div>
     </div>
 
-    <div class="sb-group">
-      <div class="sb-group-label">Dev</div>
-      <div class="sb-item" onclick="goto('scripts')"><span class="si-icon">⟨/⟩</span> Scripts Hub</div>
-      <div class="sb-item" onclick="goto('bugbounty')"><span class="si-icon">◈</span> Bug Bounty</div>
-    </div>
-
-    <div class="sb-group">
-      <div class="sb-group-label">System</div>
-      <div class="sb-item" onclick="goto('para')"><span class="si-icon">⊞</span> PARA</div>
-    </div>
-
-    <div class="sb-footer">
-      <span class="sb-footer-date" id="sbDate"></span>
-      <button class="theme-toggle" onclick="toggleTheme()">◑</button>
+    <div class="sb-foot">
+      <span class="sb-date" id="sbDate"></span>
+      <button class="th-btn" onclick="toggleTheme()">◑</button>
     </div>
   </nav>
 
   <!-- MAIN -->
   <div class="main">
     <div class="topbar">
-      <span class="topbar-title" id="pageTitle">DASHBOARD</span>
-      <span class="topbar-crumb" id="pageCrumb"></span>
-      <div class="search-wrap">
-        <span class="search-icon">⌕</span>
-        <input class="search-input" type="text" placeholder="Search everything…  ⌘K" id="globalSearch">
+      <span class="tb-title" id="pageTitle">DASHBOARD</span>
+      <div class="sw">
+        <span class="si-ico2">⌕</span>
+        <input class="si-input" type="text" placeholder="Search…  ⌘K" id="globalSearch">
       </div>
-      <button class="btn btn-primary btn-sm" onclick="openCapture()">+ Capture</button>
+      <button class="btn btn-p btn-sm" onclick="openCapture()">+ Capture</button>
     </div>
 
     <div class="content">
@@ -996,278 +383,289 @@ select.field { cursor: pointer; }
       <!-- DASHBOARD -->
       <div class="page active" id="page-dashboard">
         <div class="stats-row">
-          <div class="stat">
-            <div class="stat-n" id="statNotes">0</div>
-            <div class="stat-l">Notes</div>
-          </div>
-          <div class="stat">
-            <div class="stat-n" id="statTasks">0</div>
-            <div class="stat-l">Open tasks</div>
-          </div>
-          <div class="stat">
-            <div class="stat-n" id="statStreak">0</div>
-            <div class="stat-l">Day streak</div>
-          </div>
-          <div class="stat">
-            <div class="stat-n" id="statFocus">0</div>
-            <div class="stat-l">Focus hrs</div>
-          </div>
+          <div class="stat"><div class="stat-n" id="statNotes">0</div><div class="stat-l">Notes</div></div>
+          <div class="stat"><div class="stat-n" id="statTasks">0</div><div class="stat-l">Open tasks</div></div>
+          <div class="stat"><div class="stat-n" id="statStreak">0</div><div class="stat-l">Day streak</div></div>
+          <div class="stat"><div class="stat-n" id="statFocus">0</div><div class="stat-l">Focus hrs</div></div>
         </div>
-
         <div class="qa-row">
-          <div class="qa" onclick="openCapture()"><span class="qa-icon">↓</span> Quick Capture</div>
-          <div class="qa" onclick="newNote()"><span class="qa-icon">+</span> New Note</div>
-          <div class="qa" onclick="goto('focus')"><span class="qa-icon">◎</span> Start Focus</div>
-          <div class="qa" onclick="goto('journal')"><span class="qa-icon">◉</span> Daily Journal</div>
-          <div class="qa" onclick="goto('scripts')"><span class="qa-icon">⟨/⟩</span> Scripts</div>
+          <div class="qa" onclick="openCapture()">↓ Quick Capture</div>
+          <div class="qa" onclick="newNote()">+ New Note</div>
+          <div class="qa" onclick="goto('focus')">○ Focus</div>
+          <div class="qa" onclick="goto('live')">◉ Live Feed</div>
+          <div class="qa" onclick="goto('agents')">⚡ Agents</div>
+          <div class="qa" onclick="goto('scripts')">⟨/⟩ Scripts</div>
         </div>
-
         <div class="g2">
           <div class="panel">
-            <div class="panel-head">
-              <span class="panel-head-title">Recent Captures</span>
-              <button class="btn btn-ghost btn-sm" onclick="goto('capture')">View all</button>
-            </div>
-            <div class="panel-body"><div id="recentCaptures" class="row-list"></div></div>
+            <div class="ph"><span class="ph-t">Recent Captures</span><button class="btn btn-g btn-sm" onclick="goto('capture')">View all</button></div>
+            <div class="pb"><div id="recentCaptures" class="rl"></div></div>
           </div>
           <div class="panel">
-            <div class="panel-head"><span class="panel-head-title">Activity</span></div>
-            <div class="panel-body"><div id="activityFeed"></div></div>
+            <div class="ph"><span class="ph-t">Activity</span><span id="actSource" style="font-family:var(--mono);font-size:9px;color:var(--tx3);"></span></div>
+            <div class="pb"><div id="activityFeed"></div></div>
           </div>
         </div>
-
-        <div class="panel">
-          <div class="panel-head">
-            <span class="panel-head-title">Active Tasks</span>
-            <button class="btn btn-ghost btn-sm" onclick="goto('kanban')">Kanban</button>
-          </div>
-          <div class="panel-body"><div id="dashTasks" class="row-list"></div></div>
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Active Tasks</span><button class="btn btn-g btn-sm" onclick="goto('kanban')">Kanban</button></div>
+          <div class="pb"><div id="dashTasks" class="rl"></div></div>
         </div>
       </div>
 
       <!-- CAPTURE -->
       <div class="page" id="page-capture">
-        <div class="capture-block">
-          <div class="sec-label">Quick Capture — dump semua sekarang, proses nanti</div>
-          <textarea class="field" id="captureText" rows="3" placeholder="Idea, task, link, insight… Ctrl+Enter to save"></textarea>
-          <div class="capture-row">
-            <select class="cap-select" id="captureType">
-              <option>idea</option>
-              <option>task</option>
-              <option>resource</option>
-              <option>bug</option>
-              <option>script</option>
-              <option>vuln</option>
-              <option>quote</option>
-            </select>
-            <input class="field" style="width:140px;padding:5px 8px;font-size:12px;" type="text" id="captureTag" placeholder="#tag">
-            <button class="btn btn-primary btn-sm" onclick="saveCapture()">Save</button>
+        <div class="panel mb">
+          <div class="ph"><span class="ph-t">Quick Capture</span><span id="capMcpStatus" style="font-family:var(--mono);font-size:9px;color:var(--tx3);">local</span></div>
+          <div class="pb">
+            <textarea class="field mb" id="captureText" rows="3" placeholder="Idea, task, link, insight… Ctrl+Enter to save" style="margin-bottom:8px;"></textarea>
+            <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;">
+              <select class="field" style="width:auto;padding:4px 8px;font-size:11px;font-family:var(--mono);" id="captureType">
+                <option>idea</option><option>task</option><option>resource</option><option>bug</option><option>script</option><option>vuln</option><option>quote</option>
+              </select>
+              <input class="field" style="width:130px;padding:5px 8px;font-size:12px;" type="text" id="captureTag" placeholder="#tag">
+              <button class="btn btn-p btn-sm" onclick="saveCapture()">Save</button>
+            </div>
           </div>
         </div>
-        <div class="sec-label">Inbox <span id="inboxCount" style="font-weight:400;color:var(--tx3)"></span></div>
-        <div id="inboxList" class="row-list"></div>
+        <div class="sec">Inbox <span id="inboxCount" style="font-weight:400;color:var(--tx3);"></span></div>
+        <div id="inboxList" class="rl"></div>
       </div>
 
       <!-- NOTES -->
       <div class="page" id="page-notes">
         <div class="editor-shell">
-          <div class="notes-list-panel">
-            <div class="panel-head">
-              <span class="panel-head-title">All Notes</span>
-              <button class="btn btn-primary btn-sm" onclick="newNote()">+</button>
-            </div>
-            <div class="nlist-body" id="notesList"></div>
+          <div class="nlp">
+            <div class="ph"><span class="ph-t">Notes</span><button class="btn btn-p btn-sm" onclick="newNote()">+</button></div>
+            <div class="nlb" id="notesList"></div>
           </div>
-          <div class="editor-panel">
-            <div class="editor-toolbar">
-              <button class="tool-btn" onclick="fmt('bold')"><b>B</b></button>
-              <button class="tool-btn" onclick="fmt('italic')"><i>I</i></button>
-              <button class="tool-btn" onclick="insertMd('# ')">H1</button>
-              <button class="tool-btn" onclick="insertMd('## ')">H2</button>
-              <button class="tool-btn" onclick="insertMd('- ')">List</button>
-              <button class="tool-btn" onclick="insertMd('```\n\n```')">Code</button>
-              <button class="tool-btn" onclick="insertMd('> ')">Quote</button>
-              <div style="margin-left:auto;display:flex;gap:6px;">
-                <button class="btn btn-ghost btn-sm" onclick="saveNote()">Save</button>
-                <button class="btn btn-sm" style="border:1px solid var(--border);color:var(--rose);background:transparent;" onclick="deleteCurrentNote()">Delete</button>
+          <div class="ep">
+            <div class="etb">
+              <button class="tbtn" onclick="fmt('bold')"><b>B</b></button>
+              <button class="tbtn" onclick="fmt('italic')"><i>I</i></button>
+              <button class="tbtn" onclick="insertMd('# ')">H1</button>
+              <button class="tbtn" onclick="insertMd('## ')">H2</button>
+              <button class="tbtn" onclick="insertMd('- ')">List</button>
+              <button class="tbtn" onclick="insertMd('```\n\n```')">Code</button>
+              <button class="tbtn" onclick="insertMd('> ')">Quote</button>
+              <div style="margin-left:auto;display:flex;gap:5px;">
+                <button class="btn btn-g btn-sm" onclick="saveNote()">Save</button>
+                <button class="btn btn-sm" style="border:1px solid var(--border);color:var(--rose);background:transparent;" onclick="deleteNote()">Del</button>
               </div>
             </div>
-            <input class="note-title-input" id="noteTitle" placeholder="Untitled note">
-            <textarea class="note-content-area" id="noteContent" placeholder="Start writing… markdown supported"></textarea>
+            <input class="nti" id="noteTitle" placeholder="Untitled note">
+            <textarea class="nca" id="noteContent" placeholder="Write in markdown…"></textarea>
           </div>
         </div>
       </div>
 
       <!-- KANBAN -->
       <div class="page" id="page-kanban">
-        <div style="display:flex;gap:8px;margin-bottom:14px;">
-          <button class="btn btn-primary btn-sm" onclick="addTask()">+ Add task</button>
-          <button class="btn btn-ghost btn-sm" onclick="clearDone()">Clear done</button>
+        <div style="display:flex;gap:7px;margin-bottom:13px;">
+          <button class="btn btn-p btn-sm" onclick="addTask()">+ Add task</button>
+          <button class="btn btn-g btn-sm" onclick="clearDone()">Clear done</button>
         </div>
         <div class="kanban" id="kanbanBoard"></div>
       </div>
 
-      <!-- JOURNAL -->
-      <div class="page" id="page-journal">
-        <div class="journal-entry mb">
-          <div class="journal-head">
-            <span class="journal-date-display" id="journalDate"></span>
-            <span class="journal-day" id="journalDay"></span>
+      <!-- LIVE FEED -->
+      <div class="page" id="page-live">
+        <div class="live-header">
+          <div class="live-dot"></div>
+          <span class="live-label">Live Activity</span>
+          <span class="live-ts" id="liveTs">—</span>
+          <button class="btn btn-g btn-sm" style="margin-left:8px;" onclick="refreshLive()">↻ Refresh</button>
+        </div>
+        <div id="liveGhError" style="display:none;" class="panel mb">
+          <div class="pb" id="liveGhErrorMsg"></div>
+        </div>
+        <div class="g2 mb">
+          <div class="panel">
+            <div class="ph"><span class="ph-t">Pull Requests</span><span id="prCount" style="font-family:var(--mono);font-size:10px;color:var(--tx3);">—</span></div>
+            <div class="pb"><div id="livePs" class="rl"></div></div>
           </div>
-          <div class="journal-body">
-            <div class="j-section">
-              <h4>Mood</h4>
-              <div class="mood-row">
-                <button class="mood-btn" data-mood="5" onclick="setMood(this)">😄</button>
-                <button class="mood-btn" data-mood="4" onclick="setMood(this)">😊</button>
-                <button class="mood-btn" data-mood="3" onclick="setMood(this)">😐</button>
-                <button class="mood-btn" data-mood="2" onclick="setMood(this)">😔</button>
-                <button class="mood-btn" data-mood="1" onclick="setMood(this)">😫</button>
-              </div>
-            </div>
-            <div class="j-section">
-              <h4>3 Priorities hari ini</h4>
-              <textarea class="field" id="jPriorities" rows="3" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
-            </div>
-            <div class="j-section">
-              <h4>Brain Dump</h4>
-              <textarea class="field" id="jBrainDump" rows="4" placeholder="Tulis semua yang ada di kepala tanpa filter…"></textarea>
-            </div>
-            <div class="j-section">
-              <h4>Achieved today</h4>
-              <textarea class="field" id="jAchieved" rows="3" placeholder="Apa yang berhasil diselesaikan…"></textarea>
-            </div>
-            <div class="j-section">
-              <h4>Learned</h4>
-              <textarea class="field" id="jLearned" rows="3" placeholder="Ilmu / insight baru hari ini…"></textarea>
-            </div>
-            <div class="j-section">
-              <h4>Reflection</h4>
-              <textarea class="field" id="jReflection" rows="3" placeholder="Refleksi…"></textarea>
-            </div>
-            <button class="btn btn-primary btn-sm" onclick="saveJournal()">Save journal</button>
+          <div class="panel">
+            <div class="ph"><span class="ph-t">Issues</span><span id="issueCount" style="font-family:var(--mono);font-size:10px;color:var(--tx3);">—</span></div>
+            <div class="pb"><div id="liveIs" class="rl"></div></div>
           </div>
         </div>
-        <div class="sec-label">Past Journals</div>
-        <div id="pastJournals" class="row-list"></div>
+        <div class="panel">
+          <div class="ph"><span class="ph-t">Recent Commits</span><span id="commitCount" style="font-family:var(--mono);font-size:10px;color:var(--tx3);">—</span></div>
+          <div class="pb"><div id="liveCs" class="rl"></div></div>
+        </div>
+      </div>
+
+      <!-- AGENTS -->
+      <div class="page" id="page-agents">
+        <div class="sec" style="margin-bottom:14px;">Agentic Workflows — dispatch tasks directly from Second Brain</div>
+        <div class="agent-grid">
+          <div class="agent-card">
+            <div class="ac-head"><span class="ac-icon">📥</span><div><div class="ac-name">Daily Review</div><div style="font-family:var(--mono);font-size:10px;color:var(--tx3);">daily-review</div></div></div>
+            <div class="ac-desc">Triage inbox, review open tasks, auto-generate priorities, save journal entry.</div>
+            <div class="run-btn" onclick="runAgent('daily')">▶ Run Daily Review</div>
+            <div class="ac-log" id="log-daily">Ready.</div>
+          </div>
+          <div class="agent-card">
+            <div class="ac-head"><span class="ac-icon">🎯</span><div><div class="ac-name">Bug Bounty Recon</div><div style="font-family:var(--mono);font-size:10px;color:var(--tx3);">bugbounty-recon</div></div></div>
+            <div class="ac-desc">Full black-box recon on a target — DNS, subdomains, tech stack, attack surface analysis, auto-create tasks.</div>
+            <div class="ac-params">
+              <input type="text" id="p-target" placeholder="target.com" style="font-family:var(--mono);">
+            </div>
+            <div class="run-btn" onclick="runAgent('recon')">▶ Run Recon</div>
+            <div class="ac-log" id="log-recon">Enter target domain above.</div>
+          </div>
+          <div class="agent-card">
+            <div class="ac-head"><span class="ac-icon">🔍</span><div><div class="ac-name">Script Review</div><div style="font-family:var(--mono);font-size:10px;color:var(--tx3);">script-review</div></div></div>
+            <div class="ac-desc">Review Roblox script for detection vectors, bugs, performance issues, aim assist calibration.</div>
+            <div class="ac-params">
+              <select id="p-script" style="font-family:var(--mono);background:var(--overlay);border:1px solid var(--border);border-radius:var(--r);padding:5px 8px;font-size:12px;color:var(--tx);outline:none;">
+                <option>Hub.lua</option><option>ZC.lua</option><option>XZ.lua</option><option>CheatDev.lua</option><option>ESP.lua</option>
+              </select>
+            </div>
+            <div class="run-btn" onclick="runAgent('review')">▶ Run Review</div>
+            <div class="ac-log" id="log-review">Select script above.</div>
+          </div>
+          <div class="agent-card">
+            <div class="ac-head"><span class="ac-icon">🧹</span><div><div class="ac-name">Brain Sync</div><div style="font-family:var(--mono);font-size:10px;color:var(--tx3);">brain-sync</div></div></div>
+            <div class="ac-desc">Sync localStorage data to Brain MCP server — make everything persistent to real files.</div>
+            <div class="run-btn" onclick="runAgent('sync')">▶ Sync to MCP</div>
+            <div class="ac-log" id="log-sync">Requires XC Brain MCP connected.</div>
+          </div>
+          <div class="agent-card">
+            <div class="ac-head"><span class="ac-icon">📊</span><div><div class="ac-name">Brain Stats</div><div style="font-family:var(--mono);font-size:10px;color:var(--tx3);">brain-stats</div></div></div>
+            <div class="ac-desc">Fetch live stats from Brain MCP — tasks, captures, notes, vulns breakdown.</div>
+            <div class="run-btn" onclick="runAgent('stats')">▶ Get Stats</div>
+            <div class="ac-log" id="log-stats">Requires XC Brain MCP connected.</div>
+          </div>
+          <div class="agent-card">
+            <div class="ac-head"><span class="ac-icon">🔎</span><div><div class="ac-name">Brain Search</div><div style="font-family:var(--mono);font-size:10px;color:var(--tx3);">brain-search</div></div></div>
+            <div class="ac-desc">Search across all brain data — notes, captures, tasks, vulns — via Brain MCP.</div>
+            <div class="ac-params">
+              <input type="text" id="p-search" placeholder="search query…" style="font-family:var(--mono);">
+            </div>
+            <div class="run-btn" onclick="runAgent('search')">▶ Search Brain</div>
+            <div class="ac-log" id="log-search">Enter query above.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- JOURNAL -->
+      <div class="page" id="page-journal">
+        <div class="je mb">
+          <div class="jh"><span class="jdate" id="journalDate"></span><span class="jday" id="journalDay"></span></div>
+          <div class="jb">
+            <div class="js"><h4>Mood</h4>
+              <div class="mood-row">
+                <button class="mbt" data-mood="5" onclick="setMood(this)">😄</button>
+                <button class="mbt" data-mood="4" onclick="setMood(this)">😊</button>
+                <button class="mbt" data-mood="3" onclick="setMood(this)">😐</button>
+                <button class="mbt" data-mood="2" onclick="setMood(this)">😔</button>
+                <button class="mbt" data-mood="1" onclick="setMood(this)">😫</button>
+              </div>
+            </div>
+            <div class="js"><h4>3 Priorities</h4><textarea class="field" id="jPri" rows="3" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea></div>
+            <div class="js"><h4>Brain Dump</h4><textarea class="field" id="jDump" rows="4" placeholder="Semua yang ada di kepala tanpa filter…"></textarea></div>
+            <div class="js"><h4>Achieved</h4><textarea class="field" id="jAch" rows="3" placeholder="Apa yang selesai hari ini…"></textarea></div>
+            <div class="js"><h4>Learned</h4><textarea class="field" id="jLearn" rows="3" placeholder="Ilmu / insight baru…"></textarea></div>
+            <div class="js"><h4>Reflection</h4><textarea class="field" id="jRef" rows="3" placeholder="Refleksi…"></textarea></div>
+            <button class="btn btn-p btn-sm" onclick="saveJournal()">Save journal</button>
+          </div>
+        </div>
+        <div class="sec">Past Journals</div>
+        <div id="pastJournals" class="rl"></div>
       </div>
 
       <!-- FOCUS -->
       <div class="page" id="page-focus">
-        <div class="focus-card mb">
-          <div class="focus-phase" id="timerPhase">POMODORO</div>
-          <div class="timer-num" id="timerDisplay">25:00</div>
-          <div class="timer-task-label" id="timerTask">No task selected</div>
-          <div class="timer-controls">
-            <button class="btn btn-ghost btn-sm" onclick="setTimer(25)">25 min</button>
-            <button class="btn btn-ghost btn-sm" onclick="setTimer(50)">50 min</button>
-            <button class="btn btn-ghost btn-sm" onclick="setTimer(5)">5 min break</button>
-            <button class="btn btn-primary btn-sm" id="timerBtn" onclick="toggleTimer()">▶ Start</button>
+        <div class="fc mb">
+          <div class="fp" id="timerPhase">POMODORO</div>
+          <div class="tn" id="timerDisplay">25:00</div>
+          <div class="ttl" id="timerTask">No task selected</div>
+          <div class="tc">
+            <button class="btn btn-g btn-sm" onclick="setTimer(25)">25 min</button>
+            <button class="btn btn-g btn-sm" onclick="setTimer(50)">50 min</button>
+            <button class="btn btn-g btn-sm" onclick="setTimer(5)">5 min break</button>
+            <button class="btn btn-p btn-sm" id="timerBtn" onclick="toggleTimer()">▶ Start</button>
           </div>
         </div>
         <div class="g2">
-          <div class="panel">
-            <div class="panel-head"><span class="panel-head-title">Focus Task</span></div>
-            <div class="panel-body">
-              <textarea class="field" id="focusTaskInput" rows="3" placeholder="Apa yang mau dikerjakan sekarang?"></textarea>
-              <button class="btn btn-ghost btn-sm" style="margin-top:8px;" onclick="setFocusTask()">Set task</button>
-            </div>
-          </div>
-          <div class="panel">
-            <div class="panel-head"><span class="panel-head-title">Sessions Today</span></div>
-            <div class="panel-body">
-              <div class="stat-n" id="sessionCount" style="margin-bottom:4px;">0</div>
-              <div style="font-family:var(--mono);font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.6px;">Pomodoros completed</div>
-              <div style="margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--tx3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.6px;">Today's focus</div>
-              <div class="progress"><div class="progress-fill" id="focusProgress" style="width:0%"></div></div>
-            </div>
-          </div>
+          <div class="panel"><div class="ph"><span class="ph-t">Focus Task</span></div><div class="pb"><textarea class="field" id="focusTaskInput" rows="3" placeholder="Apa yang mau dikerjakan?"></textarea><button class="btn btn-g btn-sm" style="margin-top:7px;" onclick="setFocusTask()">Set task</button></div></div>
+          <div class="panel"><div class="ph"><span class="ph-t">Sessions Today</span></div><div class="pb"><div class="stat-n" id="sessionCount" style="margin-bottom:4px;">0</div><div class="stat-l">Pomodoros</div><div style="margin-top:12px;"><div class="stat-l" style="margin-bottom:5px;">Today's focus</div><div class="prog"><div class="pf" id="focusProgress" style="width:0%"></div></div></div></div></div>
         </div>
       </div>
 
       <!-- HABITS -->
       <div class="page" id="page-habits">
-        <div style="display:flex;gap:8px;margin-bottom:14px;">
-          <button class="btn btn-primary btn-sm" onclick="addHabit()">+ Add habit</button>
-        </div>
+        <div style="display:flex;gap:7px;margin-bottom:13px;"><button class="btn btn-p btn-sm" onclick="addHabit()">+ Add habit</button></div>
         <div class="panel">
-          <div class="panel-head">
-            <span class="panel-head-title">Weekly Tracker</span>
-            <div class="day-labels" id="dayLabels"></div>
-          </div>
+          <div class="ph"><span class="ph-t">Weekly Tracker</span><div class="dlbl" id="dayLabels"></div></div>
           <div id="habitList"></div>
         </div>
       </div>
 
       <!-- SCRIPTS -->
       <div class="page" id="page-scripts">
-        <div class="sec-label" style="margin-bottom:14px;">Load Scripts — XC Hub Suite</div>
-        <div class="script-grid" id="scriptsGrid"></div>
+        <div class="sec" style="margin-bottom:13px;">Scripts Hub — XC / ZC / XZ</div>
+        <div class="sgrid" id="scriptsGrid"></div>
       </div>
 
       <!-- BUG BOUNTY -->
       <div class="page" id="page-bugbounty">
-        <div style="display:flex;gap:8px;margin-bottom:14px;">
-          <button class="btn btn-primary btn-sm" onclick="addVuln()">+ Add finding</button>
-          <button class="btn btn-ghost btn-sm">Export report</button>
+        <div style="display:flex;gap:7px;margin-bottom:13px;">
+          <button class="btn btn-p btn-sm" onclick="addVuln()">+ Add finding</button>
+          <button class="btn btn-g btn-sm" onclick="goto('agents')">⚡ Auto Recon</button>
         </div>
         <div class="g3 mb">
-          <div class="stat">
-            <div class="stat-n" id="bCrit" style="color:var(--rose)">0</div>
-            <div class="stat-l">Critical</div>
-          </div>
-          <div class="stat">
-            <div class="stat-n" id="bHigh" style="color:var(--amber)">0</div>
-            <div class="stat-l">High</div>
-          </div>
-          <div class="stat">
-            <div class="stat-n" id="bMed" style="color:var(--accent)">0</div>
-            <div class="stat-l">Medium</div>
-          </div>
+          <div class="stat"><div class="stat-n" id="bCrit" style="color:var(--rose)">0</div><div class="stat-l">Critical</div></div>
+          <div class="stat"><div class="stat-n" id="bHigh" style="color:var(--amber)">0</div><div class="stat-l">High</div></div>
+          <div class="stat"><div class="stat-n" id="bMed" style="color:var(--accent)">0</div><div class="stat-l">Medium</div></div>
         </div>
         <div id="vulnList"></div>
       </div>
 
       <!-- PARA -->
       <div class="page" id="page-para">
-        <div class="para-grid">
-          <div class="para-card para-projects" onclick="goto('kanban')">
-            <div class="para-n" id="paraProjects">0</div>
-            <div class="para-label">Projects</div>
-            <div class="para-desc">Active work dengan deadline &amp; goal yang jelas</div>
-          </div>
-          <div class="para-card para-areas">
-            <div class="para-n">5</div>
-            <div class="para-label">Areas</div>
-            <div class="para-desc">Tanggung jawab jangka panjang</div>
-          </div>
-          <div class="para-card para-resources">
-            <div class="para-n" id="paraResources">0</div>
-            <div class="para-label">Resources</div>
-            <div class="para-desc">Referensi yang mungkin berguna nanti</div>
-          </div>
-          <div class="para-card para-archive">
-            <div class="para-n">0</div>
-            <div class="para-label">Archive</div>
-            <div class="para-desc">Item selesai atau inactive</div>
-          </div>
+        <div class="pgrid">
+          <div class="pc pp" onclick="goto('kanban')"><div class="pn" id="paraP">0</div><div class="pl2">Projects</div><div class="pd">Active work dengan deadline & goal jelas</div></div>
+          <div class="pc pa"><div class="pn">5</div><div class="pl2">Areas</div><div class="pd">Tanggung jawab jangka panjang</div></div>
+          <div class="pc pr"><div class="pn" id="paraR">0</div><div class="pl2">Resources</div><div class="pd">Referensi yang mungkin berguna nanti</div></div>
+          <div class="pc parch"><div class="pn">0</div><div class="pl2">Archive</div><div class="pd">Item selesai atau inactive</div></div>
         </div>
         <div class="g2">
-          <div class="panel">
-            <div class="panel-head"><span class="panel-head-title">Areas</span></div>
-            <div class="panel-body">
-              <div class="row-list">
-                <div class="row-item"><div class="ri-body"><div class="ri-title">Roblox Dev</div><div class="ri-sub">Scripts, XC Hub, CheatDev, Luau</div><div class="ri-meta"><span class="chip chip-accent">dev</span></div></div></div>
-                <div class="row-item"><div class="ri-body"><div class="ri-title">Bug Bounty</div><div class="ri-sub">Web security, vuln hunting</div><div class="ri-meta"><span class="chip chip-ro">security</span></div></div></div>
-                <div class="row-item"><div class="ri-body"><div class="ri-title">Gaming</div><div class="ri-sub">Free Fire, Roblox, configs</div><div class="ri-meta"><span class="chip chip-em">gaming</span></div></div></div>
-                <div class="row-item"><div class="ri-body"><div class="ri-title">Learning</div><div class="ri-sub">Lua, web security, programming</div><div class="ri-meta"><span class="chip chip-am">learning</span></div></div></div>
-              </div>
-            </div>
+          <div class="panel"><div class="ph"><span class="ph-t">Areas</span></div><div class="pb"><div class="rl">
+            <div class="ri"><div class="rb"><div class="rt">Roblox Dev</div><div class="rs2">Scripts, XC Hub, CheatDev, Luau</div><div class="rm"><span class="chip ch-a">dev</span></div></div></div>
+            <div class="ri"><div class="rb"><div class="rt">Bug Bounty</div><div class="rs2">Web security, vuln hunting</div><div class="rm"><span class="chip ch-r">security</span></div></div></div>
+            <div class="ri"><div class="rb"><div class="rt">Gaming</div><div class="rs2">Free Fire, Roblox, configs</div><div class="rm"><span class="chip ch-e">gaming</span></div></div></div>
+            <div class="ri"><div class="rb"><div class="rt">Learning</div><div class="rs2">Lua, web security, programming</div><div class="rm"><span class="chip ch-m">learning</span></div></div></div>
+          </div></div></div>
+          <div class="panel"><div class="ph"><span class="ph-t">Resources</span></div><div class="pb"><div id="paraRes" class="rl"></div></div></div>
+        </div>
+      </div>
+
+      <!-- MCP SETUP -->
+      <div class="page" id="page-setup">
+        <div class="setup-hero">
+          <h2>Connect Your MCP Servers</h2>
+          <p>Second Brain connects to two MCP servers: GitHub (live repo activity) and XC Brain (persistent file storage). Add them in claude.ai Settings → Connectors.</p>
+        </div>
+        <div class="setup-grid">
+          <div class="setup-card">
+            <h3>GitHub <span class="sh-status" id="ghSetupStatus" style="background:var(--overlay);color:var(--tx3);border:1px solid var(--border);">not connected</span></h3>
+            <p>Connects to your repos — live PRs, issues, commits in the Activity Feed.</p>
+            <p style="color:var(--tx3);font-size:11px;">1. Go to <strong>claude.ai → Settings → Connectors</strong><br>2. Add GitHub connector<br>3. Display name must be exactly: <code style="display:inline;background:var(--overlay);padding:1px 5px;border-radius:3px;font-size:11px;">GitHub</code><br>4. Reload this artifact</p>
+            <p style="font-family:var(--mono);font-size:10px;color:var(--tx3);">Tools used: list_pull_requests, list_issues, list_commits</p>
           </div>
-          <div class="panel">
-            <div class="panel-head"><span class="panel-head-title">Resources</span></div>
-            <div class="panel-body"><div id="paraResourcesList" class="row-list"></div></div>
+          <div class="setup-card">
+            <h3>XC Brain MCP <span class="sh-status" id="brainSetupStatus" style="background:var(--overlay);color:var(--tx3);border:1px solid var(--border);">not connected</span></h3>
+            <p>Persistent real-file storage — notes, tasks, captures saved to repo files instead of localStorage.</p>
+            <p style="color:var(--tx3);font-size:11px;margin-bottom:4px;"><strong>Setup (run locally):</strong></p>
+            <code>cd brain/mcp-server
+node index.js</code>
+            <p style="color:var(--tx3);font-size:11px;margin-top:4px;">Then add as connector in claude.ai with name: <code style="display:inline;background:var(--overlay);padding:1px 5px;border-radius:3px;font-size:11px;">XC Brain</code></p>
           </div>
+        </div>
+        <div class="panel">
+          <div class="ph"><span class="ph-t">Live Connector Status</span><button class="btn btn-g btn-sm" onclick="initMCP()">↻ Recheck</button></div>
+          <div class="pb" id="setupConnectors"><div class="empty">Checking connectors…</div></div>
         </div>
       </div>
 
@@ -1276,19 +674,18 @@ select.field { cursor: pointer; }
 </div><!-- /shell -->
 
 <!-- Capture Modal -->
-<div class="modal-overlay" id="captureModal">
+<div class="modal-ov" id="captureModal">
   <div class="modal">
     <h3>Quick Capture</h3>
     <p>Dump sekarang — proses nanti. Ctrl+Enter to save.</p>
-    <textarea class="field mb" id="modalCaptureText" rows="3" placeholder="Tulis apapun…" style="margin-bottom:8px;"></textarea>
-    <select class="field mb" id="modalCaptureType" style="margin-bottom:8px;">
-      <option>idea</option><option>task</option><option>resource</option>
-      <option>bug</option><option>script</option><option>vuln</option><option>quote</option>
+    <textarea class="field mb" id="mCapText" rows="3" placeholder="Tulis apapun…" style="margin-bottom:7px;"></textarea>
+    <select class="field mb" id="mCapType" style="margin-bottom:7px;font-family:var(--mono);font-size:12px;">
+      <option>idea</option><option>task</option><option>resource</option><option>bug</option><option>script</option><option>vuln</option><option>quote</option>
     </select>
-    <input class="field" id="modalCaptureTag" placeholder="#tag (optional)">
-    <div class="modal-actions">
-      <button class="btn btn-ghost btn-sm" onclick="closeCapture()">Cancel</button>
-      <button class="btn btn-primary btn-sm" onclick="saveCaptureModal()">Capture</button>
+    <input class="field" id="mCapTag" placeholder="#tag (optional)">
+    <div class="mact">
+      <button class="btn btn-g btn-sm" onclick="closeCapture()">Cancel</button>
+      <button class="btn btn-p btn-sm" onclick="saveCaptureModal()">Capture</button>
     </div>
   </div>
 </div>
@@ -1296,532 +693,569 @@ select.field { cursor: pointer; }
 <div class="toast" id="toast"></div>
 
 <script>
-/* ── STATE ── */
-let S = JSON.parse(localStorage.getItem('xcbrain2') || 'null') || {
-  notes: [],
-  captures: [],
-  tasks: [
-    { id:1, title:'Update XC Hub silent aim', desc:'Fix snap timing on tap detection', col:'doing', priority:'high', date:td() },
-    { id:2, title:'Add anti-detect layer v2', desc:'Bypass detection — obfuscation pass', col:'todo', priority:'high', date:td() },
-    { id:3, title:'Bug bounty — full recon', desc:'Run recon.py on new target', col:'todo', priority:'med', date:td() },
-    { id:4, title:'ZC Hub no-recoil tuning', desc:'Adjust kick-back compensation values', col:'done', priority:'low', date:td() },
+// ── STATE ──
+let S = JSON.parse(localStorage.getItem('xcbrain3')||'null') || {
+  notes:[],captures:[],
+  tasks:[
+    {id:1,title:'Update XC Hub silent aim',desc:'Fix snap timing on tap',col:'doing',priority:'high',date:'20 Jul 2026'},
+    {id:2,title:'Anti-detect layer v2',desc:'Bypass detection — obfuscation pass',col:'todo',priority:'high',date:'20 Jul 2026'},
+    {id:3,title:'Bug bounty recon',desc:'Run recon.py on new target',col:'todo',priority:'med',date:'20 Jul 2026'},
+    {id:4,title:'ZC Hub no-recoil tune',desc:'Adjust kick-back values',col:'done',priority:'low',date:'20 Jul 2026'},
   ],
-  vulns: [
-    { id:1, title:'SQL Injection via login param', target:'target.com/login', sev:'critical', desc:'Unfiltered user input passed directly to SQL query. Boolean-based blind confirmed.', status:'Reported' },
-    { id:2, title:'Stored XSS in profile bio', target:'target.com/profile', sev:'high', desc:'Script injection via bio field — executes for all visitors viewing the profile.', status:'Confirmed' },
-    { id:3, title:'IDOR on user data endpoint', target:'api.target.com/user/{id}', sev:'medium', desc:'Horizontal privilege escalation — can read other users\' data by incrementing ID.', status:'Triaged' },
+  vulns:[
+    {id:1,title:'SQL Injection via login param',target:'target.com/login',sev:'critical',desc:'Boolean-based blind confirmed. Unfiltered user input passed directly to SQL query.',status:'Reported'},
+    {id:2,title:'Stored XSS in profile bio',target:'target.com/profile',sev:'high',desc:'Script injection via bio field — executes for all visitors.',status:'Confirmed'},
+    {id:3,title:'IDOR on user data endpoint',target:'api.target.com/user/{id}',sev:'medium',desc:'Horizontal privilege escalation — reads other users\' data.',status:'Triaged'},
   ],
-  habits: [
-    { id:1, name:'Brain dump', streak:3, days:[1,1,1,0,1,0,0] },
-    { id:2, name:'Code 1hr+', streak:5, days:[1,1,1,1,1,0,0] },
-    { id:3, name:'Bug bounty', streak:2, days:[0,1,1,0,0,1,0] },
-    { id:4, name:'Study / learn', streak:7, days:[1,1,1,1,1,1,1] },
-    { id:5, name:'Exercise', streak:0, days:[0,0,1,0,0,0,0] },
+  habits:[
+    {id:1,name:'Brain dump',streak:3,days:[1,1,1,0,1,0,0]},
+    {id:2,name:'Code 1hr+',streak:5,days:[1,1,1,1,1,0,0]},
+    {id:3,name:'Bug bounty',streak:2,days:[0,1,1,0,0,1,0]},
+    {id:4,name:'Study/learn',streak:7,days:[1,1,1,1,1,1,1]},
+    {id:5,name:'Exercise',streak:0,days:[0,0,1,0,0,0,0]},
   ],
-  journals: [],
-  focusSessions: 0,
-  focusHours: 0,
-  timerSessions: 0,
-  timer: { remaining: 25*60, phase:'work', active:false },
+  journals:[],focusSessions:0,focusHours:0,timerSessions:0,
+  timer:{remaining:25*60,phase:'work',active:false},
 };
-function save() { localStorage.setItem('xcbrain2', JSON.stringify(S)); }
+const save=()=>localStorage.setItem('xcbrain3',JSON.stringify(S));
+const td=()=>new Date().toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'});
+function ago(d){try{const m=Math.floor((Date.now()-new Date(d).getTime())/60000);if(m<1)return'just now';if(m<60)return m+'m ago';const h=Math.floor(m/60);if(h<24)return h+'h ago';return Math.floor(h/24)+'d ago';}catch{return'';}}
+const esc=s=>s?(s+'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'):'';
 
-function td() {
-  return new Date().toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
-}
-function ago(d) {
-  try {
-    const diff = Date.now() - new Date(d).getTime();
-    const m = Math.floor(diff/60000);
-    if (m < 1) return 'just now';
-    if (m < 60) return m + 'm ago';
-    const h = Math.floor(m/60);
-    if (h < 24) return h + 'h ago';
-    return Math.floor(h/24) + 'd ago';
-  } catch { return ''; }
-}
-function esc(s) {
-  if (!s) return '';
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-
-/* ── THEME ── */
-let theme = localStorage.getItem('xctheme') || 'auto';
-function applyTheme() {
-  const root = document.documentElement;
-  if (theme === 'dark') root.dataset.theme = 'dark';
-  else if (theme === 'light') root.dataset.theme = 'light';
-  else delete root.dataset.theme;
-}
-function toggleTheme() {
-  const cycle = { auto:'dark', dark:'light', light:'auto' };
-  theme = cycle[theme] || 'auto';
-  localStorage.setItem('xctheme', theme);
-  applyTheme();
-}
+// ── THEME ──
+let theme=localStorage.getItem('xctheme')||'auto';
+function applyTheme(){const r=document.documentElement;if(theme==='dark')r.dataset.theme='dark';else if(theme==='light')r.dataset.theme='light';else delete r.dataset.theme;}
+function toggleTheme(){theme={auto:'dark',dark:'light',light:'auto'}[theme]||'auto';localStorage.setItem('xctheme',theme);applyTheme();}
 applyTheme();
 
-/* ── NAV ── */
-const PAGE_TITLES = {
-  dashboard:'DASHBOARD', capture:'INBOX', notes:'NOTES', kanban:'PROJECTS',
-  journal:'DAILY JOURNAL', focus:'FOCUS MODE', habits:'HABITS',
-  scripts:'SCRIPTS HUB', bugbounty:'BUG BOUNTY', para:'PARA SYSTEM'
-};
-function goto(p) {
-  document.querySelectorAll('.page').forEach(el => el.classList.remove('active'));
-  document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
-  document.getElementById('page-' + p).classList.add('active');
-  document.querySelectorAll('.sb-item').forEach(el => {
-    if (el.getAttribute('onclick')?.includes("'" + p + "'")) el.classList.add('active');
-  });
-  document.getElementById('pageTitle').textContent = PAGE_TITLES[p] || p.toUpperCase();
+// ── MCP STATE ──
+let mcpAvail=false,ghConnected=false,brainConnected=false,liveWatches=[];
+const OWNER='pointrungkat-art',REPO='u';
+
+async function initMCP(){
+  if(!window.claude?.mcp){mcpAvail=false;updatePills();renderSetup();return;}
+  mcpAvail=true;
+  try{
+    const {servers}=await window.claude.mcp.listTools();
+    const gh=servers.find(s=>s.server==='GitHub');
+    const br=servers.find(s=>s.server==='XC Brain');
+    ghConnected=gh?.authStatus==='connected';
+    brainConnected=br?.authStatus==='connected';
+    updatePills(servers);
+    renderSetup(servers);
+    if(ghConnected)startGHWatches();
+    if(brainConnected)document.getElementById('capMcpStatus').textContent='→ XC Brain MCP';
+  }catch(e){console.warn('MCP listTools failed',e);renderSetup([]);}
+}
+
+function updatePills(servers){
+  const p=s=>({connected:'on',needs_reauth:'err'}[s?.authStatus]||'off');
+  setPill('pill-gh',ghConnected?'on':mcpAvail?'off':'off','GH');
+  setPill('pill-brain',brainConnected?'on':mcpAvail?'off':'off','BRAIN');
+}
+function setPill(id,state,label){
+  const el=document.getElementById(id);
+  el.className='mcp-pill pill-'+state;
+  el.textContent=label;
+}
+
+function renderSetup(servers){
+  const conn=document.getElementById('setupConnectors');
+  if(!mcpAvail){conn.innerHTML='<div class="empty">window.claude.mcp not available — open this artifact in claude.ai</div>';return;}
+  if(!servers||!servers.length){conn.innerHTML='<div class="empty">No connectors found. Add GitHub and XC Brain in Settings → Connectors</div>';return;}
+  conn.innerHTML=servers.map(s=>`
+    <div class="ri">
+      <div class="rb">
+        <div class="rt">${esc(s.server)}</div>
+        <div class="rs2">${s.tools.map(t=>t.name).join(', ')||'no tools listed'}</div>
+      </div>
+      <span class="chip ${s.authStatus==='connected'?'ch-e':'ch-r'}">${esc(s.authStatus)}</span>
+    </div>`).join('');
+  const ghSt=document.getElementById('ghSetupStatus');
+  const brSt=document.getElementById('brainSetupStatus');
+  if(ghSt){const st=servers.find(s=>s.server==='GitHub')?.authStatus;ghSt.textContent=st||'not found';ghSt.style.background=st==='connected'?'var(--eb)':'var(--overlay)';ghSt.style.color=st==='connected'?'var(--em)':'var(--tx3)';}
+  if(brSt){const st=servers.find(s=>s.server==='XC Brain')?.authStatus;brSt.textContent=st||'not found';brSt.style.background=st==='connected'?'var(--eb)':'var(--overlay)';brSt.style.color=st==='connected'?'var(--em)':'var(--tx3)';}
+}
+
+// ── GITHUB LIVE WATCHES ──
+function startGHWatches(){
+  teardownWatches();
+  // Watch PRs
+  liveWatches.push(window.claude.mcp.watchTool('GitHub','list_pull_requests',{owner:OWNER,repo:REPO,state:'open'},(ev)=>{
+    if(ev.type==='data'){renderPRs(ev.result.payload);updateLiveTs(ev.result.cache?.storedAt);}
+    else handleMcpErr(ev.error,'PR');
+  },{refetchInterval:90000}));
+  // Watch Issues
+  liveWatches.push(window.claude.mcp.watchTool('GitHub','list_issues',{owner:OWNER,repo:REPO,state:'open'},(ev)=>{
+    if(ev.type==='data'){renderIssues(ev.result.payload);}
+    else handleMcpErr(ev.error,'Issues');
+  },{refetchInterval:90000}));
+  // Watch Commits
+  liveWatches.push(window.claude.mcp.watchTool('GitHub','list_commits',{owner:OWNER,repo:REPO},(ev)=>{
+    if(ev.type==='data'){renderCommits(ev.result.payload);}
+    else handleMcpErr(ev.error,'Commits');
+  },{refetchInterval:120000}));
+  document.getElementById('liveBadge').style.display='inline-block';
+  document.getElementById('actSource').textContent='github live';
+}
+
+function teardownWatches(){liveWatches.forEach(u=>{try{u();}catch{}});liveWatches=[];}
+
+function updateLiveTs(storedAt){
+  const el=document.getElementById('liveTs');
+  if(storedAt)el.textContent='updated '+ago(storedAt);else el.textContent='updated just now';
+}
+
+function handleMcpErr(err,context){
+  const msgs={
+    server_not_connected:`GitHub not connected — add in Settings → Connectors`,
+    needs_reauth:`GitHub auth expired — reconnect in Settings → Connectors`,
+    not_in_manifest:`${context}: tool not in manifest`,
+    blocked_by_policy:`${context}: blocked by org policy`,
+    server_unavailable:`${context}: GitHub temporarily unavailable`,
+    tool_error:`${context}: ${err.message}`,
+  };
+  const msg=msgs[err.code]||`${context}: ${err.message||err.code}`;
+  showLiveError(msg,err.code);
+}
+
+function showLiveError(msg,code){
+  const el=document.getElementById('liveGhError');
+  const mel=document.getElementById('liveGhErrorMsg');
+  if(!el||!mel)return;
+  el.style.display='block';
+  const isAuthz=['server_not_connected','needs_reauth'].includes(code);
+  mel.innerHTML=`<div style="font-size:12px;color:${isAuthz?'var(--amber)':'var(--tx2)'};display:flex;align-items:center;gap:8px;">
+    <span style="font-family:var(--mono);font-size:10px;background:${isAuthz?'var(--ab)':'var(--overlay)'};color:${isAuthz?'var(--amber)':'var(--tx3)'};padding:2px 7px;border-radius:var(--rs);">${code}</span>
+    ${esc(msg)}
+    ${isAuthz?`<a href="https://claude.ai/settings/connectors" target="_blank" style="margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--accent);">Open Settings →</a>`:''}
+  </div>`;
+}
+
+function renderPRs(payload){
+  const prs=Array.isArray(payload)?payload:(payload?.items||payload?.pull_requests||[]);
+  document.getElementById('prCount').textContent=prs.length+' open';
+  document.getElementById('livePs').innerHTML=prs.slice(0,6).map(p=>`
+    <div class="ri ri-live">
+      <div class="rb">
+        <div class="rt">${esc(p.title||p.name||JSON.stringify(p).substring(0,60))}</div>
+        <div class="rs2">${esc(p.user?.login||p.author||'')}${p.created_at?' · '+ago(p.created_at):''}</div>
+      </div>
+      <span class="chip ch-a">#${p.number||'PR'}</span>
+    </div>`).join('')||'<div class="empty">No open PRs</div>';
+  // mirror to dashboard activity
+  renderActivity(prs,'pr');
+}
+function renderIssues(payload){
+  const issues=Array.isArray(payload)?payload:(payload?.items||payload?.issues||[]);
+  document.getElementById('issueCount').textContent=issues.length+' open';
+  document.getElementById('liveIs').innerHTML=issues.slice(0,6).map(i=>`
+    <div class="ri ri-live">
+      <div class="rb">
+        <div class="rt">${esc(i.title||JSON.stringify(i).substring(0,60))}</div>
+        <div class="rs2">${esc(i.user?.login||'')}${i.created_at?' · '+ago(i.created_at):''}</div>
+      </div>
+      <span class="chip ch-r">#${i.number||'#'}</span>
+    </div>`).join('')||'<div class="empty">No open issues</div>';
+}
+function renderCommits(payload){
+  const commits=Array.isArray(payload)?payload:(payload?.commits||[]);
+  document.getElementById('commitCount').textContent=commits.length+' recent';
+  document.getElementById('liveCs').innerHTML=commits.slice(0,8).map(c=>{
+    const msg=c.commit?.message||c.message||JSON.stringify(c).substring(0,60);
+    const author=c.commit?.author?.name||c.author?.login||'';
+    const date=c.commit?.author?.date||c.commit?.committer?.date||'';
+    return`<div class="ri ri-live">
+      <div class="rb">
+        <div class="rt">${esc(msg.split('\n')[0])}</div>
+        <div class="rs2">${esc(author)}${date?' · '+ago(date):''}</div>
+      </div>
+      <span class="chip ch-c" style="font-family:var(--mono);font-size:9px;">${(c.sha||'').substring(0,7)||'—'}</span>
+    </div>`;
+  }).join('')||'<div class="empty">No commits found</div>';
+}
+
+let ghActivity=[];
+function renderActivity(prs,type){
+  ghActivity=prs.slice(0,5).map(p=>({text:(type==='pr'?'PR: ':'Issue: ')+p.title,time:ago(p.created_at||p.updated_at||Date.now()),c:'var(--accent)'}));
+  renderDashboard();
+}
+
+function refreshLive(){document.getElementById('liveTs').textContent='refreshing…';teardownWatches();if(ghConnected)startGHWatches();}
+
+// ── AGENT DISPATCH ──
+async function runAgent(name){
+  const logEl=document.getElementById('log-'+name);
+  const log=m=>{logEl.textContent=m;};
+  const logMap={
+    daily:{fn:agentDaily},
+    recon:{fn:agentRecon},
+    review:{fn:agentReview},
+    sync:{fn:agentSync},
+    stats:{fn:agentStats},
+    search:{fn:agentSearch},
+  };
+  const ag=logMap[name];
+  if(!ag){log('Unknown agent');return;}
+  try{await ag.fn(log);}catch(e){log('Error: '+e.message);}
+}
+
+async function agentDaily(log){
+  log('Checking inbox…');
+  const total=S.captures.filter(c=>!c.processed).length;
+  const open=S.tasks.filter(t=>t.col!=='done').length;
+  if(brainConnected){
+    log('Fetching from Brain MCP…');
+    try{
+      const r=await window.claude.mcp.callTool('XC Brain','brain_get_stats',{});
+      const stats=r.payload||JSON.parse(r.content[0].text);
+      log(`Stats from MCP:\n• Captures: ${stats.captures.unprocessed} unprocessed\n• Tasks: ${stats.tasks.open} open\n• Notes: ${stats.notes.total}`);
+    }catch(e){log('Brain MCP error: '+handleCallError(e));}
+  }else{
+    log(`Local mode:\n• Inbox: ${total} unprocessed\n• Tasks: ${open} open\n\nConnect Brain MCP for persistent storage.\nSuggested priorities based on open tasks:\n`+S.tasks.filter(t=>t.col!=='done').slice(0,3).map((t,i)=>`${i+1}. ${t.title}`).join('\n'));
+  }
+}
+
+async function agentRecon(log){
+  const target=document.getElementById('p-target').value.trim();
+  if(!target){log('Enter a target domain first.');return;}
+  log(`Starting recon on ${target}…\n\nThis dispatches to Claude Code via CLAUDE.md workflow.\nRun locally:\n  claude code\n  /C raw loadstring… \n\nCapturing target to inbox…`);
+  S.captures.push({id:Date.now(),text:`Recon target: ${target} — manual investigation pending`,type:'vuln',tag:target,date:new Date().toISOString(),processed:false});
+  save();updateStats();
+  if(brainConnected){
+    try{
+      await window.claude.mcp.callTool('XC Brain','brain_capture',{text:`Recon target: ${target}`,type:'vuln',tag:target});
+      log(`Target ${target} captured to Brain MCP.\nRun recon.py from Claude Code:\n  python3 bugbounty/recon.py ${target}`);
+    }catch(e){log('Capture to MCP failed: '+handleCallError(e));}
+  }else{
+    log(`Target ${target} captured locally.\nRun: python3 bugbounty/recon.py ${target}`);
+  }
+}
+
+async function agentReview(log){
+  const file=document.getElementById('p-script').value;
+  log(`Reviewing ${file}…\n\nRun Claude Code review:\n  /code-review ${file}\n\nCreating review task…`);
+  S.tasks.push({id:Date.now(),title:`Review: ${file}`,desc:'Check detection vectors, bugs, perf, aim calibration',col:'todo',priority:'high',date:td()});
+  save();
+  log(`Task created: Review ${file}\n\nOpen Claude Code and run:\n  /review ${file}`);
+  toast('Review task created');
+}
+
+async function agentSync(log){
+  if(!brainConnected){log('XC Brain MCP not connected.\nRun: node brain/mcp-server/index.js\nThen add as connector in claude.ai');return;}
+  log('Syncing captures…');
+  let ok=0,fail=0;
+  for(const c of S.captures.slice(-20)){
+    try{await window.claude.mcp.callTool('XC Brain','brain_capture',{text:c.text,type:c.type,tag:c.tag||''});ok++;}
+    catch{fail++;}
+  }
+  log(`Captures: ${ok} synced, ${fail} failed\n\nSyncing tasks…`);
+  let tok=0;
+  for(const t of S.tasks){
+    try{await window.claude.mcp.callTool('XC Brain','brain_create_task',{title:t.title,desc:t.desc,priority:t.priority,col:t.col});tok++;}
+    catch{}
+  }
+  log(`Done.\n• Captures: ${ok}/${S.captures.length} synced\n• Tasks: ${tok}/${S.tasks.length} synced\n\nData now persistent in brain/data/`);
+  toast('Sync complete');
+}
+
+async function agentStats(log){
+  if(!brainConnected){log('XC Brain MCP not connected.');return;}
+  log('Fetching stats from Brain MCP…');
+  try{
+    const r=await window.claude.mcp.callTool('XC Brain','brain_get_stats',{});
+    const st=r.payload||JSON.parse(r.content[0].text);
+    log(`Brain MCP Stats:\n\nCaptures: ${st.captures.total} total, ${st.captures.unprocessed} unprocessed\n\nTasks: ${st.tasks.open} open\n  todo: ${st.tasks.by_col.todo}\n  doing: ${st.tasks.by_col.doing}\n  review: ${st.tasks.by_col.review}\n  done: ${st.tasks.by_col.done}\n\nNotes: ${st.notes.total}\n\nVulns: ${st.vulns.total}\n  critical: ${st.vulns.by_sev.critical}\n  high: ${st.vulns.by_sev.high}\n  medium: ${st.vulns.by_sev.medium}\n\nJournals: ${st.journals.total}\nLatest: ${st.journals.latest||'none'}`);
+  }catch(e){log('Error: '+handleCallError(e));}
+}
+
+async function agentSearch(log){
+  const q=document.getElementById('p-search').value.trim();
+  if(!q){log('Enter a search query.');return;}
+  if(!brainConnected){
+    // local search fallback
+    const results=[];
+    S.notes.filter(n=>n.title?.toLowerCase().includes(q.toLowerCase())||n.content?.toLowerCase().includes(q.toLowerCase())).forEach(n=>results.push('note: '+n.title));
+    S.captures.filter(c=>c.text?.toLowerCase().includes(q.toLowerCase())).forEach(c=>results.push('capture: '+c.text.substring(0,50)));
+    S.tasks.filter(t=>t.title?.toLowerCase().includes(q.toLowerCase())).forEach(t=>results.push('task: '+t.title));
+    log(results.length?`Local search "${q}":\n`+results.join('\n'):`No results for "${q}" in local data.`);
+  }else{
+    log(`Searching Brain MCP for "${q}"…`);
+    try{
+      const r=await window.claude.mcp.callTool('XC Brain','brain_search',{query:q});
+      const sr=r.payload||JSON.parse(r.content[0].text);
+      log(`${sr.count} results for "${q}":\n`+(sr.results.map(x=>`[${x.source}] ${x.title}`).join('\n')||'none'));
+    }catch(e){log('Error: '+handleCallError(e));}
+  }
+}
+
+function handleCallError(e){
+  const codes={server_not_connected:'server not connected',needs_reauth:'needs re-authentication',tool_error:e.message||'tool error',server_unavailable:'server unavailable (retry)'};
+  return codes[e.code]||e.message||e.code||String(e);
+}
+
+// ── NAV ──
+const TITLES={dashboard:'DASHBOARD',capture:'INBOX',notes:'NOTES',kanban:'PROJECTS',live:'ACTIVITY FEED',agents:'AGENTS',journal:'DAILY JOURNAL',focus:'FOCUS MODE',habits:'HABITS',scripts:'SCRIPTS HUB',bugbounty:'BUG BOUNTY',para:'PARA SYSTEM',setup:'MCP SETUP'};
+function goto(p){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.querySelectorAll('.si').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.querySelectorAll('.si').forEach(e=>{if(e.getAttribute('onclick')?.includes("'"+p+"'"))e.classList.add('active');});
+  document.getElementById('pageTitle').textContent=TITLES[p]||p.toUpperCase();
   render(p);
 }
-function render(p) {
-  if (p === 'dashboard') renderDashboard();
-  if (p === 'capture') renderCaptures();
-  if (p === 'notes') renderNotes();
-  if (p === 'kanban') renderKanban();
-  if (p === 'journal') renderJournal();
-  if (p === 'habits') renderHabits();
-  if (p === 'scripts') renderScripts();
-  if (p === 'bugbounty') renderBugBounty();
-  if (p === 'para') renderPARA();
+function render(p){
+  if(p==='dashboard')renderDashboard();
+  if(p==='capture')renderCaptures();
+  if(p==='notes')renderNotes();
+  if(p==='kanban')renderKanban();
+  if(p==='journal')renderJournal();
+  if(p==='habits')renderHabits();
+  if(p==='scripts')renderScripts();
+  if(p==='bugbounty')renderBugBounty();
+  if(p==='para')renderPARA();
+  if(p==='setup')initMCP();
   updateStats();
 }
 
-function updateStats() {
-  document.getElementById('statNotes').textContent = S.notes.length;
-  document.getElementById('statTasks').textContent = S.tasks.filter(t => t.col !== 'done').length;
-  const streak = S.habits.reduce((m,h) => Math.max(m, h.streak), 0);
-  document.getElementById('statStreak').textContent = streak;
-  document.getElementById('statFocus').textContent = S.focusHours;
-  const inbox = S.captures.filter(c => !c.processed).length;
-  const badge = document.getElementById('inboxBadge');
-  badge.textContent = inbox;
-  badge.style.display = inbox ? 'inline-block' : 'none';
-  // sidebar date
-  document.getElementById('sbDate').textContent = new Date().toLocaleDateString('id-ID', {day:'2-digit', month:'short'});
+function updateStats(){
+  document.getElementById('statNotes').textContent=S.notes.length;
+  document.getElementById('statTasks').textContent=S.tasks.filter(t=>t.col!=='done').length;
+  document.getElementById('statStreak').textContent=S.habits.reduce((m,h)=>Math.max(m,h.streak),0);
+  document.getElementById('statFocus').textContent=S.focusHours;
+  const inbox=S.captures.filter(c=>!c.processed).length;
+  const badge=document.getElementById('inboxBadge');
+  badge.textContent=inbox;badge.style.display=inbox?'inline-block':'none';
+  document.getElementById('sbDate').textContent=new Date().toLocaleDateString('id-ID',{day:'2-digit',month:'short'});
+  document.getElementById('paraP').textContent=S.tasks.filter(t=>t.col!=='done').length;
 }
 
-/* ── DASHBOARD ── */
-function renderDashboard() {
-  const cap = document.getElementById('recentCaptures');
-  const recent = S.captures.slice(-5).reverse();
-  cap.innerHTML = recent.length ? recent.map(c => `
-    <div class="row-item">
-      <div class="ri-body">
-        <div class="ri-title">${esc(c.text.substring(0,70))}${c.text.length > 70 ? '…' : ''}</div>
-        <div class="ri-meta">
-          <span class="chip chip-ghost">${esc(c.type)}</span>
-          ${c.tag ? `<span class="chip chip-cyan">${esc(c.tag)}</span>` : ''}
-        </div>
-      </div>
-      <span class="ri-time">${ago(c.date)}</span>
-    </div>
-  `).join('') : '<div class="empty">No captures yet</div>';
+// ── DASHBOARD ──
+function renderDashboard(){
+  const cap=document.getElementById('recentCaptures');
+  const recent=S.captures.slice(-5).reverse();
+  cap.innerHTML=recent.length?recent.map(c=>`
+    <div class="ri">
+      <div class="rb"><div class="rt">${esc(c.text.substring(0,70))}${c.text.length>70?'…':''}</div>
+        <div class="rm"><span class="chip ch-g">${esc(c.type)}</span>${c.tag?`<span class="chip ch-c">${esc(c.tag)}</span>`:''}</div>
+      </div><span class="rtime">${ago(c.date)}</span>
+    </div>`).join(''):'<div class="empty">No captures yet</div>';
 
-  const af = document.getElementById('activityFeed');
-  const acts = [
-    { text:'XC Hub — silent aim v2 updated', time:'2h ago', c:'var(--accent)' },
-    { text:'Bug bounty: Critical finding reported', time:'4h ago', c:'var(--rose)' },
-    { text:'Daily journal saved', time:'8h ago', c:'var(--cyan)' },
-    { text:'Focus session completed (25 min)', time:'1d ago', c:'var(--emerald)' },
-    { text:'New note: anti-detect ideas', time:'1d ago', c:'var(--amber)' },
+  const af=document.getElementById('activityFeed');
+  const acts=ghActivity.length?ghActivity:[
+    {text:'XC Hub — silent aim v2 pushed',time:'2h ago',c:'var(--accent)'},
+    {text:'Bug bounty: Critical SQLi reported',time:'4h ago',c:'var(--rose)'},
+    {text:'Daily journal saved',time:'8h ago',c:'var(--cyan)'},
+    {text:'Focus session: 25 min complete',time:'1d ago',c:'var(--em)'},
   ];
-  af.innerHTML = acts.map(a => `
-    <div class="act-item">
-      <div class="act-dot" style="background:${a.c}"></div>
-      <div><div class="act-text">${a.text}</div><div class="act-time">${a.time}</div></div>
-    </div>
-  `).join('');
+  af.innerHTML=acts.map(a=>`
+    <div style="display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-bottom:1px solid var(--border-s);">
+      <div style="width:5px;height:5px;border-radius:50%;background:${a.c};margin-top:5px;flex-shrink:0;"></div>
+      <div><div style="font-size:12px;color:var(--tx2);">${a.text}</div><div style="font-family:var(--mono);font-size:10px;color:var(--tx3);margin-top:1px;">${a.time}</div></div>
+    </div>`).join('');
 
-  const dt = document.getElementById('dashTasks');
-  const active = S.tasks.filter(t => t.col !== 'done').slice(0,5);
-  dt.innerHTML = active.map(t => `
-    <div class="row-item" onclick="goto('kanban')" style="border-left-color:${t.col === 'doing' ? 'var(--cyan)' : 'transparent'}">
-      <div class="ri-body">
-        <div class="ri-title">${esc(t.title)}</div>
-        <div class="ri-sub">${esc(t.desc)}</div>
-        <div class="ri-meta">
-          <span class="chip chip-ghost">${t.col}</span>
-        </div>
-      </div>
-      <span class="prio prio-${t.priority}">${t.priority}</span>
-    </div>
-  `).join('') || '<div class="empty">No active tasks</div>';
+  const dt=document.getElementById('dashTasks');
+  dt.innerHTML=S.tasks.filter(t=>t.col!=='done').slice(0,5).map(t=>`
+    <div class="ri" onclick="goto('kanban')" style="border-left-color:${t.col==='doing'?'var(--cyan)':'transparent'}">
+      <div class="rb"><div class="rt">${esc(t.title)}</div><div class="rs2">${esc(t.desc)}</div></div>
+      <span class="prio p${t.priority[0]}">${t.priority}</span>
+    </div>`).join('')||'<div class="empty">No active tasks</div>';
 }
 
-/* ── CAPTURE ── */
-function renderCaptures() {
-  const list = S.captures.slice().reverse();
-  document.getElementById('inboxCount').textContent = `${list.length} items, ${list.filter(c => !c.processed).length} unprocessed`;
-  document.getElementById('inboxList').innerHTML = list.map((c, i) => {
-    const realIdx = S.captures.length - 1 - i;
-    return `
-    <div class="row-item" style="opacity:${c.processed ? .45 : 1}">
-      <div class="ri-body">
-        <div class="ri-title">${esc(c.text)}</div>
-        <div class="ri-meta">
-          <span class="chip chip-ghost">${esc(c.type)}</span>
-          ${c.tag ? `<span class="chip chip-cyan">${esc(c.tag)}</span>` : ''}
-        </div>
+// ── CAPTURE ──
+function renderCaptures(){
+  const list=S.captures.slice().reverse();
+  document.getElementById('inboxCount').textContent=`${list.length} total, ${list.filter(c=>!c.processed).length} unprocessed`;
+  document.getElementById('inboxList').innerHTML=list.map((c,i)=>{
+    const ri=S.captures.length-1-i;
+    return`<div class="ri" style="opacity:${c.processed?.45:1}">
+      <div class="rb"><div class="rt">${esc(c.text)}</div>
+        <div class="rm"><span class="chip ch-g">${esc(c.type)}</span>${c.tag?`<span class="chip ch-c">${esc(c.tag)}</span>`:''}</div>
       </div>
-      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;">
-        <span class="ri-time">${ago(c.date)}</span>
-        <button onclick="markProcessed(${realIdx})" class="btn btn-ghost btn-sm" style="font-size:10px;">${c.processed ? '↩ Undo' : '✓ Done'}</button>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px;flex-shrink:0;">
+        <span class="rtime">${ago(c.date)}</span>
+        <button onclick="markPr(${ri})" class="btn btn-g btn-sm" style="font-size:10px;">${c.processed?'↩ Undo':'✓ Done'}</button>
       </div>
     </div>`;
-  }).join('') || '<div class="empty">Inbox empty</div>';
+  }).join('')||'<div class="empty">Inbox empty</div>';
 }
-function saveCapture() {
-  const text = document.getElementById('captureText').value.trim();
-  if (!text) return;
-  S.captures.push({ text, type: document.getElementById('captureType').value, tag: document.getElementById('captureTag').value.trim(), date: new Date().toISOString(), processed: false });
-  document.getElementById('captureText').value = '';
-  document.getElementById('captureTag').value = '';
-  save(); renderCaptures(); updateStats(); toast('Captured');
+async function saveCapture(){
+  const text=document.getElementById('captureText').value.trim();
+  if(!text)return;
+  const type=document.getElementById('captureType').value;
+  const tag=document.getElementById('captureTag').value.trim();
+  S.captures.push({id:Date.now(),text,type,tag,date:new Date().toISOString(),processed:false});
+  document.getElementById('captureText').value='';document.getElementById('captureTag').value='';
+  save();renderCaptures();updateStats();toast('Captured');
+  if(brainConnected){try{await window.claude.mcp.callTool('XC Brain','brain_capture',{text,type,tag});}catch{}}
 }
-function saveCaptureModal() {
-  const text = document.getElementById('modalCaptureText').value.trim();
-  if (!text) return;
-  S.captures.push({ text, type: document.getElementById('modalCaptureType').value, tag: document.getElementById('modalCaptureTag').value.trim(), date: new Date().toISOString(), processed: false });
-  document.getElementById('modalCaptureText').value = '';
-  document.getElementById('modalCaptureTag').value = '';
-  save(); updateStats(); closeCapture(); toast('Captured');
+async function saveCaptureModal(){
+  const text=document.getElementById('mCapText').value.trim();if(!text)return;
+  const type=document.getElementById('mCapType').value;const tag=document.getElementById('mCapTag').value.trim();
+  S.captures.push({id:Date.now(),text,type,tag,date:new Date().toISOString(),processed:false});
+  document.getElementById('mCapText').value='';document.getElementById('mCapTag').value='';
+  save();updateStats();closeCapture();toast('Captured');
+  if(brainConnected){try{await window.claude.mcp.callTool('XC Brain','brain_capture',{text,type,tag});}catch{}}
 }
-function markProcessed(i) { S.captures[i].processed = !S.captures[i].processed; save(); renderCaptures(); updateStats(); }
-function openCapture() { document.getElementById('captureModal').classList.add('open'); setTimeout(() => document.getElementById('modalCaptureText').focus(), 50); }
-function closeCapture() { document.getElementById('captureModal').classList.remove('open'); }
+function markPr(i){S.captures[i].processed=!S.captures[i].processed;save();renderCaptures();updateStats();}
+function openCapture(){document.getElementById('captureModal').classList.add('open');setTimeout(()=>document.getElementById('mCapText').focus(),50);}
+function closeCapture(){document.getElementById('captureModal').classList.remove('open');}
 
-/* ── NOTES ── */
-let currentNoteId = null;
-function renderNotes() {
-  document.getElementById('notesList').innerHTML = S.notes.map(n => `
-    <div class="nlist-item ${n.id === currentNoteId ? 'active' : ''}" onclick="openNote(${n.id})">
-      <div class="ni-title">${esc(n.title || 'Untitled')}</div>
-      <div class="ni-preview">${esc(n.content?.substring(0,55) || '')}</div>
-      <div class="ni-date">${n.date}</div>
-    </div>
-  `).join('') || '<div class="empty">No notes</div>';
+// ── NOTES ──
+let curNote=null;
+function renderNotes(){
+  document.getElementById('notesList').innerHTML=S.notes.map(n=>`
+    <div class="nli ${n.id===curNote?'active':''}" onclick="openNote(${n.id})">
+      <div class="nt">${esc(n.title||'Untitled')}</div>
+      <div class="np">${esc(n.content?.substring(0,50)||'')}</div>
+      <div class="nd">${n.date}</div>
+    </div>`).join('')||'<div class="empty">No notes</div>';
 }
-function newNote() {
-  const id = Date.now();
-  S.notes.unshift({ id, title:'', content:'', date:td() });
-  currentNoteId = id;
-  save(); renderNotes(); openNote(id); goto('notes');
-}
-function openNote(id) {
-  const n = S.notes.find(x => x.id === id);
-  if (!n) return;
-  currentNoteId = id;
-  document.getElementById('noteTitle').value = n.title || '';
-  document.getElementById('noteContent').value = n.content || '';
-  renderNotes();
-}
-function saveNote() {
-  if (!currentNoteId) return;
-  const n = S.notes.find(x => x.id === currentNoteId);
-  if (n) { n.title = document.getElementById('noteTitle').value; n.content = document.getElementById('noteContent').value; n.date = td(); }
-  save(); renderNotes(); toast('Saved');
-}
-function deleteCurrentNote() {
-  if (!currentNoteId || !confirm('Delete this note?')) return;
-  S.notes = S.notes.filter(n => n.id !== currentNoteId);
-  currentNoteId = null;
-  document.getElementById('noteTitle').value = '';
-  document.getElementById('noteContent').value = '';
-  save(); renderNotes();
-}
-function fmt(cmd) { document.getElementById('noteContent').focus(); document.execCommand(cmd); }
-function insertMd(t) {
-  const ta = document.getElementById('noteContent');
-  const s = ta.selectionStart;
-  ta.value = ta.value.substring(0, s) + t + ta.value.substring(ta.selectionEnd);
-  ta.selectionStart = ta.selectionEnd = s + t.length;
-  ta.focus();
-}
+function newNote(){const id=Date.now();S.notes.unshift({id,title:'',content:'',date:td()});curNote=id;save();renderNotes();openNote(id);goto('notes');}
+function openNote(id){const n=S.notes.find(x=>x.id===id);if(!n)return;curNote=id;document.getElementById('noteTitle').value=n.title||'';document.getElementById('noteContent').value=n.content||'';renderNotes();}
+function saveNote(){if(!curNote)return;const n=S.notes.find(x=>x.id===curNote);if(n){n.title=document.getElementById('noteTitle').value;n.content=document.getElementById('noteContent').value;n.date=td();}save();renderNotes();toast('Saved');}
+function deleteNote(){if(!curNote||!confirm('Delete?'))return;S.notes=S.notes.filter(n=>n.id!==curNote);curNote=null;document.getElementById('noteTitle').value='';document.getElementById('noteContent').value='';save();renderNotes();}
+function fmt(cmd){document.getElementById('noteContent').focus();document.execCommand(cmd);}
+function insertMd(t){const ta=document.getElementById('noteContent');const s=ta.selectionStart;ta.value=ta.value.substring(0,s)+t+ta.value.substring(ta.selectionEnd);ta.selectionStart=ta.selectionEnd=s+t.length;ta.focus();}
 
-/* ── KANBAN ── */
-const COLS = [
-  { id:'todo',   label:'To Do',       color:'var(--tx3)' },
-  { id:'doing',  label:'In Progress', color:'var(--cyan)' },
-  { id:'review', label:'Review',      color:'var(--amber)' },
-  { id:'done',   label:'Done',        color:'var(--emerald)' },
-];
-function renderKanban() {
-  document.getElementById('kanbanBoard').innerHTML = COLS.map(col => `
-    <div class="k-col">
-      <div class="k-col-head">
-        <div class="k-col-dot" style="background:${col.color}"></div>
-        <span class="k-col-title">${col.label}</span>
-        <span class="k-col-count">${S.tasks.filter(t => t.col === col.id).length}</span>
-      </div>
-      <div class="k-col-body">
-        ${S.tasks.filter(t => t.col === col.id).map(t => `
-          <div class="k-card">
-            <div class="k-card-title">${esc(t.title)}</div>
-            <div class="k-card-desc">${esc(t.desc)}</div>
-            <div class="k-card-foot">
-              <span class="prio prio-${t.priority}">${t.priority}</span>
-              <button class="k-move" onclick="moveTask(${t.id},-1)">◀</button>
-              <button class="k-move" onclick="moveTask(${t.id},1)">▶</button>
-              <button class="k-del" onclick="deleteTask(${t.id})">✕</button>
-            </div>
+// ── KANBAN ──
+const COLS=[{id:'todo',label:'To Do',c:'var(--tx3)'},{id:'doing',label:'In Progress',c:'var(--cyan)'},{id:'review',label:'Review',c:'var(--amber)'},{id:'done',label:'Done',c:'var(--em)'}];
+function renderKanban(){
+  document.getElementById('kanbanBoard').innerHTML=COLS.map(col=>`
+    <div class="kc">
+      <div class="kch"><div class="kcd" style="background:${col.c}"></div><span class="kct">${col.label}</span><span class="kcn">${S.tasks.filter(t=>t.col===col.id).length}</span></div>
+      <div class="kcb">${S.tasks.filter(t=>t.col===col.id).map(t=>`
+        <div class="kcard">
+          <div class="ktt">${esc(t.title)}</div>
+          <div class="kds">${esc(t.desc)}</div>
+          <div class="kft">
+            <span class="prio p${t.priority[0]}">${t.priority}</span>
+            <button class="kmv" onclick="mvTask(${t.id},-1)">◀</button>
+            <button class="kmv" onclick="mvTask(${t.id},1)">▶</button>
+            <button class="kdl" onclick="delTask(${t.id})">✕</button>
           </div>
-        `).join('')}
+        </div>`).join('')}
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-function moveTask(id, dir) {
-  const ids = COLS.map(c => c.id);
-  const t = S.tasks.find(x => x.id === id);
-  if (!t) return;
-  t.col = ids[Math.max(0, Math.min(3, ids.indexOf(t.col) + dir))];
-  save(); renderKanban();
+function mvTask(id,d){const ids=COLS.map(c=>c.id);const t=S.tasks.find(x=>x.id===id);if(!t)return;t.col=ids[Math.max(0,Math.min(3,ids.indexOf(t.col)+d))];save();renderKanban();}
+function delTask(id){S.tasks=S.tasks.filter(t=>t.id!==id);save();renderKanban();}
+function clearDone(){S.tasks=S.tasks.filter(t=>t.col!=='done');save();renderKanban();toast('Cleared');}
+function addTask(){const title=prompt('Task title:');if(!title)return;S.tasks.push({id:Date.now(),title,desc:prompt('Description:')||'',col:'todo',priority:'med',date:td()});save();renderKanban();toast('Task added');}
+
+// ── JOURNAL ──
+function renderJournal(){
+  const now=new Date();
+  document.getElementById('journalDate').textContent=now.toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+  document.getElementById('journalDay').textContent=now.toLocaleDateString('id-ID',{weekday:'long'});
+  const key=now.toISOString().split('T')[0];
+  const j=S.journals.find(x=>x.date===key);
+  if(j){document.getElementById('jPri').value=j.priorities||'';document.getElementById('jDump').value=j.braindump||'';document.getElementById('jAch').value=j.achieved||'';document.getElementById('jLearn').value=j.learned||'';document.getElementById('jRef').value=j.reflection||'';if(j.mood)document.querySelectorAll('.mbt').forEach(b=>{if(b.dataset.mood==j.mood)b.classList.add('sel');});}
+  document.getElementById('pastJournals').innerHTML=S.journals.filter(j=>j.date!==key).slice(-5).reverse().map(j=>`
+    <div class="ri"><div class="rb">
+      <div class="rt" style="font-family:var(--mono);">${j.date}</div>
+      <div class="rs2">${esc(j.braindump?.substring(0,80)||'No brain dump')}</div>
+      <div class="rm">${j.mood?`<span class="chip ch-m">mood ${j.mood}/5</span>`:''}</div>
+    </div></div>`).join('')||'<div class="empty">No past journals</div>';
 }
-function deleteTask(id) { S.tasks = S.tasks.filter(t => t.id !== id); save(); renderKanban(); }
-function clearDone() { S.tasks = S.tasks.filter(t => t.col !== 'done'); save(); renderKanban(); toast('Done tasks cleared'); }
-function addTask() {
-  const title = prompt('Task title:'); if (!title) return;
-  const desc = prompt('Description:') || '';
-  S.tasks.push({ id:Date.now(), title, desc, col:'todo', priority:'med', date:td() });
-  save(); renderKanban(); toast('Task added');
+function setMood(btn){document.querySelectorAll('.mbt').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');}
+function saveJournal(){
+  const key=new Date().toISOString().split('T')[0];
+  const mood=document.querySelector('.mbt.sel')?.dataset.mood||null;
+  const entry={date:key,mood,priorities:document.getElementById('jPri').value,braindump:document.getElementById('jDump').value,achieved:document.getElementById('jAch').value,learned:document.getElementById('jLearn').value,reflection:document.getElementById('jRef').value};
+  const i=S.journals.findIndex(x=>x.date===key);
+  if(i>=0)S.journals[i]=entry;else S.journals.push(entry);
+  save();toast('Journal saved');renderJournal();
 }
 
-/* ── JOURNAL ── */
-function renderJournal() {
-  const now = new Date();
-  document.getElementById('journalDate').textContent = now.toLocaleDateString('id-ID', { day:'numeric', month:'long', year:'numeric' });
-  document.getElementById('journalDay').textContent = now.toLocaleDateString('id-ID', { weekday:'long' });
-  const key = now.toISOString().split('T')[0];
-  const j = S.journals.find(x => x.date === key);
-  if (j) {
-    ['Priorities','BrainDump','Achieved','Learned','Reflection'].forEach(k => {
-      const el = document.getElementById('j' + k);
-      if (el) el.value = j[k.toLowerCase()] || '';
-    });
-    if (j.mood) document.querySelectorAll('.mood-btn').forEach(b => { if (b.dataset.mood == j.mood) b.classList.add('selected'); });
-  }
-  document.getElementById('pastJournals').innerHTML = S.journals.filter(j => j.date !== key).slice(-6).reverse().map(j => `
-    <div class="row-item">
-      <div class="ri-body">
-        <div class="ri-title">${j.date}</div>
-        <div class="ri-sub">${esc(j.braindump?.substring(0,80) || 'No brain dump')}</div>
-        <div class="ri-meta">${j.mood ? `<span class="chip chip-am">mood ${j.mood}/5</span>` : ''}</div>
-      </div>
-    </div>
-  `).join('') || '<div class="empty">No past journals</div>';
+// ── HABITS ──
+const DAYS=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+function renderHabits(){
+  document.getElementById('dayLabels').innerHTML=DAYS.map(d=>`<div class="dl">${d}</div>`).join('');
+  document.getElementById('habitList').innerHTML=S.habits.map(h=>`
+    <div class="hr">
+      <div class="hn">${esc(h.name)}</div>
+      <div class="hdays">${h.days.map((d,i)=>`<div class="hday${d?' done':''}" onclick="togHabit(${h.id},${i})" title="${DAYS[i]}"></div>`).join('')}</div>
+      <div class="hst">${h.streak}d</div>
+      <button onclick="delHabit(${h.id})" class="kdl" style="margin-left:3px;">✕</button>
+    </div>`).join('');
 }
-function setMood(btn) { document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected')); btn.classList.add('selected'); }
-function saveJournal() {
-  const key = new Date().toISOString().split('T')[0];
-  const mood = document.querySelector('.mood-btn.selected')?.dataset.mood || null;
-  const entry = {
-    date:key, mood,
-    priorities: document.getElementById('jPriorities').value,
-    braindump:  document.getElementById('jBrainDump').value,
-    achieved:   document.getElementById('jAchieved').value,
-    learned:    document.getElementById('jLearned').value,
-    reflection: document.getElementById('jReflection').value,
-  };
-  const i = S.journals.findIndex(x => x.date === key);
-  if (i >= 0) S.journals[i] = entry; else S.journals.push(entry);
-  save(); toast('Journal saved'); renderJournal();
-}
+function togHabit(id,day){const h=S.habits.find(x=>x.id===id);if(!h)return;h.days[day]^=1;h.streak=h.days.filter(Boolean).length;save();renderHabits();}
+function delHabit(id){S.habits=S.habits.filter(h=>h.id!==id);save();renderHabits();}
+function addHabit(){const name=prompt('Habit name:');if(!name)return;S.habits.push({id:Date.now(),name,streak:0,days:[0,0,0,0,0,0,0]});save();renderHabits();toast('Habit added');}
 
-/* ── HABITS ── */
-const DAYS = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
-function renderHabits() {
-  document.getElementById('dayLabels').innerHTML = DAYS.map(d => `<div class="day-lbl">${d}</div>`).join('');
-  document.getElementById('habitList').innerHTML = S.habits.map(h => `
-    <div class="habit-row">
-      <div class="habit-name">${esc(h.name)}</div>
-      <div class="habit-days">${h.days.map((d,i) => `<div class="habit-day ${d?'done':''}" onclick="toggleHabit(${h.id},${i})" title="${DAYS[i]}"></div>`).join('')}</div>
-      <div class="habit-streak">${h.streak}d</div>
-      <button onclick="deleteHabit(${h.id})" class="k-del" style="margin-left:4px;">✕</button>
-    </div>
-  `).join('');
-}
-function toggleHabit(id, day) {
-  const h = S.habits.find(x => x.id === id);
-  if (!h) return;
-  h.days[day] ^= 1;
-  h.streak = h.days.filter(Boolean).length;
-  save(); renderHabits();
-}
-function deleteHabit(id) { S.habits = S.habits.filter(h => h.id !== id); save(); renderHabits(); }
-function addHabit() {
-  const name = prompt('Habit name:'); if (!name) return;
-  S.habits.push({ id:Date.now(), name, streak:0, days:[0,0,0,0,0,0,0] });
-  save(); renderHabits(); toast('Habit added');
-}
-
-/* ── SCRIPTS ── */
-const SCRIPTS = [
-  { name:'XC Hub', hub:'Main Hub', key:'XCGANG', desc:'ESP, Auto Hop, Auto Chest, Auto Fruit, Crosshair, Aim Assist, Silent Aim', code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Hub.lua"))()' },
-  { name:'ZC Hub', hub:'FPS Hub', key:'ZCFPS', desc:'ESP, Crosshair, Aim Assist, Silent Aim, No Recoil, FPS Boost', code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ZC.lua"))()' },
-  { name:'XZ Hub', hub:'RPG Hub', key:'XZRPG', desc:'Enemy ESP, Auto Farm, Auto Collect, Auto Quest, Auto Chest, Auto Hop', code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/XZ.lua"))()' },
-  { name:'ESP', hub:'Standalone', key:null, desc:'Box hitbox ESP — 4 Drawing objects per player, lightweight', code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ESP.lua"))()' },
-  { name:'Auto Hop', hub:'Standalone', key:null, desc:'Auto server hop every 5 min + anti-AFK system', code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/AutoHop.lua"))()' },
-  { name:'Crosshair', hub:'Standalone', key:null, desc:'Custom crosshair + aim assist + hitmarker overlay', code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Crosshair.lua"))()' },
-  { name:'CheatDev', hub:'Dev Suite', key:null, desc:'Full dev suite — ESP, movement, combat, visual, dev console', code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/CheatDev.lua"))()' },
+// ── SCRIPTS ──
+const SCRIPTS=[
+  {name:'XC Hub',hub:'Main Hub',key:'XCGANG',desc:'ESP, Auto Hop, Auto Chest, Auto Fruit, Crosshair, Aim Assist, Silent Aim',code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Hub.lua"))()'},
+  {name:'ZC Hub',hub:'FPS Hub',key:'ZCFPS',desc:'ESP, Crosshair, Aim Assist, Silent Aim, No Recoil, FPS Boost',code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ZC.lua"))()'},
+  {name:'XZ Hub',hub:'RPG Hub',key:'XZRPG',desc:'Enemy ESP, Auto Farm, Auto Collect, Auto Quest, Auto Chest, Auto Hop',code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/XZ.lua"))()'},
+  {name:'ESP',hub:'Standalone',key:null,desc:'Box hitbox ESP — 4 Drawing objects per player',code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ESP.lua"))()'},
+  {name:'Auto Hop',hub:'Standalone',key:null,desc:'Auto server hop every 5 min + anti-AFK',code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/AutoHop.lua"))()'},
+  {name:'Crosshair',hub:'Standalone',key:null,desc:'Custom crosshair + aim assist + hitmarker',code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Crosshair.lua"))()'},
+  {name:'CheatDev',hub:'Dev Suite',key:null,desc:'Full dev suite — ESP, movement, combat, visual, dev console',code:'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/CheatDev.lua"))()'},
 ];
-function renderScripts() {
-  document.getElementById('scriptsGrid').innerHTML = SCRIPTS.map((s,i) => `
-    <div class="script-card">
-      <div class="sc-head">
-        <div class="sc-dot" style="${s.key ? '' : 'background:var(--tx3)'}"></div>
-        <div>
-          <div class="sc-name">${s.name}</div>
-          <div class="sc-hub">${s.hub}${s.key ? ` · <span class="sc-key">${s.key}</span>` : ''}</div>
-        </div>
-      </div>
-      <div class="sc-desc">${s.desc}</div>
-      <div class="sc-code-wrap">${esc(s.code)}</div>
-      <button class="copy-btn" id="cb${i}" onclick="copyScript(${i})">copy loadstring</button>
-    </div>
-  `).join('');
+function renderScripts(){
+  document.getElementById('scriptsGrid').innerHTML=SCRIPTS.map((s,i)=>`
+    <div class="scard">
+      <div class="sch"><div class="sdot" style="${s.key?'':'background:var(--tx3)'}"></div><div><div class="sn">${s.name}</div><div class="sh">${s.hub}${s.key?` · <span class="sk">${s.key}</span>`:''}</div></div></div>
+      <div class="sd">${s.desc}</div>
+      <div class="scode">${esc(s.code)}</div>
+      <button class="cpbtn" id="cb${i}" onclick="cpScript(${i})">copy loadstring</button>
+    </div>`).join('');
 }
-function copyScript(i) {
-  navigator.clipboard?.writeText(SCRIPTS[i].code);
-  const b = document.getElementById('cb'+i);
-  b.textContent = 'copied!'; b.classList.add('ok');
-  setTimeout(() => { b.textContent = 'copy loadstring'; b.classList.remove('ok'); }, 2000);
+function cpScript(i){navigator.clipboard?.writeText(SCRIPTS[i].code);const b=document.getElementById('cb'+i);b.textContent='copied!';b.classList.add('ok');setTimeout(()=>{b.textContent='copy loadstring';b.classList.remove('ok');},2000);}
+
+// ── BUG BOUNTY ──
+function renderBugBounty(){
+  const cnt={critical:0,high:0,medium:0,low:0};
+  S.vulns.forEach(v=>{cnt[v.sev]=(cnt[v.sev]||0)+1;});
+  document.getElementById('bCrit').textContent=cnt.critical||0;
+  document.getElementById('bHigh').textContent=cnt.high||0;
+  document.getElementById('bMed').textContent=cnt.medium||0;
+  document.getElementById('vulnList').innerHTML=S.vulns.map(v=>`
+    <div class="vc vc${v.sev[0]}">
+      <div class="vhd"><div class="vtt">${esc(v.title)}</div><span class="sev s${v.sev[0]}">${v.sev}</span></div>
+      <div class="vtg">${esc(v.target)}</div>
+      <div class="vds">${esc(v.desc)}</div>
+      <div class="vft"><span class="vst">${esc(v.status)}</span><button onclick="delVuln(${v.id})" class="kdl" style="margin-left:auto;">✕</button></div>
+    </div>`).join('');
+}
+function addVuln(){const title=prompt('Vulnerability title:');if(!title)return;S.vulns.push({id:Date.now(),title,target:prompt('Target:')||'',sev:(prompt('Severity (critical/high/medium/low):')||'medium').toLowerCase(),desc:prompt('Description:')||'',status:'New'});save();renderBugBounty();toast('Finding added');}
+function delVuln(id){S.vulns=S.vulns.filter(v=>v.id!==id);save();renderBugBounty();}
+
+// ── PARA ──
+function renderPARA(){
+  const res=S.captures.filter(c=>c.type==='resource');
+  document.getElementById('paraR').textContent=res.length;
+  document.getElementById('paraRes').innerHTML=res.slice(0,5).map(r=>`
+    <div class="ri"><div class="rb"><div class="rt">${esc(r.text.substring(0,60))}</div>${r.tag?`<div class="rm"><span class="chip ch-e">${esc(r.tag)}</span></div>`:''}</div></div>`).join('')||'<div class="empty">No resources captured yet</div>';
 }
 
-/* ── BUG BOUNTY ── */
-function renderBugBounty() {
-  const cnt = { critical:0, high:0, medium:0, low:0 };
-  S.vulns.forEach(v => cnt[v.sev] = (cnt[v.sev]||0)+1);
-  document.getElementById('bCrit').textContent = cnt.critical || 0;
-  document.getElementById('bHigh').textContent = cnt.high || 0;
-  document.getElementById('bMed').textContent = cnt.medium || 0;
-  document.getElementById('vulnList').innerHTML = S.vulns.map(v => `
-    <div class="vuln-card vc-${v.sev}">
-      <div class="vc-head">
-        <div class="vc-title">${esc(v.title)}</div>
-        <span class="sev-chip sev-${v.sev}">${v.sev}</span>
-      </div>
-      <div class="vc-target">${esc(v.target)}</div>
-      <div class="vc-desc">${esc(v.desc)}</div>
-      <div class="vc-foot">
-        <span class="vc-status">${esc(v.status)}</span>
-        <button onclick="deleteVuln(${v.id})" class="k-del" style="margin-left:auto;">✕</button>
-      </div>
-    </div>
-  `).join('');
+// ── FOCUS TIMER ──
+let timerInt=null;
+function initTimer(){updateTimerDisplay();document.getElementById('sessionCount').textContent=S.timerSessions||0;}
+function setTimer(m){clearInterval(timerInt);timerInt=null;S.timer={remaining:m*60,phase:m<=10?'break':'work',active:false};document.getElementById('timerPhase').textContent=S.timer.phase==='break'?'BREAK':'POMODORO';document.getElementById('timerBtn').textContent='▶ Start';updateTimerDisplay();}
+function toggleTimer(){
+  if(S.timer.active){clearInterval(timerInt);timerInt=null;S.timer.active=false;document.getElementById('timerBtn').textContent='▶ Resume';}
+  else{S.timer.active=true;document.getElementById('timerBtn').textContent='⏸ Pause';
+    timerInt=setInterval(()=>{S.timer.remaining--;if(S.timer.remaining<=0){clearInterval(timerInt);timerInt=null;S.timer.active=false;S.timer.remaining=0;if(S.timer.phase==='work'){S.timerSessions=(S.timerSessions||0)+1;S.focusSessions++;S.focusHours=Math.round(S.focusSessions*25/60*10)/10;document.getElementById('sessionCount').textContent=S.timerSessions;document.getElementById('focusProgress').style.width=Math.min(100,(S.focusHours/4)*100)+'%';updateStats();}save();document.getElementById('timerBtn').textContent='▶ Start';toast('Session done');}updateTimerDisplay();},1000);}
 }
-function addVuln() {
-  const title = prompt('Vulnerability title:'); if (!title) return;
-  const target = prompt('Target:') || '';
-  const sev = (prompt('Severity (critical/high/medium/low):') || 'medium').toLowerCase();
-  const desc = prompt('Description:') || '';
-  S.vulns.push({ id:Date.now(), title, target, sev, desc, status:'New' });
-  save(); renderBugBounty(); toast('Finding added');
-}
-function deleteVuln(id) { S.vulns = S.vulns.filter(v => v.id !== id); save(); renderBugBounty(); }
+function updateTimerDisplay(){const m=Math.floor(S.timer.remaining/60),s=S.timer.remaining%60;document.getElementById('timerDisplay').textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');}
+function setFocusTask(){const t=document.getElementById('focusTaskInput').value.trim();if(t){document.getElementById('timerTask').textContent=t;toast('Task set');}}
 
-/* ── PARA ── */
-function renderPARA() {
-  document.getElementById('paraProjects').textContent = S.tasks.filter(t => t.col !== 'done').length;
-  const res = S.captures.filter(c => c.type === 'resource');
-  document.getElementById('paraResources').textContent = res.length;
-  document.getElementById('paraResourcesList').innerHTML = res.slice(0,5).map(r => `
-    <div class="row-item">
-      <div class="ri-body">
-        <div class="ri-title">${esc(r.text.substring(0,60))}</div>
-        ${r.tag ? `<div class="ri-meta"><span class="chip chip-em">${esc(r.tag)}</span></div>` : ''}
-      </div>
-    </div>
-  `).join('') || '<div class="empty">No resources captured yet</div>';
-}
-
-/* ── FOCUS TIMER ── */
-let timerInt = null;
-function initTimer() { updateTimerDisplay(); document.getElementById('sessionCount').textContent = S.timerSessions || 0; }
-function setTimer(m) {
-  clearInterval(timerInt); timerInt = null;
-  S.timer = { remaining: m*60, phase: m <= 10 ? 'break' : 'work', active: false };
-  document.getElementById('timerPhase').textContent = S.timer.phase === 'break' ? 'BREAK' : 'POMODORO';
-  document.getElementById('timerBtn').textContent = '▶ Start';
-  updateTimerDisplay();
-}
-function toggleTimer() {
-  if (S.timer.active) {
-    clearInterval(timerInt); timerInt = null;
-    S.timer.active = false;
-    document.getElementById('timerBtn').textContent = '▶ Resume';
-  } else {
-    S.timer.active = true;
-    document.getElementById('timerBtn').textContent = '⏸ Pause';
-    timerInt = setInterval(() => {
-      S.timer.remaining--;
-      if (S.timer.remaining <= 0) {
-        clearInterval(timerInt); timerInt = null; S.timer.active = false;
-        S.timer.remaining = 0;
-        if (S.timer.phase === 'work') {
-          S.timerSessions = (S.timerSessions||0)+1;
-          S.focusSessions++;
-          S.focusHours = Math.round(S.focusSessions * 25/60 * 10)/10;
-          document.getElementById('sessionCount').textContent = S.timerSessions;
-          document.getElementById('focusProgress').style.width = Math.min(100, (S.focusHours/4)*100) + '%';
-          updateStats();
-        }
-        save();
-        document.getElementById('timerBtn').textContent = '▶ Start';
-        toast('Session complete');
-      }
-      updateTimerDisplay();
-    }, 1000);
-  }
-}
-function updateTimerDisplay() {
-  const m = Math.floor(S.timer.remaining/60);
-  const s = S.timer.remaining%60;
-  document.getElementById('timerDisplay').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-}
-function setFocusTask() {
-  const t = document.getElementById('focusTaskInput').value.trim();
-  if (t) { document.getElementById('timerTask').textContent = t; toast('Task set'); }
-}
-
-/* ── TOAST ── */
+// ── TOAST ──
 let toastT;
-function toast(msg) {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.classList.add('show');
-  clearTimeout(toastT);
-  toastT = setTimeout(() => el.classList.remove('show'), 2200);
-}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('show'),2200);}
 
-/* ── INIT ── */
-window.addEventListener('DOMContentLoaded', () => {
-  // keyboard shortcuts
-  document.addEventListener('keydown', e => {
-    if ((e.metaKey||e.ctrlKey) && e.key === 'k') { e.preventDefault(); openCapture(); }
-    if (e.key === 'Escape') closeCapture();
-  });
-  document.getElementById('captureText').addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'Enter') saveCapture(); });
-  document.getElementById('modalCaptureText').addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'Enter') saveCaptureModal(); });
-
-  // auto-save notes
-  const nt = document.getElementById('noteTitle');
-  const nc = document.getElementById('noteContent');
-  [nt, nc].forEach(el => el.addEventListener('input', () => {
-    if (!currentNoteId) return;
-    const n = S.notes.find(x => x.id === currentNoteId);
-    if (n) { n.title = nt.value; n.content = nc.value; save(); if (el === nt) renderNotes(); }
-  }));
-
+// ── INIT ──
+window.addEventListener('DOMContentLoaded',()=>{
+  document.addEventListener('keydown',e=>{if((e.metaKey||e.ctrlKey)&&e.key==='k'){e.preventDefault();openCapture();}if(e.key==='Escape')closeCapture();});
+  document.getElementById('captureText').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')saveCapture();});
+  document.getElementById('mCapText').addEventListener('keydown',e=>{if(e.ctrlKey&&e.key==='Enter')saveCaptureModal();});
+  const nt=document.getElementById('noteTitle'),nc=document.getElementById('noteContent');
+  [nt,nc].forEach(el=>el.addEventListener('input',()=>{if(!curNote)return;const n=S.notes.find(x=>x.id===curNote);if(n){n.title=nt.value;n.content=nc.value;save();if(el===nt)renderNotes();}}));
   initTimer();
-  renderDashboard();
-  renderHabits();
-  renderScripts();
-  renderBugBounty();
-  renderJournal();
-  updateStats();
+  renderDashboard();renderHabits();renderScripts();renderBugBounty();renderJournal();updateStats();
+  initMCP();
 });
 </script>
