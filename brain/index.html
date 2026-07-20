@@ -1,0 +1,1880 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>XC Second Brain</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --bg2: #12121a;
+    --bg3: #1a1a28;
+    --bg4: #22223a;
+    --accent: #9b59ff;
+    --accent2: #7c3aed;
+    --accent3: #c084fc;
+    --cyan: #22d3ee;
+    --green: #4ade80;
+    --gold: #fbbf24;
+    --red: #f87171;
+    --pink: #f472b6;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --text3: #64748b;
+    --border: rgba(155,89,255,0.18);
+    --glow: 0 0 20px rgba(155,89,255,0.25);
+    --glow2: 0 0 40px rgba(155,89,255,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 20%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 40% 80%, rgba(155,89,255,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 90% 50%, rgba(34,211,238,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 90%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 70% 40%, rgba(192,132,252,0.5) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Layout */
+  .layout { display: flex; height: 100vh; position: relative; z-index: 1; }
+
+  /* Sidebar */
+  .sidebar {
+    width: 240px;
+    min-width: 240px;
+    background: linear-gradient(180deg, rgba(26,26,40,0.95) 0%, rgba(10,10,20,0.98) 100%);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    overflow-y: auto;
+    backdrop-filter: blur(10px);
+  }
+
+  .logo {
+    padding: 0 20px 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 16px;
+  }
+  .logo h1 {
+    font-size: 18px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent3), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.5px;
+  }
+  .logo span {
+    font-size: 11px;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+  }
+
+  .nav-section {
+    padding: 0 12px;
+    margin-bottom: 8px;
+  }
+  .nav-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text3);
+    padding: 0 8px;
+    margin-bottom: 4px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text2);
+    transition: all 0.2s;
+    border: 1px solid transparent;
+  }
+  .nav-item:hover { background: var(--bg3); color: var(--text); }
+  .nav-item.active {
+    background: rgba(155,89,255,0.15);
+    border-color: var(--border);
+    color: var(--accent3);
+    box-shadow: var(--glow);
+  }
+  .nav-item .icon { font-size: 16px; width: 20px; text-align: center; }
+  .badge {
+    margin-left: auto;
+    background: var(--accent2);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* Main content */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Topbar */
+  .topbar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 24px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,0.8);
+    backdrop-filter: blur(10px);
+  }
+  .topbar h2 {
+    font-size: 18px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #fff, var(--text2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .search-bar {
+    flex: 1;
+    max-width: 400px;
+    margin-left: auto;
+    position: relative;
+  }
+  .search-bar input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 12px 8px 36px;
+    color: var(--text);
+    font-size: 13px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-bar input:focus { border-color: var(--accent); }
+  .search-bar .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text3);
+    font-size: 14px;
+  }
+  .btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: white;
+    box-shadow: 0 4px 15px rgba(155,89,255,0.3);
+  }
+  .btn-primary:hover { box-shadow: 0 4px 25px rgba(155,89,255,0.5); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text2);
+  }
+  .btn-ghost:hover { background: var(--bg3); color: var(--text); }
+
+  /* Content area */
+  .content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px;
+  }
+
+  /* Pages */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* Cards */
+  .card {
+    background: linear-gradient(135deg, rgba(26,26,40,0.9) 0%, rgba(18,18,26,0.95) 100%);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all 0.3s;
+    backdrop-filter: blur(5px);
+  }
+  .card:hover { border-color: rgba(155,89,255,0.4); box-shadow: var(--glow2); }
+
+  /* Dashboard grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    background: linear-gradient(135deg, rgba(26,26,40,0.9), rgba(18,18,26,0.95));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px;
+    text-align: center;
+    transition: all 0.3s;
+  }
+  .stat-card:hover { transform: translateY(-2px); box-shadow: var(--glow); }
+  .stat-num {
+    font-size: 36px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent3), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+  }
+  .stat-label { font-size: 12px; color: var(--text3); margin-top: 6px; text-transform: uppercase; letter-spacing: 1px; }
+  .stat-icon { font-size: 24px; margin-bottom: 8px; }
+
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+
+  .section-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Capture / Inbox */
+  .capture-form {
+    background: linear-gradient(135deg, rgba(26,26,40,0.9), rgba(18,18,26,0.95));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 24px;
+  }
+  .capture-textarea {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px;
+    color: var(--text);
+    font-size: 15px;
+    resize: none;
+    min-height: 80px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    margin-bottom: 12px;
+  }
+  .capture-textarea:focus { border-color: var(--accent); }
+  .capture-meta {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .tag-input {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+    width: 120px;
+  }
+  .type-select {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    color: var(--text);
+    font-size: 12px;
+    outline: none;
+    cursor: pointer;
+  }
+
+  /* Note items */
+  .note-list { display: flex; flex-direction: column; gap: 10px; }
+  .note-item {
+    background: linear-gradient(135deg, rgba(26,26,40,0.8), rgba(18,18,26,0.9));
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .note-item:hover { border-color: rgba(155,89,255,0.4); transform: translateX(3px); }
+  .note-item .note-icon { font-size: 20px; margin-top: 2px; }
+  .note-item .note-body { flex: 1; }
+  .note-item .note-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+  .note-item .note-preview { font-size: 12px; color: var(--text3); line-height: 1.5; }
+  .note-item .note-meta { display: flex; gap: 6px; margin-top: 6px; flex-wrap: wrap; }
+  .tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    font-weight: 600;
+    background: rgba(155,89,255,0.15);
+    border: 1px solid rgba(155,89,255,0.3);
+    color: var(--accent3);
+  }
+  .tag.cyan { background: rgba(34,211,238,0.1); border-color: rgba(34,211,238,0.3); color: var(--cyan); }
+  .tag.green { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.3); color: var(--green); }
+  .tag.gold { background: rgba(251,191,36,0.1); border-color: rgba(251,191,36,0.3); color: var(--gold); }
+  .tag.red { background: rgba(248,113,113,0.1); border-color: rgba(248,113,113,0.3); color: var(--red); }
+  .tag.pink { background: rgba(244,114,182,0.1); border-color: rgba(244,114,182,0.3); color: var(--pink); }
+  .note-date { font-size: 11px; color: var(--text3); margin-left: auto; white-space: nowrap; }
+
+  /* PARA grid */
+  .para-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
+  .para-card {
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid;
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .para-card:hover { transform: translateY(-3px); }
+  .para-card.projects { background: rgba(155,89,255,0.08); border-color: rgba(155,89,255,0.3); }
+  .para-card.areas { background: rgba(34,211,238,0.06); border-color: rgba(34,211,238,0.25); }
+  .para-card.resources { background: rgba(74,222,128,0.06); border-color: rgba(74,222,128,0.25); }
+  .para-card.archive { background: rgba(100,116,139,0.08); border-color: rgba(100,116,139,0.2); }
+  .para-card h3 { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .para-card.projects h3 { color: var(--accent3); }
+  .para-card.areas h3 { color: var(--cyan); }
+  .para-card.resources h3 { color: var(--green); }
+  .para-card.archive h3 { color: var(--text2); }
+  .para-card .para-icon { font-size: 28px; margin-bottom: 10px; }
+  .para-card .para-count { font-size: 28px; font-weight: 900; }
+  .para-card .para-desc { font-size: 11px; color: var(--text3); margin-top: 4px; line-height: 1.5; }
+
+  /* Kanban board */
+  .kanban { display: flex; gap: 16px; overflow-x: auto; padding-bottom: 8px; }
+  .kanban-col {
+    min-width: 260px;
+    background: rgba(18,18,26,0.9);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px;
+  }
+  .kanban-col h3 {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .col-dot { width: 8px; height: 8px; border-radius: 50%; }
+  .dot-purple { background: var(--accent); }
+  .dot-cyan { background: var(--cyan); }
+  .dot-gold { background: var(--gold); }
+  .dot-green { background: var(--green); }
+  .kanban-card {
+    background: rgba(26,26,40,0.95);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .kanban-card:hover { border-color: rgba(155,89,255,0.4); transform: translateY(-1px); box-shadow: var(--glow); }
+  .kanban-card .k-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .kanban-card .k-desc { font-size: 11px; color: var(--text3); line-height: 1.5; margin-bottom: 8px; }
+  .kanban-card .k-meta { display: flex; gap: 6px; align-items: center; }
+  .priority { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 700; }
+  .prio-high { background: rgba(248,113,113,0.2); color: var(--red); }
+  .prio-med { background: rgba(251,191,36,0.2); color: var(--gold); }
+  .prio-low { background: rgba(74,222,128,0.2); color: var(--green); }
+
+  /* Scripts page */
+  .script-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+  .script-card {
+    background: linear-gradient(135deg, rgba(26,26,40,0.9), rgba(18,18,26,0.95));
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .script-card:hover { border-color: rgba(155,89,255,0.4); box-shadow: var(--glow); transform: translateY(-2px); }
+  .script-card .sc-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .script-card .sc-icon { font-size: 22px; }
+  .script-card .sc-name { font-size: 13px; font-weight: 700; color: var(--text); }
+  .script-card .sc-hub { font-size: 10px; color: var(--text3); }
+  .script-card .sc-desc { font-size: 12px; color: var(--text2); line-height: 1.5; margin-bottom: 10px; }
+  .script-card .sc-code {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: 'Courier New', monospace;
+    font-size: 11px;
+    color: var(--cyan);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+  .copy-btn {
+    background: rgba(155,89,255,0.15);
+    border: 1px solid rgba(155,89,255,0.3);
+    color: var(--accent3);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 8px;
+    width: 100%;
+  }
+  .copy-btn:hover { background: rgba(155,89,255,0.3); }
+  .copy-btn.copied { background: rgba(74,222,128,0.2); border-color: rgba(74,222,128,0.4); color: var(--green); }
+
+  /* Notes editor */
+  .editor-area {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 16px;
+    height: calc(100vh - 140px);
+  }
+  .notes-list-panel {
+    background: rgba(18,18,26,0.9);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .panel-header {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .panel-header h3 { font-size: 13px; font-weight: 700; color: var(--text2); }
+  .notes-list-items { overflow-y: auto; flex: 1; padding: 8px; }
+  .note-list-item {
+    padding: 10px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-bottom: 4px;
+  }
+  .note-list-item:hover { background: var(--bg3); }
+  .note-list-item.active { background: rgba(155,89,255,0.15); border: 1px solid rgba(155,89,255,0.3); }
+  .note-list-item .nli-title { font-size: 13px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+  .note-list-item .nli-preview { font-size: 11px; color: var(--text3); overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .note-list-item .nli-date { font-size: 10px; color: var(--text3); margin-top: 4px; }
+
+  .editor-panel {
+    background: rgba(18,18,26,0.9);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  .editor-toolbar {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .tool-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text2);
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .tool-btn:hover { background: var(--bg3); border-color: var(--border); color: var(--text); }
+  .note-title-input {
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-size: 22px;
+    font-weight: 700;
+    padding: 16px 20px;
+    outline: none;
+    font-family: inherit;
+  }
+  .note-content-area {
+    flex: 1;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.8;
+    padding: 16px 20px;
+    outline: none;
+    resize: none;
+    font-family: inherit;
+  }
+
+  /* Daily journal */
+  .journal-entry {
+    background: linear-gradient(135deg, rgba(26,26,40,0.9), rgba(18,18,26,0.95));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .journal-date {
+    font-size: 18px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent3), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 16px;
+  }
+  .journal-section { margin-bottom: 16px; }
+  .journal-section h4 { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 8px; }
+  .journal-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    font-family: inherit;
+    transition: border-color 0.2s;
+    resize: none;
+  }
+  .journal-input:focus { border-color: var(--accent); }
+
+  /* Mood tracker */
+  .mood-row { display: flex; gap: 10px; margin-bottom: 12px; }
+  .mood-btn {
+    flex: 1;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 22px;
+    text-align: center;
+    transition: all 0.2s;
+  }
+  .mood-btn:hover { transform: scale(1.1); }
+  .mood-btn.selected { border-color: var(--accent); background: rgba(155,89,255,0.15); }
+
+  /* Activity feed */
+  .activity-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .activity-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+  }
+  .activity-item .a-text { font-size: 13px; color: var(--text2); }
+  .activity-item .a-time { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* Bug bounty */
+  .vuln-card {
+    background: linear-gradient(135deg, rgba(26,26,40,0.9), rgba(18,18,26,0.95));
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 3px solid;
+    transition: all 0.2s;
+  }
+  .vuln-card:hover { transform: translateX(4px); }
+  .vuln-critical { border-color: var(--red); }
+  .vuln-high { border-color: var(--gold); }
+  .vuln-medium { border-color: var(--accent3); }
+  .vuln-low { border-color: var(--green); }
+  .vuln-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 6px; }
+  .vuln-title { font-size: 14px; font-weight: 700; }
+  .vuln-sev {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+  }
+  .sev-critical { background: rgba(248,113,113,0.2); color: var(--red); }
+  .sev-high { background: rgba(251,191,36,0.2); color: var(--gold); }
+  .sev-medium { background: rgba(192,132,252,0.2); color: var(--accent3); }
+  .sev-low { background: rgba(74,222,128,0.2); color: var(--green); }
+  .vuln-target { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .vuln-desc { font-size: 12px; color: var(--text2); line-height: 1.5; }
+  .vuln-status {
+    display: inline-block;
+    margin-top: 8px;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    color: var(--text3);
+  }
+
+  /* Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: linear-gradient(135deg, var(--bg2), var(--bg3));
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6), var(--glow);
+  }
+  .modal h3 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .modal p { font-size: 13px; color: var(--text3); margin-bottom: 20px; }
+  .modal-input {
+    width: 100%;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+    margin-bottom: 12px;
+    font-family: inherit;
+  }
+  .modal-input:focus { border-color: var(--accent); }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: linear-gradient(135deg, var(--bg2), var(--bg3));
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-size: 13px;
+    color: var(--text);
+    z-index: 200;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: all 0.3s;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.4), var(--glow);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* Focus mode timer */
+  .focus-timer {
+    background: linear-gradient(135deg, rgba(155,89,255,0.1), rgba(34,211,238,0.05));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  .timer-display {
+    font-size: 60px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent3), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    margin: 10px 0;
+  }
+  .timer-label { font-size: 12px; color: var(--text3); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px; }
+  .timer-btns { display: flex; justify-content: center; gap: 10px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(155,89,255,0.3); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(155,89,255,0.5); }
+
+  /* Progress bar */
+  .progress-bar { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+
+  /* Quick actions */
+  .quick-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .qa-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: rgba(26,26,40,0.8);
+    color: var(--text2);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .qa-btn:hover { background: rgba(155,89,255,0.15); border-color: rgba(155,89,255,0.4); color: var(--accent3); }
+
+  /* Habit tracker */
+  .habit-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+  .habit-name { font-size: 13px; font-weight: 600; flex: 1; }
+  .habit-streak { font-size: 11px; color: var(--gold); font-weight: 700; }
+  .habit-days { display: flex; gap: 4px; }
+  .habit-day {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .habit-day.done { background: var(--accent2); border-color: var(--accent); }
+  .habit-day:hover { border-color: var(--accent3); }
+
+  /* Knowledge graph mini */
+  .kg-preview {
+    height: 200px;
+    background: var(--bg);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: var(--text3);
+    position: relative;
+    overflow: hidden;
+  }
+
+  @keyframes float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes pulse { 0%,100% { opacity: 0.5; } 50% { opacity: 1; } }
+  @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+  @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+  .page.active { animation: fadeInUp 0.3s ease; }
+  .floating { animation: float 3s ease-in-out infinite; }
+  .pulsing { animation: pulse 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="logo">
+      <h1>🧠 XC Brain</h1>
+      <span>Second Brain v1.0</span>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Core</div>
+      <div class="nav-item active" onclick="goto('dashboard')">
+        <span class="icon">⚡</span> Dashboard
+      </div>
+      <div class="nav-item" onclick="goto('capture')">
+        <span class="icon">📥</span> Inbox
+        <span class="badge" id="inboxBadge">0</span>
+      </div>
+      <div class="nav-item" onclick="goto('notes')">
+        <span class="icon">📝</span> Notes
+      </div>
+      <div class="nav-item" onclick="goto('kanban')">
+        <span class="icon">📋</span> Projects
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Workflow</div>
+      <div class="nav-item" onclick="goto('journal')">
+        <span class="icon">🌅</span> Daily Journal
+      </div>
+      <div class="nav-item" onclick="goto('focus')">
+        <span class="icon">🎯</span> Focus Mode
+      </div>
+      <div class="nav-item" onclick="goto('habits')">
+        <span class="icon">🔥</span> Habits
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Dev</div>
+      <div class="nav-item" onclick="goto('scripts')">
+        <span class="icon">⚙️</span> Scripts Hub
+      </div>
+      <div class="nav-item" onclick="goto('bugbounty')">
+        <span class="icon">🎯</span> Bug Bounty
+      </div>
+    </div>
+
+    <div class="nav-section">
+      <div class="nav-label">Resources</div>
+      <div class="nav-item" onclick="goto('para')">
+        <span class="icon">📁</span> PARA System
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <h2 id="pageTitle">Dashboard</h2>
+      <div class="search-bar">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search everything..." id="globalSearch" oninput="searchAll(this.value)">
+      </div>
+      <button class="btn btn-primary" onclick="openCapture()">+ Capture</button>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-icon">📝</div>
+            <div class="stat-num" id="statNotes">0</div>
+            <div class="stat-label">Notes</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">✅</div>
+            <div class="stat-num" id="statTasks">0</div>
+            <div class="stat-label">Tasks</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🔥</div>
+            <div class="stat-num" id="statStreak">0</div>
+            <div class="stat-label">Day Streak</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">⚡</div>
+            <div class="stat-num" id="statFocus">0</div>
+            <div class="stat-label">Focus hrs</div>
+          </div>
+        </div>
+
+        <div class="quick-actions">
+          <button class="qa-btn" onclick="goto('capture')">📥 Quick Capture</button>
+          <button class="qa-btn" onclick="newNote()">📝 New Note</button>
+          <button class="qa-btn" onclick="goto('focus')">🎯 Start Focus</button>
+          <button class="qa-btn" onclick="goto('journal')">🌅 Daily Journal</button>
+          <button class="qa-btn" onclick="goto('scripts')">⚙️ Scripts</button>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title">📥 Recent Captures</div>
+            <div id="recentCaptures" class="note-list"></div>
+          </div>
+          <div class="card">
+            <div class="section-title">🔥 Activity Feed</div>
+            <div id="activityFeed"></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">📋 Active Tasks</div>
+          <div id="dashTasks" class="note-list"></div>
+        </div>
+      </div>
+
+      <!-- CAPTURE / INBOX -->
+      <div class="page" id="page-capture">
+        <div class="capture-form">
+          <div class="section-title">⚡ Quick Capture — Dump pikiran sekarang</div>
+          <textarea class="capture-textarea" id="captureText" placeholder="Tulis ide, task, link, apapun... tekan Ctrl+Enter untuk save" rows="4"></textarea>
+          <div class="capture-meta">
+            <select class="type-select" id="captureType">
+              <option>💡 Ide</option>
+              <option>✅ Task</option>
+              <option>📖 Resource</option>
+              <option>🐛 Bug</option>
+              <option>⚙️ Script</option>
+              <option>🎯 Vuln</option>
+              <option>💬 Quote</option>
+            </select>
+            <input class="tag-input" type="text" id="captureTag" placeholder="#tag">
+            <button class="btn btn-primary" onclick="saveCapture()">Save ⚡</button>
+          </div>
+        </div>
+
+        <div class="section-title">📥 Inbox</div>
+        <div id="inboxList" class="note-list"></div>
+      </div>
+
+      <!-- NOTES -->
+      <div class="page" id="page-notes">
+        <div class="editor-area">
+          <div class="notes-list-panel">
+            <div class="panel-header">
+              <h3>All Notes</h3>
+              <button class="btn btn-primary" style="padding:5px 10px;font-size:11px;" onclick="newNote()">+ New</button>
+            </div>
+            <div class="notes-list-items" id="notesList"></div>
+          </div>
+          <div class="editor-panel">
+            <div class="editor-toolbar">
+              <button class="tool-btn" onclick="fmt('bold')"><b>B</b></button>
+              <button class="tool-btn" onclick="fmt('italic')"><i>I</i></button>
+              <button class="tool-btn" onclick="insertMd('# ')">H1</button>
+              <button class="tool-btn" onclick="insertMd('## ')">H2</button>
+              <button class="tool-btn" onclick="insertMd('- ')">List</button>
+              <button class="tool-btn" onclick="insertMd('```\n\n```')">Code</button>
+              <button class="tool-btn" onclick="insertMd('> ')">Quote</button>
+              <button class="tool-btn" onclick="insertMd('---\n')">HR</button>
+              <div style="margin-left:auto;display:flex;gap:8px;">
+                <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;" onclick="saveNote()">Save</button>
+                <button class="btn btn-ghost" style="font-size:11px;padding:4px 10px;color:var(--red);" onclick="deleteCurrentNote()">Delete</button>
+              </div>
+            </div>
+            <input class="note-title-input" id="noteTitle" placeholder="Note title...">
+            <textarea class="note-content-area" id="noteContent" placeholder="Start writing... markdown supported"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- KANBAN / PROJECTS -->
+      <div class="page" id="page-kanban">
+        <div style="display:flex;gap:10px;margin-bottom:16px;align-items:center;">
+          <button class="btn btn-primary" onclick="addTask()">+ Add Task</button>
+          <button class="btn btn-ghost" onclick="clearDone()">Clear Done</button>
+        </div>
+        <div class="kanban" id="kanbanBoard"></div>
+      </div>
+
+      <!-- DAILY JOURNAL -->
+      <div class="page" id="page-journal">
+        <div class="journal-entry">
+          <div class="journal-date" id="journalDate"></div>
+
+          <div class="journal-section">
+            <h4>🌅 Mood Hari Ini</h4>
+            <div class="mood-row">
+              <button class="mood-btn" data-mood="5" onclick="setMood(this)">😄</button>
+              <button class="mood-btn" data-mood="4" onclick="setMood(this)">😊</button>
+              <button class="mood-btn" data-mood="3" onclick="setMood(this)">😐</button>
+              <button class="mood-btn" data-mood="2" onclick="setMood(this)">😔</button>
+              <button class="mood-btn" data-mood="1" onclick="setMood(this)">😫</button>
+            </div>
+          </div>
+
+          <div class="journal-section">
+            <h4>⚡ 3 Priorities Hari Ini</h4>
+            <textarea class="journal-input" id="jPriorities" rows="3" placeholder="1. ...&#10;2. ...&#10;3. ..."></textarea>
+          </div>
+
+          <div class="journal-section">
+            <h4>💡 Brain Dump — Apa yang ada di kepala?</h4>
+            <textarea class="journal-input" id="jBrainDump" rows="4" placeholder="Tulis semua yang ada di pikiran..."></textarea>
+          </div>
+
+          <div class="journal-section">
+            <h4>✅ Achieved Today</h4>
+            <textarea class="journal-input" id="jAchieved" rows="3" placeholder="Apa yang berhasil diselesaikan..."></textarea>
+          </div>
+
+          <div class="journal-section">
+            <h4>📖 Learned Today</h4>
+            <textarea class="journal-input" id="jLearned" rows="3" placeholder="Ilmu/insight baru hari ini..."></textarea>
+          </div>
+
+          <div class="journal-section">
+            <h4>🌙 Reflection</h4>
+            <textarea class="journal-input" id="jReflection" rows="3" placeholder="Refleksi hari ini..."></textarea>
+          </div>
+
+          <button class="btn btn-primary" onclick="saveJournal()" style="margin-top:8px;">Save Journal 💾</button>
+        </div>
+
+        <div class="section-title">📚 Past Journals</div>
+        <div id="pastJournals" class="note-list"></div>
+      </div>
+
+      <!-- FOCUS MODE -->
+      <div class="page" id="page-focus">
+        <div class="focus-timer">
+          <div class="timer-label" id="timerPhase">POMODORO</div>
+          <div class="timer-display" id="timerDisplay">25:00</div>
+          <div style="font-size:12px;color:var(--text3);margin-bottom:16px;" id="timerTask">No task selected</div>
+          <div class="timer-btns">
+            <button class="btn btn-ghost" onclick="setTimer(25)">25 min</button>
+            <button class="btn btn-ghost" onclick="setTimer(50)">50 min</button>
+            <button class="btn btn-ghost" onclick="setTimer(5)">5 min break</button>
+            <button class="btn btn-primary" id="timerBtn" onclick="toggleTimer()">▶ Start</button>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title">🎯 Focus Task</div>
+            <textarea class="capture-textarea" id="focusTaskInput" rows="3" placeholder="Apa yang mau dikerjakan sekarang?"></textarea>
+            <button class="btn btn-ghost" style="font-size:12px;margin-top:8px;" onclick="setFocusTask()">Set Task</button>
+          </div>
+          <div class="card">
+            <div class="section-title">📊 Sessions Today</div>
+            <div id="focusSessions">
+              <div style="font-size:40px;font-weight:900;background:linear-gradient(135deg,var(--accent3),var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;" id="sessionCount">0</div>
+              <div style="font-size:12px;color:var(--text3);">Pomodoro completed</div>
+              <div style="margin-top:16px;">
+                <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">Today's Focus Time</div>
+                <div class="progress-bar">
+                  <div class="progress-fill" id="focusProgress" style="width:0%;background:linear-gradient(90deg,var(--accent2),var(--accent))"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HABITS -->
+      <div class="page" id="page-habits">
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+          <button class="btn btn-primary" onclick="addHabit()">+ Add Habit</button>
+        </div>
+        <div class="card">
+          <div style="display:flex;gap:12px;align-items:center;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border);">
+            <div style="flex:1;font-size:12px;font-weight:700;color:var(--text3);text-transform:uppercase;">Habit</div>
+            <div id="habitDayLabels" style="display:flex;gap:4px;"></div>
+            <div style="font-size:12px;font-weight:700;color:var(--text3);width:60px;text-align:center;">Streak</div>
+          </div>
+          <div id="habitList"></div>
+        </div>
+      </div>
+
+      <!-- SCRIPTS HUB -->
+      <div class="page" id="page-scripts">
+        <div class="section-title">🚀 Load Scripts — XC Hub</div>
+        <div class="script-grid" id="scriptsGrid"></div>
+      </div>
+
+      <!-- BUG BOUNTY -->
+      <div class="page" id="page-bugbounty">
+        <div style="display:flex;gap:10px;margin-bottom:16px;">
+          <button class="btn btn-primary" onclick="addVuln()">+ Add Finding</button>
+          <button class="btn btn-ghost">Export Report</button>
+        </div>
+        <div class="grid-3" style="margin-bottom:16px;">
+          <div class="stat-card">
+            <div class="stat-icon">🔴</div>
+            <div class="stat-num" id="bCrit" style="font-size:28px;">0</div>
+            <div class="stat-label">Critical</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🟠</div>
+            <div class="stat-num" id="bHigh" style="font-size:28px;">0</div>
+            <div class="stat-label">High</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon">🟡</div>
+            <div class="stat-num" id="bMed" style="font-size:28px;">0</div>
+            <div class="stat-label">Medium</div>
+          </div>
+        </div>
+        <div id="vulnList"></div>
+      </div>
+
+      <!-- PARA SYSTEM -->
+      <div class="page" id="page-para">
+        <div class="para-grid">
+          <div class="para-card projects" onclick="goto('kanban')">
+            <div class="para-icon">🚀</div>
+            <div class="para-count" style="color:var(--accent3);" id="paraProjects">0</div>
+            <h3>Projects</h3>
+            <div class="para-desc">Active work dengan deadline & goal yang jelas</div>
+          </div>
+          <div class="para-card areas">
+            <div class="para-icon">🌐</div>
+            <div class="para-count" style="color:var(--cyan);">5</div>
+            <h3>Areas</h3>
+            <div class="para-desc">Tanggung jawab jangka panjang yang perlu dijaga</div>
+          </div>
+          <div class="para-card resources">
+            <div class="para-icon">📚</div>
+            <div class="para-count" style="color:var(--green);" id="paraResources">0</div>
+            <h3>Resources</h3>
+            <div class="para-desc">Referensi & materi yang mungkin berguna nanti</div>
+          </div>
+          <div class="para-card archive">
+            <div class="para-icon">📦</div>
+            <div class="para-count" style="color:var(--text2);">0</div>
+            <h3>Archive</h3>
+            <div class="para-desc">Item dari kategori lain yang sudah selesai/inactive</div>
+          </div>
+        </div>
+
+        <div class="grid-2">
+          <div class="card">
+            <div class="section-title">🌐 Areas</div>
+            <div class="note-list">
+              <div class="note-item">
+                <span class="note-icon">💻</span>
+                <div class="note-body">
+                  <div class="note-title">Roblox Dev</div>
+                  <div class="note-preview">Script development, XC Hub, cheat scripts, Luau</div>
+                  <div class="note-meta"><span class="tag cyan">dev</span></div>
+                </div>
+              </div>
+              <div class="note-item">
+                <span class="note-icon">🎯</span>
+                <div class="note-body">
+                  <div class="note-title">Bug Bounty</div>
+                  <div class="note-preview">Web security research, vulnerability hunting</div>
+                  <div class="note-meta"><span class="tag red">security</span></div>
+                </div>
+              </div>
+              <div class="note-item">
+                <span class="note-icon">🎮</span>
+                <div class="note-body">
+                  <div class="note-title">Gaming</div>
+                  <div class="note-preview">Free Fire, Roblox gameplay, configs</div>
+                  <div class="note-meta"><span class="tag green">gaming</span></div>
+                </div>
+              </div>
+              <div class="note-item">
+                <span class="note-icon">📖</span>
+                <div class="note-body">
+                  <div class="note-title">Learning</div>
+                  <div class="note-preview">Lua, web security, programming concepts</div>
+                  <div class="note-meta"><span class="tag gold">learning</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="section-title">📚 Resources</div>
+            <div id="paraResourcesList" class="note-list"></div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /content -->
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<!-- Quick Capture Modal -->
+<div class="modal-overlay" id="captureModal">
+  <div class="modal">
+    <h3>⚡ Quick Capture</h3>
+    <p>Dump ide sekarang — proses nanti</p>
+    <textarea class="modal-input" id="modalCaptureText" rows="3" placeholder="Tulis apapun..."></textarea>
+    <select class="modal-input" id="modalCaptureType">
+      <option>💡 Ide</option>
+      <option>✅ Task</option>
+      <option>📖 Resource</option>
+      <option>🐛 Bug</option>
+      <option>⚙️ Script</option>
+      <option>🎯 Vuln</option>
+      <option>💬 Quote</option>
+    </select>
+    <input class="modal-input" id="modalCaptureTag" placeholder="#tag (opsional)">
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeCapture()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCaptureModal()">Capture ⚡</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">✅ Saved!</div>
+
+<script>
+// ===== STATE =====
+let state = JSON.parse(localStorage.getItem('xcbrain') || 'null') || {
+  notes: [],
+  captures: [],
+  tasks: [
+    { id: 1, title: 'Update XC Hub silent aim', desc: 'Fix snap timing', col: 'doing', priority: 'high', date: today() },
+    { id: 2, title: 'Add anti-detect layer', desc: 'Bypass detection v2', col: 'todo', priority: 'high', date: today() },
+    { id: 3, title: 'Bug bounty — recon target', desc: 'Run recon.py full scan', col: 'todo', priority: 'med', date: today() },
+    { id: 4, title: 'ZC Hub no recoil tune', desc: 'Adjust recoil values', col: 'done', priority: 'low', date: today() },
+  ],
+  vulns: [
+    { id: 1, title: 'SQL Injection via login param', target: 'target.com/login', sev: 'critical', desc: 'Unfiltered user input passed directly to SQL query. Boolean-based blind confirmed.', status: 'Reported' },
+    { id: 2, title: 'Stored XSS in profile bio', target: 'target.com/profile', sev: 'high', desc: 'Script injection via bio field, executes for all visitors.', status: 'Confirmed' },
+    { id: 3, title: 'IDOR on user data endpoint', target: 'api.target.com/user/{id}', sev: 'medium', desc: 'Horizontal privilege escalation — can read other users data.', status: 'Triaged' },
+  ],
+  habits: [
+    { id: 1, name: '🧠 Brain Dump', streak: 3, days: [1,1,1,0,1,0,0] },
+    { id: 2, name: '💻 Code 1hr', streak: 5, days: [1,1,1,1,1,0,0] },
+    { id: 3, name: '🎯 Bug Bounty', streak: 2, days: [0,1,1,0,0,1,0] },
+    { id: 4, name: '📖 Learn', streak: 7, days: [1,1,1,1,1,1,1] },
+    { id: 5, name: '🏃 Exercise', streak: 0, days: [0,0,1,0,0,0,0] },
+  ],
+  journals: [],
+  focusSessions: 0,
+  focusHours: 0,
+  currentNote: null,
+  timer: { active: false, remaining: 25*60, phase: 'work', sessions: 0 },
+};
+
+function save() { localStorage.setItem('xcbrain', JSON.stringify(state)); }
+
+function today() {
+  return new Date().toLocaleDateString('id-ID', { day:'numeric', month:'short', year:'numeric' });
+}
+function timeAgo(dateStr) {
+  try {
+    const d = new Date(dateStr);
+    const diff = Date.now() - d.getTime();
+    const m = Math.floor(diff / 60000);
+    if (m < 1) return 'baru saja';
+    if (m < 60) return `${m}m ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h}h ago`;
+    return `${Math.floor(h/24)}d ago`;
+  } catch { return 'baru'; }
+}
+
+// ===== NAVIGATION =====
+let currentPage = 'dashboard';
+function goto(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => {
+    if (n.getAttribute('onclick')?.includes(page)) n.classList.add('active');
+  });
+  currentPage = page;
+  const titles = {
+    dashboard: '⚡ Dashboard', capture: '📥 Inbox', notes: '📝 Notes',
+    kanban: '📋 Projects', journal: '🌅 Daily Journal', focus: '🎯 Focus Mode',
+    habits: '🔥 Habits', scripts: '⚙️ Scripts Hub', bugbounty: '🎯 Bug Bounty', para: '📁 PARA System'
+  };
+  document.getElementById('pageTitle').textContent = titles[page] || page;
+  render(page);
+}
+
+// ===== RENDER =====
+function render(page) {
+  if (page === 'dashboard') renderDashboard();
+  if (page === 'capture') renderCaptures();
+  if (page === 'notes') renderNotes();
+  if (page === 'kanban') renderKanban();
+  if (page === 'journal') renderJournal();
+  if (page === 'habits') renderHabits();
+  if (page === 'scripts') renderScripts();
+  if (page === 'bugbounty') renderBugBounty();
+  if (page === 'para') renderPARA();
+  updateStats();
+}
+
+function updateStats() {
+  document.getElementById('statNotes').textContent = state.notes.length;
+  document.getElementById('statTasks').textContent = state.tasks.filter(t => t.col !== 'done').length;
+  document.getElementById('statStreak').textContent = state.habits[0]?.streak || 0;
+  document.getElementById('statFocus').textContent = state.focusHours;
+  const inbox = state.captures.filter(c => !c.processed).length;
+  document.getElementById('inboxBadge').textContent = inbox;
+  document.getElementById('inboxBadge').style.display = inbox ? 'block' : 'none';
+}
+
+function renderDashboard() {
+  // Recent captures
+  const el = document.getElementById('recentCaptures');
+  const recent = state.captures.slice(-5).reverse();
+  el.innerHTML = recent.length ? recent.map(c => `
+    <div class="note-item">
+      <span class="note-icon">${c.type.split(' ')[0]}</span>
+      <div class="note-body">
+        <div class="note-title">${escHtml(c.text.substring(0,60))}${c.text.length > 60 ? '...' : ''}</div>
+        <div class="note-meta">
+          <span class="tag">${c.type}</span>
+          ${c.tag ? `<span class="tag cyan">${escHtml(c.tag)}</span>` : ''}
+        </div>
+      </div>
+      <span class="note-date">${timeAgo(c.date)}</span>
+    </div>
+  `).join('') : '<div style="color:var(--text3);font-size:13px;padding:20px;text-align:center;">No captures yet — start dumping ideas! ⚡</div>';
+
+  // Activity feed
+  const af = document.getElementById('activityFeed');
+  const activities = [
+    { text: 'XC Hub updated — silent aim v2', time: '2h ago', color: 'var(--accent)' },
+    { text: 'Bug bounty finding reported (Critical)', time: '4h ago', color: 'var(--red)' },
+    { text: 'Daily journal saved', time: '8h ago', color: 'var(--cyan)' },
+    { text: 'Focus session completed (25min)', time: '1d ago', color: 'var(--green)' },
+    { text: 'New note: Roblox anti-detect ideas', time: '1d ago', color: 'var(--gold)' },
+  ];
+  af.innerHTML = activities.map(a => `
+    <div class="activity-item">
+      <div class="activity-dot" style="background:${a.color}"></div>
+      <div>
+        <div class="a-text">${a.text}</div>
+        <div class="a-time">${a.time}</div>
+      </div>
+    </div>
+  `).join('');
+
+  // Active tasks
+  const dt = document.getElementById('dashTasks');
+  const active = state.tasks.filter(t => t.col !== 'done').slice(0, 4);
+  dt.innerHTML = active.map(t => `
+    <div class="note-item" onclick="goto('kanban')">
+      <span class="note-icon">${t.col === 'doing' ? '🔄' : '📋'}</span>
+      <div class="note-body">
+        <div class="note-title">${escHtml(t.title)}</div>
+        <div class="note-preview">${escHtml(t.desc)}</div>
+      </div>
+      <span class="priority prio-${t.priority}">${t.priority.toUpperCase()}</span>
+    </div>
+  `).join('');
+}
+
+function renderCaptures() {
+  const el = document.getElementById('inboxList');
+  el.innerHTML = state.captures.slice().reverse().map((c, i) => `
+    <div class="note-item" style="${c.processed ? 'opacity:0.5' : ''}">
+      <span class="note-icon">${c.type.split(' ')[0]}</span>
+      <div class="note-body">
+        <div class="note-title">${escHtml(c.text)}</div>
+        <div class="note-meta">
+          <span class="tag">${c.type}</span>
+          ${c.tag ? `<span class="tag cyan">${escHtml(c.tag)}</span>` : ''}
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:4px;align-items:flex-end;">
+        <span class="note-date">${timeAgo(c.date)}</span>
+        <button onclick="markProcessed(${state.captures.length - 1 - i})" style="font-size:10px;background:transparent;border:1px solid var(--border);color:var(--text3);border-radius:4px;padding:2px 6px;cursor:pointer;">
+          ${c.processed ? '✓ Done' : 'Process'}
+        </button>
+      </div>
+    </div>
+  `).join('') || '<div style="color:var(--text3);font-size:13px;padding:20px;text-align:center;">Inbox kosong 🎉</div>';
+}
+
+function saveCapture() {
+  const text = document.getElementById('captureText').value.trim();
+  if (!text) return;
+  state.captures.push({
+    text, type: document.getElementById('captureType').value,
+    tag: document.getElementById('captureTag').value.trim(),
+    date: new Date().toISOString(), processed: false
+  });
+  document.getElementById('captureText').value = '';
+  document.getElementById('captureTag').value = '';
+  save(); renderCaptures(); updateStats();
+  toast('⚡ Captured!');
+}
+
+function saveCaptureModal() {
+  const text = document.getElementById('modalCaptureText').value.trim();
+  if (!text) return;
+  state.captures.push({
+    text, type: document.getElementById('modalCaptureType').value,
+    tag: document.getElementById('modalCaptureTag').value.trim(),
+    date: new Date().toISOString(), processed: false
+  });
+  document.getElementById('modalCaptureText').value = '';
+  document.getElementById('modalCaptureTag').value = '';
+  save(); updateStats(); closeCapture();
+  toast('⚡ Captured!');
+}
+
+function markProcessed(idx) {
+  state.captures[idx].processed = !state.captures[idx].processed;
+  save(); renderCaptures(); updateStats();
+}
+
+function openCapture() {
+  document.getElementById('captureModal').classList.add('open');
+  document.getElementById('modalCaptureText').focus();
+}
+function closeCapture() { document.getElementById('captureModal').classList.remove('open'); }
+
+// ===== NOTES =====
+let currentNoteId = null;
+function renderNotes() {
+  const list = document.getElementById('notesList');
+  list.innerHTML = state.notes.map(n => `
+    <div class="note-list-item ${n.id === currentNoteId ? 'active' : ''}" onclick="openNote(${n.id})">
+      <div class="nli-title">${escHtml(n.title || 'Untitled')}</div>
+      <div class="nli-preview">${escHtml(n.content?.substring(0,60) || '')}</div>
+      <div class="nli-date">${n.date}</div>
+    </div>
+  `).join('') || '<div style="color:var(--text3);font-size:12px;padding:12px;">No notes yet — create one!</div>';
+}
+
+function newNote() {
+  const id = Date.now();
+  state.notes.unshift({ id, title: '', content: '', date: today() });
+  currentNoteId = id;
+  save(); renderNotes();
+  openNote(id);
+  goto('notes');
+}
+
+function openNote(id) {
+  const note = state.notes.find(n => n.id === id);
+  if (!note) return;
+  currentNoteId = id;
+  document.getElementById('noteTitle').value = note.title || '';
+  document.getElementById('noteContent').value = note.content || '';
+  renderNotes();
+}
+
+function saveNote() {
+  if (!currentNoteId) return;
+  const note = state.notes.find(n => n.id === currentNoteId);
+  if (note) {
+    note.title = document.getElementById('noteTitle').value;
+    note.content = document.getElementById('noteContent').value;
+    note.date = today();
+  }
+  save(); renderNotes(); toast('📝 Note saved!');
+}
+
+function deleteCurrentNote() {
+  if (!currentNoteId) return;
+  if (!confirm('Delete this note?')) return;
+  state.notes = state.notes.filter(n => n.id !== currentNoteId);
+  currentNoteId = null;
+  document.getElementById('noteTitle').value = '';
+  document.getElementById('noteContent').value = '';
+  save(); renderNotes(); toast('🗑️ Deleted');
+}
+
+function fmt(cmd) { document.getElementById('noteContent').focus(); document.execCommand(cmd); }
+function insertMd(text) {
+  const ta = document.getElementById('noteContent');
+  const start = ta.selectionStart;
+  ta.value = ta.value.substring(0, start) + text + ta.value.substring(ta.selectionEnd);
+  ta.selectionStart = ta.selectionEnd = start + text.length;
+  ta.focus();
+}
+
+// Auto save notes on type
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('noteContent').addEventListener('input', () => { if (currentNoteId) { const n = state.notes.find(x => x.id === currentNoteId); if (n) { n.content = document.getElementById('noteContent').value; save(); } } });
+  document.getElementById('noteTitle').addEventListener('input', () => { if (currentNoteId) { const n = state.notes.find(x => x.id === currentNoteId); if (n) { n.title = document.getElementById('noteTitle').value; save(); renderNotes(); } } });
+  document.getElementById('captureText').addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'Enter') saveCapture(); });
+  document.getElementById('modalCaptureText').addEventListener('keydown', e => { if (e.ctrlKey && e.key === 'Enter') saveCaptureModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeCapture(); if (e.ctrlKey && e.key === 'k') { openCapture(); e.preventDefault(); } });
+  initTimer();
+  renderDashboard();
+  renderHabits();
+  renderScripts();
+  renderBugBounty();
+  renderJournal();
+  updateStats();
+});
+
+// ===== KANBAN =====
+const cols = [
+  { id: 'todo', label: 'TO DO', dotClass: 'dot-purple' },
+  { id: 'doing', label: 'IN PROGRESS', dotClass: 'dot-cyan' },
+  { id: 'review', label: 'REVIEW', dotClass: 'dot-gold' },
+  { id: 'done', label: 'DONE', dotClass: 'dot-green' },
+];
+function renderKanban() {
+  const board = document.getElementById('kanbanBoard');
+  board.innerHTML = cols.map(col => `
+    <div class="kanban-col">
+      <h3>
+        <span class="col-dot ${col.dotClass}"></span>
+        ${col.label}
+        <span style="margin-left:auto;font-size:11px;color:var(--text3);">${state.tasks.filter(t => t.col === col.id).length}</span>
+      </h3>
+      ${state.tasks.filter(t => t.col === col.id).map(t => `
+        <div class="kanban-card">
+          <div class="k-title">${escHtml(t.title)}</div>
+          <div class="k-desc">${escHtml(t.desc)}</div>
+          <div class="k-meta">
+            <span class="priority prio-${t.priority}">${t.priority}</span>
+            <button onclick="moveTask(${t.id},-1)" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:12px;">◀</button>
+            <button onclick="moveTask(${t.id},1)" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:12px;">▶</button>
+            <button onclick="deleteTask(${t.id})" style="background:transparent;border:none;color:var(--red);cursor:pointer;font-size:12px;margin-left:auto;">✕</button>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `).join('');
+}
+
+function moveTask(id, dir) {
+  const colIds = cols.map(c => c.id);
+  const task = state.tasks.find(t => t.id === id);
+  if (!task) return;
+  const idx = colIds.indexOf(task.col);
+  const newIdx = Math.max(0, Math.min(3, idx + dir));
+  task.col = colIds[newIdx];
+  save(); renderKanban();
+}
+
+function deleteTask(id) {
+  state.tasks = state.tasks.filter(t => t.id !== id);
+  save(); renderKanban();
+}
+
+function clearDone() {
+  state.tasks = state.tasks.filter(t => t.col !== 'done');
+  save(); renderKanban(); toast('✅ Cleared done tasks');
+}
+
+function addTask() {
+  const title = prompt('Task title:');
+  if (!title) return;
+  const desc = prompt('Description (optional):') || '';
+  state.tasks.push({ id: Date.now(), title, desc, col: 'todo', priority: 'med', date: today() });
+  save(); renderKanban(); toast('✅ Task added!');
+}
+
+// ===== JOURNAL =====
+function renderJournal() {
+  const now = new Date();
+  document.getElementById('journalDate').textContent =
+    now.toLocaleDateString('id-ID', { weekday:'long', day:'numeric', month:'long', year:'numeric' });
+
+  const todayKey = now.toISOString().split('T')[0];
+  const j = state.journals.find(j => j.date === todayKey);
+  if (j) {
+    document.getElementById('jPriorities').value = j.priorities || '';
+    document.getElementById('jBrainDump').value = j.brainDump || '';
+    document.getElementById('jAchieved').value = j.achieved || '';
+    document.getElementById('jLearned').value = j.learned || '';
+    document.getElementById('jReflection').value = j.reflection || '';
+    if (j.mood) {
+      document.querySelectorAll('.mood-btn').forEach(b => {
+        if (b.dataset.mood == j.mood) b.classList.add('selected');
+      });
+    }
+  }
+
+  const past = document.getElementById('pastJournals');
+  past.innerHTML = state.journals.filter(j => j.date !== todayKey).slice(-5).reverse().map(j => `
+    <div class="note-item">
+      <span class="note-icon">🌅</span>
+      <div class="note-body">
+        <div class="note-title">${j.date}</div>
+        <div class="note-preview">${escHtml(j.brainDump?.substring(0,80) || 'No brain dump')}</div>
+        <div class="note-meta">
+          ${j.mood ? `<span class="tag gold">Mood ${j.mood}/5</span>` : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function setMood(btn) {
+  document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+}
+
+function saveJournal() {
+  const todayKey = new Date().toISOString().split('T')[0];
+  const mood = document.querySelector('.mood-btn.selected')?.dataset.mood || null;
+  const existing = state.journals.findIndex(j => j.date === todayKey);
+  const entry = {
+    date: todayKey,
+    mood,
+    priorities: document.getElementById('jPriorities').value,
+    brainDump: document.getElementById('jBrainDump').value,
+    achieved: document.getElementById('jAchieved').value,
+    learned: document.getElementById('jLearned').value,
+    reflection: document.getElementById('jReflection').value,
+  };
+  if (existing >= 0) state.journals[existing] = entry;
+  else state.journals.push(entry);
+  save(); toast('🌅 Journal saved!');
+}
+
+// ===== HABITS =====
+const DAYS = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+function renderHabits() {
+  const labels = document.getElementById('habitDayLabels');
+  labels.innerHTML = DAYS.map(d => `<div style="width:18px;text-align:center;font-size:10px;color:var(--text3);">${d}</div>`).join('');
+
+  const list = document.getElementById('habitList');
+  list.innerHTML = state.habits.map(h => `
+    <div class="habit-row">
+      <div class="habit-name">${h.name}</div>
+      <div class="habit-days">
+        ${h.days.map((d, i) => `
+          <div class="habit-day ${d ? 'done' : ''}" onclick="toggleHabit(${h.id},${i})" title="${DAYS[i]}"></div>
+        `).join('')}
+      </div>
+      <div class="habit-streak">🔥 ${h.streak}</div>
+      <button onclick="deleteHabit(${h.id})" style="background:transparent;border:none;color:var(--text3);cursor:pointer;font-size:14px;">✕</button>
+    </div>
+  `).join('');
+}
+
+function toggleHabit(id, dayIdx) {
+  const h = state.habits.find(h => h.id === id);
+  if (!h) return;
+  h.days[dayIdx] = h.days[dayIdx] ? 0 : 1;
+  h.streak = h.days.filter(Boolean).length;
+  save(); renderHabits();
+}
+
+function deleteHabit(id) {
+  state.habits = state.habits.filter(h => h.id !== id);
+  save(); renderHabits();
+}
+
+function addHabit() {
+  const name = prompt('Habit name (e.g. 🧘 Meditate):');
+  if (!name) return;
+  state.habits.push({ id: Date.now(), name, streak: 0, days: [0,0,0,0,0,0,0] });
+  save(); renderHabits(); toast('🔥 Habit added!');
+}
+
+// ===== SCRIPTS =====
+const SCRIPTS = [
+  { name: 'XC Hub', hub: 'Main Hub', icon: '🌌', desc: 'ESP, Auto Hop, Auto Chest, Auto Fruit, Crosshair, Aim Assist, Silent Aim', key: 'XCGANG', code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Hub.lua"))()' },
+  { name: 'ZC Hub', hub: 'FPS Hub', icon: '🔵', desc: 'ESP, Crosshair, Aim Assist, Silent Aim, No Recoil, FPS Boost', key: 'ZCFPS', code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ZC.lua"))()' },
+  { name: 'XZ Hub', hub: 'RPG Hub', icon: '🟢', desc: 'Enemy ESP, Auto Farm, Auto Collect, Auto Quest, Auto Chest, Auto Hop', key: 'XZRPG', code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/XZ.lua"))()' },
+  { name: 'ESP', hub: 'Standalone', icon: '👁️', desc: 'Box hitbox ESP — 4 Drawing objects per player, ringan', key: null, code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/ESP.lua"))()' },
+  { name: 'Auto Hop', hub: 'Standalone', icon: '🔀', desc: 'Auto server hop tiap 5 menit + anti-AFK system', key: null, code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/AutoHop.lua"))()' },
+  { name: 'Crosshair', hub: 'Standalone', icon: '🎯', desc: 'Custom crosshair + aim assist + hitmarker overlay', key: null, code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/Crosshair.lua"))()' },
+  { name: 'CheatDev', hub: 'Dev Mode', icon: '🔥', desc: 'Full cheat dev suite — ESP, Movement, Combat, Visual, Dev Console', key: null, code: 'loadstring(game:HttpGet("https://raw.githubusercontent.com/pointrungkat-art/u/main/CheatDev.lua"))()' },
+];
+
+function renderScripts() {
+  const grid = document.getElementById('scriptsGrid');
+  grid.innerHTML = SCRIPTS.map((s, i) => `
+    <div class="script-card">
+      <div class="sc-header">
+        <span class="sc-icon">${s.icon}</span>
+        <div>
+          <div class="sc-name">${s.name}</div>
+          <div class="sc-hub">${s.hub} ${s.key ? '· Key: <b style="color:var(--accent3)">' + s.key + '</b>' : ''}</div>
+        </div>
+      </div>
+      <div class="sc-desc">${s.desc}</div>
+      <div class="sc-code">${s.code}</div>
+      <button class="copy-btn" id="copybtn${i}" onclick="copyScript(${i})">📋 Copy loadstring</button>
+    </div>
+  `).join('');
+}
+
+function copyScript(i) {
+  navigator.clipboard.writeText(SCRIPTS[i].code);
+  const btn = document.getElementById('copybtn' + i);
+  btn.textContent = '✅ Copied!';
+  btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = '📋 Copy loadstring'; btn.classList.remove('copied'); }, 2000);
+}
+
+// ===== BUG BOUNTY =====
+function renderBugBounty() {
+  const sevMap = { critical: 0, high: 0, medium: 0, low: 0 };
+  state.vulns.forEach(v => { if (sevMap.hasOwnProperty(v.sev)) sevMap[v.sev]++; });
+  document.getElementById('bCrit').textContent = sevMap.critical;
+  document.getElementById('bHigh').textContent = sevMap.high;
+  document.getElementById('bMed').textContent = sevMap.medium;
+
+  const list = document.getElementById('vulnList');
+  list.innerHTML = state.vulns.map(v => `
+    <div class="vuln-card vuln-${v.sev}">
+      <div class="vuln-header">
+        <div class="vuln-title">${escHtml(v.title)}</div>
+        <span class="vuln-sev sev-${v.sev}">${v.sev}</span>
+      </div>
+      <div class="vuln-target">🎯 ${escHtml(v.target)}</div>
+      <div class="vuln-desc">${escHtml(v.desc)}</div>
+      <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+        <span class="vuln-status">${escHtml(v.status)}</span>
+        <button onclick="deleteVuln(${v.id})" style="background:transparent;border:none;color:var(--red);cursor:pointer;font-size:12px;margin-left:auto;">Delete</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addVuln() {
+  const title = prompt('Vulnerability title:');
+  if (!title) return;
+  const target = prompt('Target URL/endpoint:') || '';
+  const sev = prompt('Severity (critical/high/medium/low):') || 'medium';
+  const desc = prompt('Description:') || '';
+  state.vulns.push({ id: Date.now(), title, target, sev: sev.toLowerCase(), desc, status: 'New' });
+  save(); renderBugBounty(); toast('🎯 Finding added!');
+}
+
+function deleteVuln(id) {
+  state.vulns = state.vulns.filter(v => v.id !== id);
+  save(); renderBugBounty();
+}
+
+// ===== PARA =====
+function renderPARA() {
+  document.getElementById('paraProjects').textContent = state.tasks.filter(t => t.col !== 'done').length;
+  const res = state.captures.filter(c => c.type?.includes('Resource'));
+  document.getElementById('paraResources').textContent = res.length;
+  const resList = document.getElementById('paraResourcesList');
+  resList.innerHTML = res.slice(0, 5).map(r => `
+    <div class="note-item">
+      <span class="note-icon">📖</span>
+      <div class="note-body">
+        <div class="note-title">${escHtml(r.text.substring(0, 50))}</div>
+        <div class="note-meta">${r.tag ? `<span class="tag green">${escHtml(r.tag)}</span>` : ''}</div>
+      </div>
+    </div>
+  `).join('') || '<div style="color:var(--text3);font-size:12px;padding:12px;">No resources yet</div>';
+}
+
+// ===== FOCUS TIMER =====
+let timerInterval = null;
+function initTimer() {
+  updateTimerDisplay();
+}
+
+function setTimer(mins) {
+  clearInterval(timerInterval);
+  timerInterval = null;
+  state.timer.active = false;
+  state.timer.remaining = mins * 60;
+  state.timer.phase = mins <= 10 ? 'break' : 'work';
+  document.getElementById('timerPhase').textContent = state.timer.phase === 'break' ? 'BREAK' : 'POMODORO';
+  document.getElementById('timerBtn').textContent = '▶ Start';
+  updateTimerDisplay();
+}
+
+function toggleTimer() {
+  if (state.timer.active) {
+    clearInterval(timerInterval);
+    timerInterval = null;
+    state.timer.active = false;
+    document.getElementById('timerBtn').textContent = '▶ Resume';
+  } else {
+    state.timer.active = true;
+    document.getElementById('timerBtn').textContent = '⏸ Pause';
+    timerInterval = setInterval(() => {
+      state.timer.remaining--;
+      if (state.timer.remaining <= 0) {
+        clearInterval(timerInterval);
+        state.timer.active = false;
+        state.timer.remaining = 0;
+        if (state.timer.phase === 'work') {
+          state.timer.sessions++;
+          state.focusSessions++;
+          state.focusHours = Math.round(state.focusSessions * 25 / 60 * 10) / 10;
+          document.getElementById('sessionCount').textContent = state.timer.sessions;
+          const pct = Math.min(100, (state.focusHours / 4) * 100);
+          document.getElementById('focusProgress').style.width = pct + '%';
+          updateStats();
+        }
+        save();
+        document.getElementById('timerBtn').textContent = '▶ Start';
+        toast('⏰ Session done! 🔥');
+      }
+      updateTimerDisplay();
+    }, 1000);
+  }
+}
+
+function updateTimerDisplay() {
+  const m = Math.floor(state.timer.remaining / 60);
+  const s = state.timer.remaining % 60;
+  document.getElementById('timerDisplay').textContent =
+    String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+  document.getElementById('sessionCount').textContent = state.timer.sessions || 0;
+}
+
+function setFocusTask() {
+  const task = document.getElementById('focusTaskInput').value.trim();
+  if (task) { document.getElementById('timerTask').textContent = task; toast('🎯 Task set!'); }
+}
+
+// ===== SEARCH =====
+function searchAll(q) {
+  if (!q) return;
+  // Simple search across notes and captures
+  const results = [
+    ...state.notes.filter(n => n.title?.toLowerCase().includes(q.toLowerCase()) || n.content?.toLowerCase().includes(q.toLowerCase())),
+    ...state.captures.filter(c => c.text?.toLowerCase().includes(q.toLowerCase())),
+  ];
+  // Future: show results in a dropdown
+}
+
+// ===== UTILS =====
+function escHtml(s) {
+  if (!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+let toastTimeout;
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => el.classList.remove('show'), 2500);
+}
+</script>
+</body>
+</html>
