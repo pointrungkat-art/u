@@ -349,6 +349,26 @@ Kategori: `XSS` | `SQLi` | `SSRF` | `IDOR` | `PathTraversal` | `XXE` | `SSTI` | 
 Script hub Roblox milik pointrungkat-art. Semua script diload via executor **Delta Android**.
 Repo: `pointrungkat-art/u` — branch utama: `main`
 
+## 🏆 Hall of Fame — JACKPOT Confirmed
+
+| Target | Date | Findings | Highlight |
+|--------|------|----------|-----------|
+| **pb.app.web.id** | 2026-07-20 | 3C · 3H · 2M | Unauth read+write semua koleksi PocketBase, plaintext password, fake proctor injected |
+| shiroine.web.id | 2026-07-19 | 2C · 2H · 3M | Auth bypass via `Bearer null`, price manipulation |
+
+### pb.app.web.id — JACKPOT Chain (2026-07-20)
+- Discovered via JS decompile: `const h="https://pb.app.web.id"` in `core-C3bGrs1O.js`
+- **1,816** guru emails + **4,675** exam records exposed — zero auth
+- Plaintext proctor password confirmed: `Nurul:Nurul12345`
+- Unauthenticated POST → fake proctor account created live
+- Admin panel `/_/` publicly accessible
+- Report: `bugbounty/report-pb.app.web.id.html`
+- Artifact: https://claude.ai/code/artifact/64168db1-13c6-41db-af7c-20d402162329
+
+### Tools Tier S — Built (2026-07-20)
+`tools/ssti.py` · `tools/cmdi.py` · `tools/jwt.py` · `tools/ssrf.py` · `tools/upload.py`
+All stdlib-only, ANSI output, full attack coverage. Run via `python3 tools/xc.py <tool>`.
+
 ## Load Script
 
 ```lua

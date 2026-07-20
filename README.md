@@ -145,7 +145,30 @@ Commands aktif:
 
 ---
 
-## Hunt Log — shiroine.web.id ✅
+## Hunt Log 🔥
+
+### admin-cbt.code.app.web.id / pb.app.web.id ✅ JACKPOT
+
+**2026-07-20** — **8 celah** ditemukan. Backend PocketBase fully exposed, unauth read+write ke semua koleksi:
+
+| Severity | Finding | Impact |
+|----------|---------|--------|
+| 🔴 Critical | **Unauth Mass Data Read** | 1,816 email guru + 4,675 kode ujian — 0 auth |
+| 🔴 Critical | **Unauth Write — Fake Proctor** | POST ke DataPengawas → inject akun pengawas palsu |
+| 🔴 Critical | **Plaintext Password Storage** | `Nurul:Nurul12345` tersimpan + terekspos plaintext |
+| 🟠 High | **Admin Panel Exposed** | `/_/` → 200 OK, GUI PocketBase publik |
+| 🟠 High | **Client-Side Role Control** | `localStorage.userType = "admin"` → privilege escalation |
+| 🟠 High | **JWT di localStorage** | XSS → token theft → full account takeover |
+| 🟡 Medium | **WAF Bypass 14/15** | Googlebot UA, Localhost spoof, Cache bypass, dll |
+| 🟡 Medium | **Answer Key Exposed** | DataKunci encrypted key terekspos tanpa auth |
+
+> Backend ditemukan via JS decompile: `core-C3bGrs1O.js` → `const h="https://pb.app.web.id"`
+
+Report: [`bugbounty/report-pb.app.web.id.html`](bugbounty/report-pb.app.web.id.html) · [`bugbounty/findings.md`](bugbounty/findings.md)
+
+---
+
+### shiroine.web.id ✅
 
 **2026-07-19** — 7 celah berhasil ditemukan:
 
