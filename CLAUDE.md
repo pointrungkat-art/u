@@ -288,6 +288,54 @@ Kategori: `XSS` | `SQLi` | `SSRF` | `IDOR` | `PathTraversal` | `XXE` | `SSTI` | 
 
 ---
 
+## ⚡ /agent — XC AGENT (Agentic AI Orchestrator)
+
+**BANNER OUTPUT:**
+```
+╔══════════════════════════════════════════════════════╗
+║  ⚡  XC AGENT  ·  AGENTIC AI  ·  HERMES-STYLE       ║
+║       23 tools · 5 workflows · Claude SDK loop       ║
+╚══════════════════════════════════════════════════════╝
+```
+
+**Location:** `agents/`
+**Setup:** `bash agents/setup.sh` (sekali doang) + `export ANTHROPIC_API_KEY=...`
+
+**CLI Usage:**
+```bash
+python3 agents/xc_agent.py                              # REPL interaktif
+python3 agents/xc_agent.py --mode hack "target.com"     # auto hack chain
+python3 agents/xc_agent.py --mode dox "username"        # OSINT
+python3 agents/xc_agent.py --mode brain "capture ..."   # brain auto
+python3 agents/xc_agent.py --mode cheatdev "auto farm"  # Lua craft
+python3 agents/xc_agent.py --list-tools                 # 23 tools
+python3 agents/xc_agent.py --list-modes                 # 5 workflows
+```
+
+**MCP Server (stdio):** `python3 agents/mcp_server.py`
+Register di Claude Desktop / Cursor / Cline:
+```json
+"xc-hub": { "command": "python3", "args": ["/absolute/path/agents/mcp_server.py"] }
+```
+
+**Files:**
+- `agents/xc_agent.py` — CLI + agentic loop (Anthropic SDK)
+- `agents/mcp_server.py` — MCP stdio server, zero deps
+- `agents/tool_registry.py` — 23 tools catalog (hack + brain + cheatdev)
+- `agents/workflows/*.yaml` — 5 mode presets (default/hack/dox/brain/cheatdev)
+- `agents/config.yaml` — model, max_turns, defaults
+- `agents/setup.sh` — one-shot installer
+- `brain/data/runs/<session>.jsonl` — agent run traces
+
+**Env vars:**
+- `ANTHROPIC_API_KEY` — required
+- `XC_AGENT_MODEL` — default `claude-sonnet-5`
+- `XC_AGENT_MAX_TURNS` — default 20
+
+**Extend:** tambah tool → edit `agents/tool_registry.py` · tambah workflow → drop YAML di `agents/workflows/`. Auto-discovered.
+
+---
+
 ## ⚡ VERIFY PROTOCOL — WAJIB TIAP BUILD BARU
 
 > Setiap tool Python atau project baru **wajib** diverifikasi sebelum dianggap selesai.
@@ -486,6 +534,11 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `tools/upload.py` | File upload bypass → webshell |
 | `tools/sqli.py` | SQL injection fuzzer |
 | `tools/waf.py` | WAF bypass & detection |
+| `agents/xc_agent.py` | 🔥 **XC AGENT** — Agentic AI CLI, 5 workflow modes |
+| `agents/mcp_server.py` | MCP stdio server — expose 23 tools ke Claude Desktop |
+| `agents/tool_registry.py` | Central tool catalog (hack + brain + cheatdev) |
+| `agents/workflows/*.yaml` | Workflow presets: default, hack, dox, brain, cheatdev |
+| `agents/setup.sh` | One-shot installer + smoke test |
 | `bugbounty/findings.md` | Log findings hasil hunt |
 | `brain/index.html` | 🧠 **XC Second Brain** — full agentic workflow hub (artifact) |
 | `brain/mcp-server/index.js` | Brain MCP server — 12 tools, persistent storage ke brain/data/ |

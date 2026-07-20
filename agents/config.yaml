@@ -1,0 +1,18 @@
+# XC Agent — Config
+# Edit sini kalau mau ganti default model / max turns / tool limits.
+# Env vars override config: XC_AGENT_MODEL, XC_AGENT_MAX_TURNS.
+
+model: claude-sonnet-5           # default model (fallback: claude-opus-4-8, claude-haiku-4-5-20251001)
+max_turns: 20                    # max agentic loop turns per session
+default_workflow: default        # workflow saat REPL start
+timeout_per_tool: 240            # seconds — subprocess timeout for hacking tools
+
+# Log & persistence
+log_runs: true                   # tulis run trace ke brain/data/runs/<session>.jsonl
+capture_findings: true           # auto brain_capture untuk vuln/loot
+
+# MCP server
+mcp:
+  name: xc-hub
+  version: 1.0.0
+  protocol: 2025-06-18

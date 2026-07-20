@@ -205,9 +205,48 @@ Config + guide khusus Free Fire untuk **one tap headshot** & **drag headshot**.
 
 ---
 
+## ⚡ XC Agent — Agentic AI Orchestrator 🔥
+
+Hermes-style autonomous agent yang bungkus **semua** XC Hub tools (hacking, OSINT,
+brain, cheatdev) jadi 1 CLI + MCP server. Kasih goal → agent chain tools sampe kelar.
+
+```bash
+bash agents/setup.sh                                          # one-shot install
+export ANTHROPIC_API_KEY=sk-ant-...                           # get from console.anthropic.com
+
+python3 agents/xc_agent.py                                    # REPL mode
+python3 agents/xc_agent.py --mode hack "target.com"           # auto recon → exploit → report
+python3 agents/xc_agent.py --mode dox "username"              # OSINT compile
+python3 agents/xc_agent.py --mode brain "idea baru: ..."      # auto brain classify
+python3 agents/xc_agent.py --mode cheatdev "auto farm RPG"    # Lua craft & save
+```
+
+| Mode | Tools | Untuk |
+|------|-------|-------|
+| `default` | 23 all | Generic — bebas |
+| `hack` | 13 hack + brain | Chain: recon → ipfind → vuln fuzz → report |
+| `dox` | 4 recon + brain | OSINT DOX report auto-compile |
+| `brain` | 7 brain | Auto-classify capture/task/note/journal |
+| `cheatdev` | 3 forge | Craft Lua script siap inject |
+
+**MCP server** (Claude Desktop / Cursor / Cline):
+```json
+"xc-hub": { "command": "python3", "args": ["/absolute/path/agents/mcp_server.py"] }
+```
+
+Detail full → [`agents/README.md`](agents/README.md)
+
+---
+
 ## Struktur Repo
 
 ```
+agents/                              ← 🔥 XC AGENT — Agentic AI orchestrator (Claude SDK + MCP)
+  xc_agent.py                        ← CLI entry — agentic loop, 5 workflow modes
+  mcp_server.py                      ← MCP stdio server, 23 tools exposed
+  tool_registry.py                   ← Central tool catalog (hack + brain + cheatdev)
+  workflows/                         ← YAML presets: default, hack, dox, brain, cheatdev
+  setup.sh                           ← One-shot install
 CheatDev.lua                         ← 🔥 CHEAT DEVELOPER — unified big hub + Script Forge
 Hub.lua                              ← XC Hub utama (Blox Fruits & general)
 ZC.lua                               ← ZC Hub — FPS Performance & Experience

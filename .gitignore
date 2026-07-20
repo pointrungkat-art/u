@@ -3,3 +3,9 @@ __pycache__/
 *.pyo
 .DS_Store
 *.log
+
+# XC Agent — runtime persistence (user data, not repo state)
+brain/data/
+agents/data/
+.env
+.env.local
