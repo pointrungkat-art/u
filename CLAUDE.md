@@ -37,7 +37,6 @@
      /F <target>     JACKPOT        │  /F Vul    vuln hunt
      /WP <target>    warm-up        │  /payload  lab
      /tools <tool>   cheatsheet     │  /chain    builder
-     /methodology    OWASP          │  /report   generate
 
   🔴 OSINT
      /DOX <target>   full OSINT     │  /DOX user/email/domain/ip/leaks
@@ -84,10 +83,10 @@
   │  /payload SSTI      server-side template inject   │
   │  /payload PathTraversal  · OpenRedirect           │
   └───────────────────────────────────────────────────┘
-  ┌─ TRACKER ────────────────────────────────────────┐
-  │  /chain             vuln chain builder            │
-  │  /methodology       OWASP checklist               │
-  │  /report            bug bounty report gen         │
+  ┌─ OWNED ───────────────────────────────────────────┐
+  │  /chain             exploit chain builder          │
+  │  /loot              data exfil summary             │
+  │  /pwned             proof of concept dump          │
   └───────────────────────────────────────────────────┘
 ```
 
