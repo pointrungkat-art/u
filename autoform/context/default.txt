@@ -1,0 +1,12 @@
+# Default context template — edit sesuai profil lu
+
+Nama: [Your Name]
+Umur: [Your Age]
+Email: [Your Email]
+Pekerjaan: [Your Job]
+Institusi/Sekolah: [Your Institution]
+Kota: [Your City]
+Negara: Indonesia
+
+# Tambah info lain sesuai kebutuhan form:
+# Hobi, minat, pengalaman kerja, dll.

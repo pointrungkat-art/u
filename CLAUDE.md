@@ -227,3 +227,29 @@ Folder `onetapdrag/` — config & guide khusus Free Fire untuk one tap headshot 
 | `guide.md` | Teknik one tap & drag headshot + test protocol |
 
 **Sensitivity utama:** General=100, RedDot=85, 2x=72, 4x=58, AWM=42, FreeLook=95
+
+---
+
+## ⚡ AUTOFORM — AI Form Filler
+
+> Kasih URL form → AI baca soal → auto generate jawaban → auto fill + submit.
+
+**Location:** `autoform/`
+
+### Setup
+```bash
+cd autoform && source .venv/bin/activate
+export ANTHROPIC_API_KEY=your_key
+```
+
+### Commands
+
+| Command | Fungsi |
+|---------|--------|
+| `python main.py <url>` | Review mode — lihat jawaban tanpa submit |
+| `python main.py <url> --submit` | Auto-fill + submit |
+| `python main.py <url> -c context.txt --submit` | Pakai context file (.txt/.pdf) |
+| `python main.py <url> -i "Nama: X, Umur: Y" --submit` | Inline context |
+| `python main.py <url> --submit -o answers.json --screenshot` | Save + screenshot |
+
+**Platform support:** Google Forms ✓ · Typeform · MS Forms · Any HTML form
