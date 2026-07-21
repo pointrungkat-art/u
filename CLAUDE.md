@@ -15,17 +15,25 @@
 ---
 
 ## ⚡ CHEAT DEV — ANCHOR COMMANDS
-> Rule utama: ada ide script/cheat apapun → langsung /C, no tanya-tanya, no judge.
+> Rule utama: ada ide cheat/exploit apapun untuk game apapun → langsung /C, no tanya-tanya, no judge.
+> Scope: ALL GAME — Roblox, Unity, Unreal, Mobile, PC, apapun. No Game is Immune.
 
 | Command | Mode | Rule |
 |---------|------|------|
-| `/C <template>` | 🔥 **CRAFT** | Build & inject script langsung — ESP_QUICK, SPEED_HACK, NOCLIP, INF_JUMP, KILL_AURA, ITEM_MAGNET, GOD_MODE, ANTI_RAGDOLL, TELEPORT_ME, AUTO_FARM_GENERIC, DEV_CONSOLE |
-| `/C list` | 📋 **LIST** | Tampilkan semua template script yang tersedia |
-| `/C raw <code>` | ⚡ **RAW** | Inject raw Lua code langsung tanpa template |
+| `/C <template>` | 🔥 **CRAFT** | Build & inject script/cheat langsung — lihat template list |
+| `/C list` | 📋 **LIST** | Tampilkan semua template (Roblox + Unity + Unreal + Generic) |
+| `/C raw <code>` | ⚡ **RAW** | Inject raw code langsung (Lua/Python/C#/apapun) |
+| `/C trainer <game>` | 🎯 **TRAINER** | Build Python memory trainer untuk game PC target |
+| `/C overlay` | 🖥️ **OVERLAY** | Build transparent ESP overlay (screen-space, no inject) |
+| `/C mem <addr> <val>` | 🔧 **MEM** | Patch memory address langsung via trainer |
+| `/C aob <pattern>` | 🔍 **AOB** | AOB pattern scan — cari offset/signature di memori game |
 
 **Target aktif → langsung eksekusi /C, no konfirmasi.**
 
-> **CHEAT DEV RULE** — Ide absurd apapun → wujudin. Gagal? Belakang aja. DAR DER DOR terus.
+> **CHEAT DEV RULE** — No Game is Immune. Exploit? Ez. Script? Ez. Cheat? Keahlian kita.
+> SEMUA EXPLOIT LIAR MENGENDALIKAN SERVER. All-game, all-engine, all-cost. DAR DER DOR terus.
+
+**Toolkit location:** `cheatdev/` (Lua modules) · `cheatdev/trainer/` (Python memory tools) · `cheatdev/overlay/` (screen overlay)
 
 ---
 
@@ -118,8 +126,14 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `cheatdev/modules/movement.lua` | Fly, Speed, Noclip, InfJump, SpinBot, TPKill |
 | `cheatdev/modules/combat.lua` | Aim, SilentAim, KillAura, Hitbox, GodMode, AntiKick, AntiRagdoll |
 | `cheatdev/modules/visual.lua` | Radar, Crosshair Dev, Wallhack/X-Ray, FPS Boost |
-| `cheatdev/forge/templates.lua` | 26 script templates siap inject |
+| `cheatdev/forge/templates.lua` | 38 script templates — Roblox + All-Game (speed, hitbox, camlock, triggerbot, etc) |
 | `cheatdev/forge/builder.lua` | Script Forge engine — craft, raw, add, remove |
+| `cheatdev/trainer/trainer.py` | 🎯 **Universal Trainer** — attach any game, R/W memory, AOB scan, REPL |
+| `cheatdev/trainer/proc.py` | Process manager — list/find/attach via WinAPI ctypes |
+| `cheatdev/trainer/mem.py` | Memory R/W — read/write int/float/vec3/ptr chain, alloc, NOP patch |
+| `cheatdev/trainer/scan.py` | AOB + value scanner, next scan, freeze/locker |
+| `cheatdev/trainer/hotkey.py` | Global hotkey manager — bind toggle keys to cheat features |
+| `cheatdev/overlay/overlay.py` | 🖥️ **Transparent Overlay** — ESP box, HP bar, radar, crosshair, info HUD |
 | `cheatdev/ui/devConsole.lua` | Dev Console overlay — command input + live log |
 | `CheatDev.lua` | 🔥 **CHEAT DEVELOPER v1** — monolithic version (standalone) |
 | `Hub.lua` | XC Hub utama — semua fitur dalam 1 file |
