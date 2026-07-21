@@ -59,6 +59,20 @@
 | `bounty-web` | `/F`, `/F Vul` | Auth bypass, SQLi, XSS, SSTI→RCE, upload, deserialization |
 | `bounty-api` | `/F`, `/F Vul` | OWASP API Top 10, GraphQL, JWT, LLM/AI API attacks |
 
+**MCP Server (`xc-hacking`) — `.mcp.json` + `mcp_server/server.py`:**
+
+| Tool | Fungsi |
+|------|--------|
+| `list_modules` | List semua modul InternalSecurityToolkit + tools/ scripts |
+| `scan_target` | Jalankan full/partial toolkit scan (recon/webprobe/injector/apifuzz) |
+| `run_tool` | Jalankan tools/ script langsung (sqli/ssrf/ssti/waf/jwt/ipfind/dll) |
+| `run_benchmark` | Payload benchmark — stress/timing analysis multi-vector |
+| `suggest_attack` | Recommend workflow + tools untuk target type (web/api/osint/llm) |
+| `guided_assessment` | Step-by-step pentest: recon → web probe → inject → next steps |
+| `run_script` | Exec inline Python/Bash script langsung |
+
+Start: `.mcp.json` auto-load via Claude Code · Manual: `python mcp_server/server.py`
+
 ---
 
 ## ⚡ VIRUS LAB — INTERNAL SECURITY TOOLKIT
