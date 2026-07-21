@@ -17,7 +17,13 @@
     python3 toolkit.py --target <url> --full          # deep scan
     python3 toolkit.py --target <url> --token <jwt>   # authenticated scan
 
-  MODULES: recon | portscanner | webprobe | authtest | injector | apifuzz | all
+  MODULES: recon | portscanner | webprobe | authtest | injector | apifuzz | benchmark | all
+  BENCH VECTORS: http | api | tcp | udp | db | malformed
+
+  BENCHMARK MODE:
+    python3 toolkit.py --target <url> --bench
+    python3 toolkit.py --target <url> --bench --vectors http api tcp
+    python3 toolkit.py --target <url> --bench --concurrency 50 --duration 30
 """
 
 import sys, os, argparse, time
@@ -31,6 +37,7 @@ MODULES = {
     "authtest":    "modules.authtest",
     "injector":    "modules.injector",
     "apifuzz":     "modules.apifuzz",
+    "benchmark":   "modules.benchmark",
 }
 
 COLORS = {
@@ -88,16 +95,48 @@ def main():
                         help="Don't save JSON report")
     parser.add_argument("--ports", nargs="+", type=int,
                         help="Custom ports for portscanner (e.g. --ports 80 443 8080)")
+    # Benchmark mode
+    parser.add_argument("--bench", "-b", action="store_true",
+                        help="Run payload benchmark mode")
+    parser.add_argument("--vectors", nargs="+",
+                        choices=["http","api","tcp","udp","db","malformed"],
+                        help="Benchmark vectors (default: all)")
+    parser.add_argument("--concurrency", "-c", type=int, default=20,
+                        help="Benchmark concurrency workers (default: 20)")
+    parser.add_argument("--duration", "-d", type=int, default=10,
+                        help="Benchmark duration per vector in seconds (default: 10)")
     args = parser.parse_args()
 
     banner()
 
     target = args.target
-    if not target.startswith("http") and not args.module == "portscanner":
+    if not target.startswith("http") and args.module not in ("portscanner",):
         target = "https://" + target
 
-    results = []
     t_start = time.time()
+
+    # ── Benchmark mode ──────────────────────────────────────────────────────
+    if args.bench or args.module == "benchmark":
+        import importlib
+        bmod = importlib.import_module("modules.benchmark")
+        status("BENCHMARK MODE — payload barrage starting", "PURPLE")
+        result = bmod.run(
+            target,
+            token=args.token,
+            full=args.full,
+            concurrency=args.concurrency,
+            duration=args.duration,
+            vectors=args.vectors,
+        )
+        elapsed = round(time.time() - t_start, 1)
+        status(f"Benchmark complete in {elapsed}s", "GREEN")
+        if not args.no_save:
+            from modules import reporter
+            reporter.save_json([result], target)
+        return
+
+    # ── Scan mode ───────────────────────────────────────────────────────────
+    results = []
 
     if args.module == "all":
         order = ["recon","portscanner","webprobe","authtest","injector","apifuzz"]
