@@ -188,6 +188,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `bugbounty/findings.md` | Log findings hasil hunt |
 | `bugbounty/hall-of-fame.md` | Hall of Fame — semua target yang udah di-hack |
 | `bugbounty/report-cbt.mimikridev.com.html` | Report — cbt.mimikridev.com (2C·3H·7M) IDOR exam hijack |
+| `bugbounty/dataleak-pb.app.web.id.md` | Data leak report — BimaSoft PocketBase PII extraction (146 hits) |
 
 ## Sub-Hub ZC & XZ
 
