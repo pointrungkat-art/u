@@ -176,6 +176,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `tools/sqli.py` | SQL injection fuzzer |
 | `tools/waf.py` | WAF bypass & detection |
 | `tools/cbt_hunter.py` | CBT/Exam platform hunter — JS decompile, PocketBase/Firebase/Supabase/Laravel scanner, auth bypass, data dump |
+| `tools/dataleak.py` | DataLeak Scanner — PII/credential extractor dari exposed endpoints (PocketBase/Firebase/Supabase/GraphQL/REST) |
 | `InternalSecurityToolkit/toolkit.py` | 🔬 **VIRUS LAB** — entry point, full scan pipeline |
 | `InternalSecurityToolkit/modules/recon.py` | DNS, IP, ASN, CDN, subdomain recon |
 | `InternalSecurityToolkit/modules/portscanner.py` | TCP port scan + banner grab |
