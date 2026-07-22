@@ -329,7 +329,7 @@ def scan_pocketbase(pb_url, deep=False, dump=False):
     else:
         fail(f"Health check failed ({code})")
 
-    code, _ = fetch(f"{base}/_/")
+    code, _, _ = fetch(f"{base}/_/")
     if code == 200:
         add_finding("HIGH", "Admin Panel Exposed", f"{base}/_/ returns 200 — PocketBase admin GUI public")
     elif code in (301, 302):

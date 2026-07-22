@@ -186,6 +186,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `InternalSecurityToolkit/modules/reporter.py` | ANSI terminal report + JSON output |
 | `bugbounty/findings.md` | Log findings hasil hunt |
 | `bugbounty/hall-of-fame.md` | Hall of Fame — semua target yang udah di-hack |
+| `bugbounty/report-cbt.mimikridev.com.html` | Report — cbt.mimikridev.com (2C·3H·7M) IDOR exam hijack |
 
 ## Sub-Hub ZC & XZ
 

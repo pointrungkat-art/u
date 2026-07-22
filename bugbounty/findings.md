@@ -34,4 +34,48 @@
 
 ---
 
-*Hacking XC Hub · Responsible Disclosure · 2026-07-19*
+---
+
+## cbt.mimikridev.com · 2026-07-22
+
+**Total:** 12 findings &nbsp;|&nbsp; 2 Critical &nbsp;·&nbsp; 3 High &nbsp;·&nbsp; 7 Medium
+
+**Stack:** PHP · MySQL · LiteSpeed · Cloudflare · Materialize 5.0
+**Type:** CBT / Exam Browser Client Platform
+
+---
+
+### 🔴 CRITICAL
+
+| # | Finding |
+|---|---------|
+| C-01 | **IDOR — Cross-Account URL Deletion via GET** — `url-del.php?id=<hex>` tidak memverifikasi kepemilikan. User manapun bisa hapus exam URL milik user lain. Confirmed: Account 2 berhasil hapus URL Account 1 (id: 8dceb6). |
+| C-02 | **IDOR — Cross-Account URL Modification** — `url-update.php?id=<hex>` tanpa ownership check. User lain bisa ubah nama, link, timer exam URL milik sekolah lain. Confirmed: URL diubah ke "HACKED_BY_IDOR" → `https://hacked.example.com`. Impact: redirect siswa ke phishing page. |
+
+---
+
+### 🟠 HIGH
+
+| # | Finding |
+|---|---------|
+| H-01 | **No CSRF Protection** — Semua form tanpa CSRF token: settings, password change, URL add/delete/update. Semua operasi state-changing exploitable via CSRF. |
+| H-02 | **CSRF via GET on Delete** — URL deletion via GET request. Exploitable via `<img src>` tag — one-click silent deletion tanpa user consent. |
+| H-03 | **Broken Password Reset** — `reset-password.php` accessible tanpa token. Form hanya punya password + cpassword, no hidden token field. Backend (process.php:789) expect token tapi form tidak kirim. |
+
+---
+
+### 🟡 MEDIUM
+
+| # | Finding |
+|---|---------|
+| M-01 | **Server Path + Internal IP Disclosure** — PHP errors expose: `/www/wwwroot/172.93.219.140/cbt.mimikridev.com/` — full filesystem path + internal IP. |
+| M-02 | **SQL Error Disclosure** — `mysqli_sql_exception: Column 'img_logo' cannot be null` di setting.php:52 — reveal database schema, column names, NOT NULL constraints. |
+| M-03 | **PHP Debug in Production** — FILTER_SANITIZE_STRING deprecated, htmlspecialchars() warnings, Undefined array key notices semua visible di response. |
+| M-04 | **Missing HTTP Security Headers** — No X-Frame-Options, CSP, X-Content-Type-Options, HSTS, Referrer-Policy, Permissions-Policy. Clickjacking possible. |
+| M-05 | **Session Cookie Missing Flags** — Initial PHPSESSID tanpa Secure, HttpOnly, SameSite flags. |
+| M-06 | **Predictable URL IDs** — 6-char hex IDs (16.7M possibilities) brute-forceable. Combined with IDOR = enumerate + modify semua URL di platform. |
+| M-07 | **Open Registration Without Email Verification** — Account langsung aktif tanpa verifikasi email. |
+
+---
+
+*Hacking XC Hub · Security Assessment · 2026-07-22*

@@ -9,11 +9,11 @@
 
 | Metric | Count |
 |--------|-------|
-| Target Hacked | **3** |
-| Total Findings | **16** |
-| Critical | **5** |
-| High | **6** |
-| Medium | **5** |
+| Target Hacked | **4** |
+| Total Findings | **28** |
+| Critical | **7** |
+| High | **9** |
+| Medium | **12** |
 | JACKPOT Chains | **2** |
 
 ---
@@ -24,7 +24,8 @@
 |---|--------|------|----------|------|----------|
 | 1 | **BimaSoft (pb.app.web.id)** | 2026-07-20 | 3C · 3H · 2M | JACKPOT | Unauth read+write 1,816 emails + plaintext passwords |
 | 2 | **shiroine.web.id** | 2026-07-19 | 2C · 2H · 3M | JACKPOT | Auth bypass `Bearer null` + price manipulation |
-| 3 | **cloudways.com** | 2026-07-20 | 1H | HIGH | CORS origin reflection + credential theft |
+| 3 | **cbt.mimikridev.com** | 2026-07-22 | 2C · 3H · 7M | CRITICAL | IDOR delete+modify exam URLs across accounts |
+| 4 | **cloudways.com** | 2026-07-20 | 1H | HIGH | CORS origin reflection + credential theft |
 
 ---
 
@@ -109,7 +110,50 @@ Recon → Bearer null Auth Bypass → All Protected Endpoints Open
 
 ---
 
-## #3 — cloudways.com (Bugcrowd)
+## #3 — cbt.mimikridev.com (CRITICAL)
+
+| Field | Detail |
+|-------|--------|
+| Target | `cbt.mimikridev.com` |
+| Owner | **mimikridev.com** |
+| Date | 2026-07-22 |
+| Type | CBT Platform (Exam Browser Client) — lock browser untuk ujian online |
+| Stack | PHP · MySQL · LiteSpeed · Cloudflare · Materialize 5.0 |
+| Server IP | `172.93.219.140` (leaked via PHP errors) |
+| Findings | **12** — 2 Critical · 3 High · 7 Medium |
+| Report | `bugbounty/report-cbt.mimikridev.com.html` |
+| Status | CRITICAL CONFIRMED |
+
+### Findings
+
+| # | Severity | Finding | Impact |
+|---|----------|---------|--------|
+| C-01 | **CRITICAL** | IDOR — Cross-Account URL Delete (GET) | `url-del.php?id=<hex>` tanpa ownership check. User manapun bisa hapus exam URL milik sekolah lain. Confirmed: Account 2 hapus URL Account 1 |
+| C-02 | **CRITICAL** | IDOR — Cross-Account URL Modify | `url-update.php?id=<hex>` tanpa ownership check. Exam URL bisa diubah ke phishing page. Confirmed: URL diubah ke "HACKED_BY_IDOR" |
+| H-01 | **HIGH** | No CSRF Protection | Semua form tanpa CSRF token — settings, password change, URL CRUD |
+| H-02 | **HIGH** | CSRF via GET Delete | URL deletion via GET — exploitable via `<img src>` tag |
+| H-03 | **HIGH** | Broken Password Reset | `reset-password.php` accessible tanpa valid token, form tanpa hidden token field |
+| M-01 | **MEDIUM** | Server Path + Internal IP | PHP errors expose `/www/wwwroot/172.93.219.140/cbt.mimikridev.com/` |
+| M-02 | **MEDIUM** | SQL Error Disclosure | `mysqli_sql_exception` reveal database schema + column names |
+| M-03 | **MEDIUM** | PHP Debug in Production | Deprecation, warnings, fatal errors semua visible |
+| M-04 | **MEDIUM** | Missing Security Headers | No X-Frame-Options, CSP, HSTS — clickjacking possible |
+| M-05 | **MEDIUM** | Session Cookie No Flags | PHPSESSID tanpa Secure, HttpOnly, SameSite |
+| M-06 | **MEDIUM** | Predictable URL IDs | 6-char hex (16.7M space) — brute-forceable + IDOR = mass compromise |
+| M-07 | **MEDIUM** | Open Registration | Account tanpa email verification — instant access |
+
+### Kill Chain
+```
+Register account (no email verify) → Login
+  → Brute-force 6-char hex URL IDs via url-update.php
+  → IDOR: modify exam URLs → redirect students to phishing
+  → Alternative: IDOR delete → destroy all exam URLs
+  → CSRF: <img src=url-del.php?id=TARGET> → silent deletion
+  → Mass exam hijack — redirect, delete, or disrupt at scale
+```
+
+---
+
+## #4 — cloudways.com (Bugcrowd)
 
 | Field | Detail |
 |-------|--------|
@@ -147,6 +191,7 @@ CORS Misconfig → Malicious Site → Steal API Keys → Account Takeover
 2026-07-19  shiroine.web.id     5 findings → +2 jackpot → 7 total (2C·2H·3M)
 2026-07-20  pb.app.web.id       8 findings JACKPOT (3C·3H·2M) — BimaSoft owned
 2026-07-20  cloudways.com       1 finding HIGH — CORS (Bugcrowd)
+2026-07-22  cbt.mimikridev.com  12 findings CRITICAL (2C·3H·7M) — IDOR mass exam hijack
 ```
 
 ---
