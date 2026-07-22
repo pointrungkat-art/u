@@ -175,6 +175,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `tools/upload.py` | File upload bypass → webshell |
 | `tools/sqli.py` | SQL injection fuzzer |
 | `tools/waf.py` | WAF bypass & detection |
+| `tools/cbt_hunter.py` | CBT/Exam platform hunter — JS decompile, PocketBase/Firebase/Supabase/Laravel scanner, auth bypass, data dump |
 | `InternalSecurityToolkit/toolkit.py` | 🔬 **VIRUS LAB** — entry point, full scan pipeline |
 | `InternalSecurityToolkit/modules/recon.py` | DNS, IP, ASN, CDN, subdomain recon |
 | `InternalSecurityToolkit/modules/portscanner.py` | TCP port scan + banner grab |
