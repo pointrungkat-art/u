@@ -184,6 +184,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `InternalSecurityToolkit/modules/apifuzz.py` | API endpoint discovery, IDOR, auth bypass, GraphQL |
 | `InternalSecurityToolkit/modules/reporter.py` | ANSI terminal report + JSON output |
 | `bugbounty/findings.md` | Log findings hasil hunt |
+| `bugbounty/hall-of-fame.md` | Hall of Fame — semua target yang udah di-hack |
 
 ## Sub-Hub ZC & XZ
 
