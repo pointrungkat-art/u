@@ -189,6 +189,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `bugbounty/hall-of-fame.md` | Hall of Fame — semua target yang udah di-hack |
 | `bugbounty/report-cbt.mimikridev.com.html` | Report — cbt.mimikridev.com (2C·3H·7M) IDOR exam hijack |
 | `bugbounty/dataleak-pb.app.web.id.md` | Data leak report — BimaSoft PocketBase PII extraction (146 hits) |
+| `bugbounty/tryout.ilmupedia.co.id.md` | Security report — Ilmupedia Tryout (2C·2H·3M) OTP brute force + WhatsApp token abuse |
 
 ## Sub-Hub ZC & XZ
 

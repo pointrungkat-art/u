@@ -79,3 +79,23 @@
 ---
 
 *Hacking XC Hub · Security Assessment · 2026-07-22*
+
+---
+
+## tryout.ilmupedia.co.id — 2026-07-23
+
+**Target:** Ilmupedia Tryout (UTBK/SNBT CBT platform by Telkomsel)  
+**Assessment:** Full JACKPOT `/F`
+
+| # | Severity | Title | Status |
+|---|----------|-------|--------|
+| 1 | CRITICAL | WhatsApp Login — No Rate Limit, Verification Code Exposed | Confirmed |
+| 2 | CRITICAL | OTP Brute Force via Session Refresh (Rate Limit Bypass) | Confirmed |
+| 3 | HIGH | CIAM Internal Error Disclosure (500 → service name leaked) | Confirmed |
+| 4 | HIGH | Auth Tokens in localStorage (XSS → Full Account Takeover) | Confirmed |
+| 5 | MEDIUM | Sentry DSN Exposed in Public JS Bundle | Confirmed |
+| 6 | MEDIUM | WA Admin Bot Number Exposed in API Response (+6285172127033) | Confirmed |
+| 7 | MEDIUM | Backend Stack Disclosure (Gunicorn/Python, AWS ALB/CF) | Confirmed |
+| 8 | INFO | Public API Endpoints Expose Platform Metadata | Confirmed |
+
+**Report:** `bugbounty/tryout.ilmupedia.co.id.md`

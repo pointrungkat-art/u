@@ -216,3 +216,12 @@ CORS Misconfig → Malicious Site → Steal API Keys → Account Takeover
 
 *XC Hacking Hub · Hall of Fame · Last updated: 2026-07-22*
 *No target is safe. DAR DER DOR.*
+
+---
+
+## tryout.ilmupedia.co.id — 2026-07-23
+
+**Platform:** Ilmupedia Tryout · Telkomsel UTBK/SNBT CBT  
+**Key Finding:** OTP Brute Force via Session Refresh + WhatsApp Token Abuse  
+**Severity:** 2x CRITICAL, 2x HIGH, 3x MEDIUM  
+**Report:** `bugbounty/tryout.ilmupedia.co.id.md`
