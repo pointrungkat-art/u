@@ -175,6 +175,7 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `tools/upload.py` | File upload bypass → webshell |
 | `tools/sqli.py` | SQL injection fuzzer |
 | `tools/waf.py` | WAF bypass & detection |
+| `tools/spy.py` | 🕵️ **XC SPY** — Person/Device surveillance: RAT deploy, keylogger, Android APK spy, screen capture, C2 server, social lure, network MITM |
 | `tools/cbt_hunter.py` | CBT/Exam platform hunter — JS decompile, PocketBase/Firebase/Supabase/Laravel scanner, auth bypass, data dump |
 | `tools/dataleak.py` | DataLeak Scanner — PII/credential extractor dari exposed endpoints (PocketBase/Firebase/Supabase/GraphQL/REST) |
 | `InternalSecurityToolkit/toolkit.py` | 🔬 **VIRUS LAB** — entry point, full scan pipeline |
