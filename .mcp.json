@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "xc-hacking": {
+      "command": "/home/user/u/mcp_server/.venv/bin/python",
+      "args": [
+        "/home/user/u/mcp_server/server.py"
+      ],
+      "env": {}
+    }
+  }
+}

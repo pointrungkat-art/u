@@ -1,0 +1,8 @@
+[project]
+name = "xc-hacking-mcp"
+version = "1.0.0"
+requires-python = ">=3.10"
+dependencies = ["fastmcp>=3.0"]
+
+[project.scripts]
+xc-mcp = "server:main"

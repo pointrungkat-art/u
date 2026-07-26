@@ -1,0 +1,28 @@
+╔══════════════════════════════════════════════════════════════════╗
+║           XC INTERNAL SECURITY TOOLKIT — AUTHORIZED USE         ║
+╚══════════════════════════════════════════════════════════════════╝
+
+Toolkit ini dibuat khusus untuk:
+
+  [1] Security testing pada sistem yang DIMILIKI atau DIKELOLA sendiri
+  [2] Authorized penetration testing dengan izin tertulis dari pemilik sistem
+  [3] Internal infrastructure assessment (server, API, web app milik sendiri)
+  [4] CTF (Capture The Flag) dan lab environment (HackTheBox, TryHackMe, dll)
+  [5] Threat simulation dan red team exercise yang sudah dikonfirmasi
+
+══════════════════════════════════════════════════════════════════
+
+SCOPE OF USE
+  - Target harus memiliki explicit authorization dari owner sistem
+  - Semua aktivitas scanning tercatat di output/ untuk audit trail
+  - Gunakan hanya pada network dan sistem dalam scope yang disepakati
+
+DISCLAIMER
+  Tool ini dibangun untuk tujuan defensif dan riset keamanan.
+  Penyalahgunaan terhadap sistem tanpa izin adalah tanggung jawab pengguna.
+
+══════════════════════════════════════════════════════════════════
+
+Owner   : pointrungkat-art
+Repo    : github.com/pointrungkat-art/u
+Updated : 2026-07-21
