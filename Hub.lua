@@ -155,7 +155,7 @@ FloatTab.InputChanged:Connect(function(i)
     if ftDragStart and (i.UserInputType == Enum.UserInputType.Touch
     or i.UserInputType == Enum.UserInputType.MouseMovement) then
         local d = i.Position - ftDragStart
-        if d.Magnitude > 6 then
+        if d.Magnitude > 12 then
             ftMoved = true
             FloatTab.Position = UDim2.new(ftStartPos.X.Scale, ftStartPos.X.Offset+d.X, ftStartPos.Y.Scale, ftStartPos.Y.Offset+d.Y)
         end
