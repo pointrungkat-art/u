@@ -1,4 +1,4 @@
--- XC Hub v2.2 | Square UI + Mobile + Fixes
+-- XC Hub v2.3 | Square UI + Mobile + Fixes
 -- ESP + AutoHop + AutoChest + AutoFruit
 -- Delta Android Compatible
 -- loadstring(game:HttpGet("RAW_URL"))()
@@ -143,25 +143,32 @@ FloatTab.ZIndex           = 10
 FloatTab.Parent           = ScreenGui
 Instance.new("UIStroke", FloatTab).Color = C.Accent
 
--- Draggable float tab
-local ftDrag, ftDragStart, ftStartPos
+-- Draggable float tab — tap = open, drag = move
+local ftDragStart, ftStartPos, ftMoved
 FloatTab.InputBegan:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.Touch
     or i.UserInputType == Enum.UserInputType.MouseButton1 then
-        ftDrag = true ; ftDragStart = i.Position ; ftStartPos = FloatTab.Position
+        ftDragStart = i.Position ; ftStartPos = FloatTab.Position ; ftMoved = false
     end
 end)
 FloatTab.InputChanged:Connect(function(i)
-    if ftDrag and (i.UserInputType == Enum.UserInputType.Touch
+    if ftDragStart and (i.UserInputType == Enum.UserInputType.Touch
     or i.UserInputType == Enum.UserInputType.MouseMovement) then
         local d = i.Position - ftDragStart
-        FloatTab.Position = UDim2.new(ftStartPos.X.Scale, ftStartPos.X.Offset+d.X, ftStartPos.Y.Scale, ftStartPos.Y.Offset+d.Y)
+        if d.Magnitude > 6 then
+            ftMoved = true
+            FloatTab.Position = UDim2.new(ftStartPos.X.Scale, ftStartPos.X.Offset+d.X, ftStartPos.Y.Scale, ftStartPos.Y.Offset+d.Y)
+        end
     end
 end)
 FloatTab.InputEnded:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.Touch
     or i.UserInputType == Enum.UserInputType.MouseButton1 then
-        ftDrag = false
+        if not ftMoved then
+            FloatTab.Visible  = false
+            MainFrame.Visible = true
+        end
+        ftDragStart = nil ; ftMoved = false
     end
 end)
 
@@ -233,11 +240,6 @@ CloseBtn.BorderSizePixel  = 0
 MinBtn.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
     FloatTab.Visible  = true
-end)
-FloatTab.MouseButton1Click:Connect(function()
-    if ftDrag then return end
-    FloatTab.Visible  = false
-    MainFrame.Visible = true
 end)
 CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
 
@@ -803,4 +805,4 @@ createToggle("Silent Aim","Snap instan ke musuh saat tap/klik",7,function(on)
     setStatus(on and "Silent Aim ON" or "Silent Aim OFF", on and C.Success or C.Error)
 end)
 
-print("[XC Hub] v2.2 Loaded!")
+print("[XC Hub] v2.3 Loaded!")
