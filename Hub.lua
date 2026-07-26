@@ -1,4 +1,4 @@
--- XC Hub v2.0 | Galaxy UI + Key System
+-- XC Hub v2.1 | Square UI + Mobile Optimized
 -- ESP + AutoHop + AutoChest + AutoFruit
 -- Delta Android Compatible
 -- loadstring(game:HttpGet("RAW_URL"))()
@@ -53,136 +53,195 @@ ScreenGui.Parent         = game:GetService("CoreGui")
 -- └─────────────────────────┘
 local KeyFrame = Instance.new("Frame")
 KeyFrame.Name             = "KeyScreen"
-KeyFrame.Size             = UDim2.new(0, 260, 0, 210)
-KeyFrame.Position         = UDim2.new(0.5, -130, 0.5, -105)
+KeyFrame.Size             = UDim2.new(0, 240, 0, 190)
+KeyFrame.Position         = UDim2.new(0.5, -120, 0.5, -95)
 KeyFrame.BackgroundColor3 = C.BG
 KeyFrame.BorderSizePixel  = 0
 KeyFrame.Parent           = ScreenGui
-Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 14)
 
 local keyStroke = Instance.new("UIStroke", KeyFrame)
 keyStroke.Color     = C.Accent
-keyStroke.Thickness = 1.5
+keyStroke.Thickness = 1
 
--- Deco line top
+-- Top accent bar
 local keyLine = Instance.new("Frame", KeyFrame)
-keyLine.Size             = UDim2.new(0.5, 0, 0, 2)
-keyLine.Position         = UDim2.new(0.25, 0, 0, 0)
-keyLine.BackgroundColor3 = C.Bright
+keyLine.Size             = UDim2.new(1, 0, 0, 2)
+keyLine.Position         = UDim2.new(0, 0, 0, 0)
+keyLine.BackgroundColor3 = C.Accent
 keyLine.BorderSizePixel  = 0
-Instance.new("UICorner", keyLine).CornerRadius = UDim.new(1, 0)
 
 -- Logo
 local keyLogo = Instance.new("TextLabel", KeyFrame)
-keyLogo.Size                 = UDim2.new(1, 0, 0, 36)
-keyLogo.Position             = UDim2.new(0, 0, 0, 14)
+keyLogo.Size                 = UDim2.new(1, 0, 0, 32)
+keyLogo.Position             = UDim2.new(0, 0, 0, 16)
 keyLogo.BackgroundTransparency = 1
-keyLogo.Text                 = "✴ XC Hub ✴"
+keyLogo.Text                 = "XC HUB"
 keyLogo.TextColor3           = C.Bright
-keyLogo.TextSize             = 20
+keyLogo.TextSize             = 18
 keyLogo.Font                 = Enum.Font.GothamBold
 
 local keySub = Instance.new("TextLabel", KeyFrame)
-keySub.Size                 = UDim2.new(1, 0, 0, 18)
-keySub.Position             = UDim2.new(0, 0, 0, 50)
+keySub.Size                 = UDim2.new(1, 0, 0, 16)
+keySub.Position             = UDim2.new(0, 0, 0, 48)
 keySub.BackgroundTransparency = 1
-keySub.Text                 = "Enter your key to continue"
+keySub.Text                 = "Enter key to continue"
 keySub.TextColor3           = C.Sub
-keySub.TextSize             = 11
+keySub.TextSize             = 10
 keySub.Font                 = Enum.Font.Gotham
 
 -- Input box
 local keyBox = Instance.new("TextBox", KeyFrame)
-keyBox.Size              = UDim2.new(0, 210, 0, 38)
-keyBox.Position          = UDim2.new(0.5, -105, 0, 80)
+keyBox.Size              = UDim2.new(1, -24, 0, 36)
+keyBox.Position          = UDim2.new(0, 12, 0, 72)
 keyBox.BackgroundColor3  = C.Panel
 keyBox.BorderSizePixel   = 0
 keyBox.Text              = ""
 keyBox.PlaceholderText   = "Key..."
 keyBox.PlaceholderColor3 = C.Sub
 keyBox.TextColor3        = C.Text
-keyBox.TextSize          = 14
+keyBox.TextSize          = 13
 keyBox.Font              = Enum.Font.GothamBold
 keyBox.ClearTextOnFocus  = false
-Instance.new("UICorner", keyBox).CornerRadius = UDim.new(0, 8)
 Instance.new("UIStroke", keyBox).Color = C.Accent
 
 -- Submit button
 local submitBtn = Instance.new("TextButton", KeyFrame)
-submitBtn.Size             = UDim2.new(0, 210, 0, 38)
-submitBtn.Position         = UDim2.new(0.5, -105, 0, 128)
+submitBtn.Size             = UDim2.new(1, -24, 0, 36)
+submitBtn.Position         = UDim2.new(0, 12, 0, 116)
 submitBtn.BackgroundColor3 = C.Accent
 submitBtn.BorderSizePixel  = 0
 submitBtn.Text             = "UNLOCK"
 submitBtn.TextColor3       = Color3.fromRGB(255, 255, 255)
-submitBtn.TextSize         = 13
+submitBtn.TextSize         = 12
 submitBtn.Font             = Enum.Font.GothamBold
-Instance.new("UICorner", submitBtn).CornerRadius = UDim.new(0, 8)
 
 -- Error msg
 local keyError = Instance.new("TextLabel", KeyFrame)
-keyError.Size                 = UDim2.new(1, 0, 0, 20)
-keyError.Position             = UDim2.new(0, 0, 0, 178)
+keyError.Size                 = UDim2.new(1, 0, 0, 18)
+keyError.Position             = UDim2.new(0, 0, 0, 162)
 keyError.BackgroundTransparency = 1
 keyError.Text                 = ""
 keyError.TextColor3           = C.Error
-keyError.TextSize             = 11
+keyError.TextSize             = 10
 keyError.Font                 = Enum.Font.Gotham
+
+-- ┌─────────────────────────┐
+-- │     FLOATING TAB        │
+-- └─────────────────────────┘
+local FloatTab = Instance.new("TextButton")
+FloatTab.Name             = "FloatTab"
+FloatTab.Size             = UDim2.new(0, 48, 0, 48)
+FloatTab.Position         = UDim2.new(0, 16, 0.5, -24)
+FloatTab.BackgroundColor3 = C.Panel
+FloatTab.BorderSizePixel  = 0
+FloatTab.Text             = "XC"
+FloatTab.TextColor3       = C.Bright
+FloatTab.TextSize         = 13
+FloatTab.Font             = Enum.Font.GothamBold
+FloatTab.Visible          = false
+FloatTab.ZIndex           = 10
+FloatTab.Parent           = ScreenGui
+Instance.new("UIStroke", FloatTab).Color = C.Accent
+
+-- Draggable float tab
+local ftDrag, ftDragStart, ftStartPos
+FloatTab.InputBegan:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        ftDrag = true ; ftDragStart = i.Position ; ftStartPos = FloatTab.Position
+    end
+end)
+FloatTab.InputChanged:Connect(function(i)
+    if ftDrag and (i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseMovement) then
+        local d = i.Position - ftDragStart
+        FloatTab.Position = UDim2.new(ftStartPos.X.Scale, ftStartPos.X.Offset+d.X, ftStartPos.Y.Scale, ftStartPos.Y.Offset+d.Y)
+    end
+end)
+FloatTab.InputEnded:Connect(function(i)
+    if i.UserInputType == Enum.UserInputType.Touch
+    or i.UserInputType == Enum.UserInputType.MouseButton1 then
+        ftDrag = false
+    end
+end)
 
 -- ┌─────────────────────────┐
 -- │        MAIN HUB         │
 -- └─────────────────────────┘
+local HUB_W = 200
+local HUB_H = 440
+
 local MainFrame = Instance.new("Frame")
 MainFrame.Name             = "MainHub"
-MainFrame.Size             = UDim2.new(0, 230, 0, 560)
-MainFrame.Position         = UDim2.new(0.5, -115, 0.5, -280)
+MainFrame.Size             = UDim2.new(0, HUB_W, 0, HUB_H)
+MainFrame.Position         = UDim2.new(0.5, -(HUB_W/2), 0.5, -(HUB_H/2))
 MainFrame.BackgroundColor3 = C.BG
 MainFrame.BorderSizePixel  = 0
 MainFrame.Visible          = false
 MainFrame.Parent           = ScreenGui
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 12)
 
 local mainStroke = Instance.new("UIStroke", MainFrame)
 mainStroke.Color     = C.Accent
-mainStroke.Thickness = 1.5
+mainStroke.Thickness = 1
+
+-- Top accent bar
+local mainTopBar = Instance.new("Frame", MainFrame)
+mainTopBar.Size             = UDim2.new(1, 0, 0, 2)
+mainTopBar.BackgroundColor3 = C.Accent
+mainTopBar.BorderSizePixel  = 0
 
 -- Title bar
 local TitleBar = Instance.new("Frame", MainFrame)
-TitleBar.Size             = UDim2.new(1, 0, 0, 42)
+TitleBar.Size             = UDim2.new(1, 0, 0, 36)
+TitleBar.Position         = UDim2.new(0, 0, 0, 2)
 TitleBar.BackgroundColor3 = C.Panel
 TitleBar.BorderSizePixel  = 0
-Instance.new("UICorner", TitleBar).CornerRadius = UDim.new(0, 12)
-
--- Top deco line
-local topLine = Instance.new("Frame", TitleBar)
-topLine.Size             = UDim2.new(0.55, 0, 0, 2)
-topLine.Position         = UDim2.new(0.225, 0, 0, 0)
-topLine.BackgroundColor3 = C.Bright
-topLine.BorderSizePixel  = 0
-Instance.new("UICorner", topLine).CornerRadius = UDim.new(1, 0)
 
 local TitleLabel = Instance.new("TextLabel", TitleBar)
-TitleLabel.Size                 = UDim2.new(1, -44, 1, 0)
-TitleLabel.Position             = UDim2.new(0, 12, 0, 0)
+TitleLabel.Size                 = UDim2.new(1, -72, 1, 0)
+TitleLabel.Position             = UDim2.new(0, 10, 0, 0)
 TitleLabel.BackgroundTransparency = 1
-TitleLabel.Text                 = "✴ XC Hub v2.0"
+TitleLabel.Text                 = "XC Hub v2.1"
 TitleLabel.TextColor3           = C.Bright
-TitleLabel.TextSize             = 14
+TitleLabel.TextSize             = 12
 TitleLabel.Font                 = Enum.Font.GothamBold
 TitleLabel.TextXAlignment       = Enum.TextXAlignment.Left
 
+-- Minimize button (→ float tab)
+local MinBtn = Instance.new("TextButton", TitleBar)
+MinBtn.Size             = UDim2.new(0, 28, 0, 28)
+MinBtn.Position         = UDim2.new(1, -62, 0.5, -14)
+MinBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 80)
+MinBtn.Text             = "—"
+MinBtn.TextColor3       = C.Sub
+MinBtn.TextSize         = 11
+MinBtn.Font             = Enum.Font.GothamBold
+MinBtn.BorderSizePixel  = 0
+
+-- Destroy button
 local CloseBtn = Instance.new("TextButton", TitleBar)
-CloseBtn.Size             = UDim2.new(0, 26, 0, 26)
-CloseBtn.Position         = UDim2.new(1, -32, 0.5, -13)
+CloseBtn.Size             = UDim2.new(0, 28, 0, 28)
+CloseBtn.Position         = UDim2.new(1, -30, 0.5, -14)
 CloseBtn.BackgroundColor3 = Color3.fromRGB(140, 25, 55)
 CloseBtn.Text             = "✕"
 CloseBtn.TextColor3       = Color3.fromRGB(255, 255, 255)
-CloseBtn.TextSize         = 12
+CloseBtn.TextSize         = 11
 CloseBtn.Font             = Enum.Font.GothamBold
-Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(1, 0)
+CloseBtn.BorderSizePixel  = 0
+
+-- Minimize → float tab logic
+MinBtn.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+    FloatTab.Visible  = true
+end)
+FloatTab.MouseButton1Click:Connect(function()
+    if ftDrag then return end
+    FloatTab.Visible  = false
+    MainFrame.Visible = true
+end)
 CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
 
--- Draggable
+-- Draggable main frame
 local dragging, dragStart, startPos
 TitleBar.InputBegan:Connect(function(i)
     if i.UserInputType == Enum.UserInputType.Touch
@@ -206,81 +265,78 @@ end)
 
 -- Content
 local Content = Instance.new("Frame", MainFrame)
-Content.Size                 = UDim2.new(1, -16, 1, -92)
-Content.Position             = UDim2.new(0, 8, 0, 48)
+Content.Size                 = UDim2.new(1, -12, 1, -84)
+Content.Position             = UDim2.new(0, 6, 0, 44)
 Content.BackgroundTransparency = 1
 local ULL = Instance.new("UIListLayout", Content)
-ULL.Padding   = UDim.new(0, 6)
+ULL.Padding   = UDim.new(0, 4)
 ULL.SortOrder = Enum.SortOrder.LayoutOrder
 
 -- Status bar
 local StatusBar = Instance.new("Frame", MainFrame)
-StatusBar.Size             = UDim2.new(1, -16, 0, 28)
-StatusBar.Position         = UDim2.new(0, 8, 1, -34)
+StatusBar.Size             = UDim2.new(1, -12, 0, 26)
+StatusBar.Position         = UDim2.new(0, 6, 1, -32)
 StatusBar.BackgroundColor3 = C.Panel
 StatusBar.BorderSizePixel  = 0
-Instance.new("UICorner", StatusBar).CornerRadius = UDim.new(0, 6)
 local sStroke = Instance.new("UIStroke", StatusBar)
 sStroke.Color = C.Off ; sStroke.Thickness = 1
 
 local StatusLabel = Instance.new("TextLabel", StatusBar)
-StatusLabel.Size                 = UDim2.new(1, -10, 1, 0)
-StatusLabel.Position             = UDim2.new(0, 8, 0, 0)
+StatusLabel.Size                 = UDim2.new(1, -8, 1, 0)
+StatusLabel.Position             = UDim2.new(0, 6, 0, 0)
 StatusLabel.BackgroundTransparency = 1
-StatusLabel.Text                 = "✴ XC Hub Ready"
+StatusLabel.Text                 = "XC Ready"
 StatusLabel.TextColor3           = C.Bright
-StatusLabel.TextSize             = 11
+StatusLabel.TextSize             = 10
 StatusLabel.Font                 = Enum.Font.Gotham
 StatusLabel.TextXAlignment       = Enum.TextXAlignment.Left
 
 local function setStatus(text, color)
-    StatusLabel.Text       = "✴ " .. text
+    StatusLabel.Text       = text
     StatusLabel.TextColor3 = color or C.Bright
 end
 
--- Toggle creator
+-- Toggle creator — square, compact
 local function createToggle(name, desc, order, onToggle, initVal)
     local Row = Instance.new("Frame", Content)
-    Row.Size             = UDim2.new(1, 0, 0, 60)
+    Row.Size             = UDim2.new(1, 0, 0, 52)
     Row.BackgroundColor3 = C.Row
     Row.BorderSizePixel  = 0
     Row.LayoutOrder      = order
-    Instance.new("UICorner", Row).CornerRadius = UDim.new(0, 8)
     local rStroke = Instance.new("UIStroke", Row)
     rStroke.Color = initVal and C.Accent or C.Off ; rStroke.Thickness = 1
 
     local NameLbl = Instance.new("TextLabel", Row)
-    NameLbl.Size=UDim2.new(0.72,0,0,24) ; NameLbl.Position=UDim2.new(0,10,0,8)
+    NameLbl.Size=UDim2.new(1,-54,0,22) ; NameLbl.Position=UDim2.new(0,8,0,7)
     NameLbl.BackgroundTransparency=1 ; NameLbl.Text=name
-    NameLbl.TextColor3=C.Text ; NameLbl.TextSize=13
+    NameLbl.TextColor3=C.Text ; NameLbl.TextSize=12
     NameLbl.Font=Enum.Font.GothamBold ; NameLbl.TextXAlignment=Enum.TextXAlignment.Left
 
     local DescLbl = Instance.new("TextLabel", Row)
-    DescLbl.Size=UDim2.new(0.72,0,0,18) ; DescLbl.Position=UDim2.new(0,10,0,32)
+    DescLbl.Size=UDim2.new(1,-54,0,16) ; DescLbl.Position=UDim2.new(0,8,0,29)
     DescLbl.BackgroundTransparency=1 ; DescLbl.Text=desc
-    DescLbl.TextColor3=C.Sub ; DescLbl.TextSize=10
+    DescLbl.TextColor3=C.Sub ; DescLbl.TextSize=9
     DescLbl.Font=Enum.Font.Gotham ; DescLbl.TextXAlignment=Enum.TextXAlignment.Left
 
+    -- Square toggle switch
     local TBg = Instance.new("Frame", Row)
-    TBg.Size=UDim2.new(0,46,0,25) ; TBg.Position=UDim2.new(1,-56,0.5,-12)
+    TBg.Size=UDim2.new(0,40,0,22) ; TBg.Position=UDim2.new(1,-48,0.5,-11)
     TBg.BackgroundColor3=initVal and C.Accent or C.Off ; TBg.BorderSizePixel=0
-    Instance.new("UICorner", TBg).CornerRadius = UDim.new(1, 0)
 
-    local Circle = Instance.new("Frame", TBg)
-    Circle.Size=UDim2.new(0,19,0,19)
-    Circle.Position=initVal and UDim2.new(0,24,0.5,-9) or UDim2.new(0,3,0.5,-9)
-    Circle.BackgroundColor3=initVal and C.Bright or C.Sub ; Circle.BorderSizePixel=0
-    Instance.new("UICorner", Circle).CornerRadius = UDim.new(1, 0)
+    local Square = Instance.new("Frame", TBg)
+    Square.Size=UDim2.new(0,18,0,18)
+    Square.Position=initVal and UDim2.new(0,20,0.5,-9) or UDim2.new(0,2,0.5,-9)
+    Square.BackgroundColor3=initVal and C.Bright or C.Sub ; Square.BorderSizePixel=0
 
     local enabled = initVal or false
     local function setToggle(val)
         enabled = val
-        TweenService:Create(Circle, TweenInfo.new(0.18), {
-            Position=val and UDim2.new(0,24,0.5,-9) or UDim2.new(0,3,0.5,-9),
+        TweenService:Create(Square, TweenInfo.new(0.15), {
+            Position=val and UDim2.new(0,20,0.5,-9) or UDim2.new(0,2,0.5,-9),
             BackgroundColor3=val and C.Bright or C.Sub,
         }):Play()
-        TweenService:Create(TBg, TweenInfo.new(0.18), {BackgroundColor3=val and C.Accent or C.Off}):Play()
-        TweenService:Create(rStroke, TweenInfo.new(0.2), {Color=val and C.Accent or C.Off}):Play()
+        TweenService:Create(TBg, TweenInfo.new(0.15), {BackgroundColor3=val and C.Accent or C.Off}):Play()
+        TweenService:Create(rStroke, TweenInfo.new(0.15), {Color=val and C.Accent or C.Off}):Play()
         onToggle(val)
     end
     TBg.InputBegan:Connect(function(i)
@@ -296,20 +352,10 @@ end
 -- │       KEY SYSTEM        │
 -- └─────────────────────────┘
 local function showHub()
-    TweenService:Create(KeyFrame, TweenInfo.new(0.25, Enum.EasingStyle.Quad), {
-        Size     = UDim2.new(0, 0, 0, 0),
-        Position = UDim2.new(0.5, 0, 0.5, 0),
-    }):Play()
-    task.wait(0.25)
+    KeyFrame.Visible = false
     KeyFrame:Destroy()
-    MainFrame.Size     = UDim2.new(0, 0, 0, 0)
-    MainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
-    MainFrame.Visible  = true
-    TweenService:Create(MainFrame, TweenInfo.new(0.3, Enum.EasingStyle.Back), {
-        Size     = UDim2.new(0, 230, 0, 560),
-        Position = UDim2.new(0.5, -115, 0.5, -280),
-    }):Play()
-    task.wait(2)
+    MainFrame.Visible = true
+    task.wait(0.5)
     setStatus("XC Hub Ready")
 end
 
@@ -722,4 +768,4 @@ createToggle("Silent Aim","Snap instan ke musuh saat tap/klik",7,function(on)
     setStatus(on and "Silent Aim ON" or "Silent Aim OFF", on and C.Success or C.Error)
 end)
 
-print("[XC Hub] v2.0 Loaded!")
+print("[XC Hub] v2.1 Loaded!")
