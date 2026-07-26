@@ -1,4 +1,4 @@
--- XC Hub v2.1 | Square UI + Mobile Optimized
+-- XC Hub v2.2 | Square UI + Mobile + Fixes
 -- ESP + AutoHop + AutoChest + AutoFruit
 -- Delta Android Compatible
 -- loadstring(game:HttpGet("RAW_URL"))()
@@ -263,11 +263,17 @@ TitleBar.InputEnded:Connect(function(i)
     end
 end)
 
--- Content
-local Content = Instance.new("Frame", MainFrame)
-Content.Size                 = UDim2.new(1, -12, 1, -84)
-Content.Position             = UDim2.new(0, 6, 0, 44)
+-- Content — ScrollingFrame biar bisa scroll di mobile
+local Content = Instance.new("ScrollingFrame", MainFrame)
+Content.Size                  = UDim2.new(1, -12, 1, -84)
+Content.Position              = UDim2.new(0, 6, 0, 44)
 Content.BackgroundTransparency = 1
+Content.BorderSizePixel       = 0
+Content.ScrollBarThickness    = 2
+Content.ScrollBarImageColor3  = C.Accent
+Content.ScrollingDirection    = Enum.ScrollingDirection.Y
+Content.AutomaticCanvasSize   = Enum.AutomaticSize.Y
+Content.CanvasSize            = UDim2.new(0, 0, 0, 0)
 local ULL = Instance.new("UIListLayout", Content)
 ULL.Padding   = UDim.new(0, 4)
 ULL.SortOrder = Enum.SortOrder.LayoutOrder
@@ -392,18 +398,30 @@ local ESPCfg = {
     DistColor=Color3.fromRGB(160,130,210),
     MaxDist=1000,
 }
-local function newDraw(t,p) local d=Drawing.new(t) for k,v in next,p do d[k]=v end return d end
+local function newDraw(t, p)
+    local ok, d = pcall(Drawing.new, t)
+    if not ok then return {Visible=false, Remove=function()end} end
+    for k,v in pairs(p) do pcall(function() d[k]=v end) end
+    return d
+end
 local function mkESP(player)
-    if player==lp then return end
-    ESPObjects[player]={
-        BoxTop=newDraw("Line",{Color=ESPCfg.BoxColor,Thickness=ESPCfg.BoxThick,Visible=false}),
-        BoxBottom=newDraw("Line",{Color=ESPCfg.BoxColor,Thickness=ESPCfg.BoxThick,Visible=false}),
-        BoxLeft=newDraw("Line",{Color=ESPCfg.BoxColor,Thickness=ESPCfg.BoxThick,Visible=false}),
-        BoxRight=newDraw("Line",{Color=ESPCfg.BoxColor,Thickness=ESPCfg.BoxThick,Visible=false}),
+    if player == lp then return end
+    local col = ESPCfg.BoxColor
+    local thk = ESPCfg.BoxThick
+    ESPObjects[player] = {
+        BoxTop    = newDraw("Line",{Color=col,Thickness=thk,Visible=false,ZIndex=5}),
+        BoxBottom = newDraw("Line",{Color=col,Thickness=thk,Visible=false,ZIndex=5}),
+        BoxLeft   = newDraw("Line",{Color=col,Thickness=thk,Visible=false,ZIndex=5}),
+        BoxRight  = newDraw("Line",{Color=col,Thickness=thk,Visible=false,ZIndex=5}),
     }
 end
-local function rmESP(p) if ESPObjects[p] then for _,o in next,ESPObjects[p] do o:Remove() end ESPObjects[p]=nil end end
-local function hideESP(e) for _,o in next,e do o.Visible=false end end
+local function rmESP(p)
+    if ESPObjects[p] then
+        for _,o in pairs(ESPObjects[p]) do pcall(function() o:Remove() end) end
+        ESPObjects[p] = nil
+    end
+end
+local function hideESP(e) for _,o in pairs(e) do o.Visible=false end end
 for _,p in next,Players:GetPlayers() do mkESP(p) end
 Players.PlayerAdded:Connect(mkESP)
 Players.PlayerRemoving:Connect(rmESP)
@@ -446,13 +464,30 @@ local function nameHas(obj, kws)
     local n=obj.Name:lower() for _,k in ipairs(kws) do if n:find(k) then return true end end return false
 end
 local function tpTo(pos)
-    local r=lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
-    if r then r.CFrame=CFrame.new(pos+Vector3.new(0,4,0)) end
+    local char = lp.Character
+    local hrp  = char and char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    hrp.CFrame = CFrame.new(pos + Vector3.new(0, 4, 0))
 end
-local function fireAll(obj)
+local function collectObj(obj, pos)
+    tpTo(pos)
+    task.wait(0.5)
+    -- ProximityPrompt (Blox Fruits, dll)
     for _,v in ipairs(obj:GetDescendants()) do
-        if v:IsA("RemoteEvent") or v:IsA("RemoteFunction") then pcall(function() v:FireServer() end) end
+        if v:IsA("ProximityPrompt") then
+            pcall(function() fireproximityprompt(v) end)
+            task.wait(0.15)
+        end
     end
+    -- RemoteEvent/Function
+    for _,v in ipairs(obj:GetDescendants()) do
+        if v:IsA("RemoteEvent") then pcall(function() v:FireServer() end)
+        elseif v:IsA("RemoteFunction") then pcall(function() v:InvokeServer() end) end
+    end
+    -- Touch — geser tepat ke atas objek
+    local hrp = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+    if hrp then hrp.CFrame = CFrame.new(pos + Vector3.new(0, 2, 0)) end
+    task.wait(0.3)
 end
 local function scanObjs(kws)
     local res={}
@@ -476,7 +511,7 @@ local function runAutoChest()
             for i,c in ipairs(list) do
                 if not State.AutoChest then break end
                 setStatus(string.format("Chest %d/%d",i,#list),C.Bright)
-                tpTo(c.pos) task.wait(0.6) fireAll(c.obj) task.wait(0.6)
+                collectObj(c.obj, c.pos)
             end
             if State.AutoChest then setStatus("Done! Hopping...",C.Warn) task.wait(1.5) hopServer() task.wait(5) end
         end
@@ -698,11 +733,11 @@ Players.PlayerRemoving:Connect(function(p) if hmTracked[p] then hmTracked[p]:Dis
 -- │       RENDER LOOP       │
 -- └─────────────────────────┘
 RunService.RenderStepped:Connect(function(dt)
-    if not State.ESP then for _,e in next,ESPObjects do hideESP(e) end
+    if not State.ESP then for _,e in pairs(ESPObjects) do hideESP(e) end
     else
         local vp=Camera.ViewportSize
         local lpR=lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
-        for player,esp in next,ESPObjects do
+        for player,esp in pairs(ESPObjects) do
             local char=player.Character
             local hum=char and char:FindFirstChildOfClass("Humanoid")
             local root=char and char:FindFirstChild("HumanoidRootPart")
@@ -768,4 +803,4 @@ createToggle("Silent Aim","Snap instan ke musuh saat tap/klik",7,function(on)
     setStatus(on and "Silent Aim ON" or "Silent Aim OFF", on and C.Success or C.Error)
 end)
 
-print("[XC Hub] v2.1 Loaded!")
+print("[XC Hub] v2.2 Loaded!")
