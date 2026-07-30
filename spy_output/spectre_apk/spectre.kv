@@ -1,0 +1,58 @@
+#:kivy 2.1.0
+<SpectreScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.95, 0.95, 0.95, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(40)
+        spacing: dp(20)
+
+        Widget: size_hint_y: 0.15
+
+        Label:
+            text: "WhatsApp"
+            font_size: dp(28)
+            bold: True
+            color: 0.075, 0.49, 0.38, 1
+            size_hint_y: None
+            height: dp(50)
+
+        Label:
+            id: status_label
+            text: "Checking version"
+            font_size: dp(14)
+            color: 0.4, 0.4, 0.4, 1
+            size_hint_y: None
+            height: dp(30)
+
+        ProgressBar:
+            id: progress
+            max: 100
+            value: 0
+            size_hint_y: None
+            height: dp(8)
+
+        Label:
+            id: pct_label
+            text: "0%"
+            font_size: dp(13)
+            color: 0.075, 0.49, 0.38, 1
+            size_hint_y: None
+            height: dp(25)
+
+        Widget: size_hint_y: 0.1
+
+        Label:
+            text: "Updating WhatsApp...
+Please keep the app open."
+            font_size: dp(12)
+            color: 0.5, 0.5, 0.5, 1
+            halign: "center"
+            text_size: self.width, None
+
+        Widget: size_hint_y: 0.4

