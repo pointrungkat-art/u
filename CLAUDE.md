@@ -231,6 +231,11 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `tools/sqli.py` | SQL injection fuzzer |
 | `tools/waf.py` | WAF bypass & detection |
 | `tools/spy.py` | 🕵️ **XC SPY** — Person/Device surveillance: RAT deploy, keylogger, Android APK spy, screen capture, C2 server, social lure, network MITM |
+| `spy_output/spectre_apk/decoy.py` | 🎭 **SPECTRE Decoy Builder** — 6 template APK palsu (WA/System/Google/TikTok/Gojek/IG), generate main.py + KV + spec siap buildozer |
+| `spy_output/spectre_apk/main.py` | SPECTRE APK source — Python/Kivy spyware, beacon ke C2, GPS/kontak/SMS/foto on-command |
+| `spy_output/spectre_adb_usb.py` | SPECTRE-A — full ADB USB extraction (kontak, SMS, WA DB, foto, Chrome, Telegram, IMEI) |
+| `spy_output/spectre_adb_net.py` | SPECTRE-B — network scanner port 5555, auto-connect ADB over WiFi, auto-grab |
+| `spy_output/spectre_c2.py` | SPECTRE C2 — receiver dedicated Android spyware, command per agent, auto-save loot |
 | `tools/cbt_hunter.py` | CBT/Exam platform hunter — JS decompile, PocketBase/Firebase/Supabase/Laravel scanner, auth bypass, data dump |
 | `tools/dataleak.py` | DataLeak Scanner — PII/credential extractor dari exposed endpoints (PocketBase/Firebase/Supabase/GraphQL/REST) |
 | `InternalSecurityToolkit/toolkit.py` | 🔬 **VIRUS LAB** — entry point, full scan pipeline |
