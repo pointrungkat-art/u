@@ -153,3 +153,60 @@ curl (no auth)
 | 8 | INFO | Public API Endpoints Expose Platform Metadata | Confirmed |
 
 **Report:** `bugbounty/tryout.ilmupedia.co.id.md`
+
+---
+
+## banuacokelat.com — Full Blackbox [2026-08-02]
+
+**Target:** https://banuacokelat.com/
+**IP:** 103.153.3.23 (PT Dewa Bisnis Digital, Jakarta — shared hosting)
+**Stack:** WordPress + PHP 7.4.33 + LiteSpeed + WooCommerce + Elementor
+
+### 🔴 HIGH
+
+**[H1] No Rate Limit on wp-login.php — Brute Force Terbuka**
+- `/wp-login.php` tidak ada CAPTCHA, tidak ada lockout, tidak ada Wordfence
+- Username confirmed: `bacokadmin` (via REST API + author redirect + error message)
+- Attack: hydra / python script → wordlist → crack password → wp-admin access → plugin upload RCE
+- Evidence: 3 rapid login attempts semua 200, tidak ada lockout/delay
+
+**[H2] Username Enumeration — 3 Vector Sekaligus**
+- REST API: `GET /wp-json/wp/v2/users` → leak `id:1, slug:bacokadmin, name:bacokadmin`
+- Author redirect: `/?author=1` → redirect ke `/author/bacokadmin/`
+- Login error: error message beda antara user valid vs invalid ("kata sandi tidak cocok" vs "tidak ada akun")
+- Password reset: `/wp-login.php?action=lostpassword` juga beda response untuk user valid/invalid
+
+**[H3] PHP 7.4.33 EOL — No Security Patches**
+- PHP 7.4 end of life Desember 2022
+- Tidak ada security update sejak 3+ tahun
+- Header exposed: `x-powered-by: PHP/7.4.33`
+
+### 🟡 MEDIUM
+
+**[M1] WP REST API User Endpoint Terbuka (Unauthenticated)**
+- `GET /wp-json/wp/v2/users` → expose full user list tanpa auth
+- Data leaked: id, name, slug, link
+
+**[M2] Upload Directories Accessible — 22 Folder Terbuka**
+- `/wp-content/uploads/` + semua subfolder 2024-2026 return 200
+- Risk: file sensitif yang di-upload bisa langsung diakses
+
+**[M3] Member Area Attack Surface**
+- Endpoints: `/member-area/orders`, `/member-area/profile`, `/member-area/dashboard`
+- Belum di-test IDOR pada order/profile endpoints
+
+**[M4] xmlrpc.php Exposed**
+- Accessible tapi blocked di network level untuk brute force
+- Potential: pingback abuse, SSRF via pingback
+
+### 🔵 INFO
+- LiteSpeed bot protection aktif di beberapa path
+- Shared hosting: 20+ domain lain di IP yang sama
+- Plugin: WooCommerce 10.9.3, Elementor 4.2.1, CF7, Jetpack, Yoast, Akismet
+- Satu-satunya admin: `bacokadmin` (ID:1)
+
+### Next Steps
+1. Brute force `bacokadmin` dengan wordlist Indonesia (nama+angka common)
+2. Test IDOR di `/member-area/orders?id=X`
+3. Check Elementor 4.2.1 CVE database
+4. Upload dir — scan file-file yang ada
