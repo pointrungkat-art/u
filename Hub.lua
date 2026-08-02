@@ -805,4 +805,21 @@ createToggle("Silent Aim","Snap instan ke musuh saat tap/klik",7,function(on)
     setStatus(on and "Silent Aim ON" or "Silent Aim OFF", on and C.Success or C.Error)
 end)
 
+-- ┌─────────────────────────┐
+-- │    CHAT COMMAND /menu   │
+-- └─────────────────────────┘
+lp.Chatted:Connect(function(msg)
+    if msg:lower() ~= "/menu" then return end
+    if not (MainFrame.Visible or FloatTab.Visible) then return end
+    if MainFrame.Visible then
+        MainFrame.Visible = false
+        FloatTab.Visible  = true
+        setStatus("Hub minimized", C.Sub)
+    else
+        FloatTab.Visible  = false
+        MainFrame.Visible = true
+        setStatus("XC Hub Ready", C.Bright)
+    end
+end)
+
 print("[XC Hub] v2.3 Loaded!")
