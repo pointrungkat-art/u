@@ -205,8 +205,25 @@ curl (no auth)
 - Plugin: WooCommerce 10.9.3, Elementor 4.2.1, CF7, Jetpack, Yoast, Akismet
 - Satu-satunya admin: `bacokadmin` (ID:1)
 
-### Next Steps
-1. Brute force `bacokadmin` dengan wordlist Indonesia (nama+angka common)
-2. Test IDOR di `/member-area/orders?id=X`
-3. Check Elementor 4.2.1 CVE database
-4. Upload dir — scan file-file yang ada
+### OSINT Intel (CEO + Site)
+- **CEO:** Doddy Faizal (dari page `/banua/` — testimonial section)
+- **Admin email:** admin@BanuaCokelat.com (exposed via homepage)
+- **Site berdiri:** 2010 (dari konten halaman)
+- **Hosting:** PT Dewa Bisnis Digital, Jakarta — shared hosting (20+ domain di IP sama)
+- **Product brands:** Sa'adah (kemiri/kelor oil), Trigona (honey)
+
+### Brute Force Status (360+ passwords tried)
+- Attempted via `wp-login.php`: 360+ passwords — **no crack**
+- Wordlists covered: generic Indo, site-specific, CEO name (Doddy Faizal), Palu/Sulteng location, year 2010/2020/2024, brand names, keyboard patterns, hosting defaults
+- XMLRPC: blocked by WAF (HTTP 403 on auth attempts)
+- No rate limit confirmed throughout — server processed all requests
+
+### Remaining Attack Paths
+1. **Rockyou-Indo** wordlist (extended, 10k+ common Indo passwords)
+2. **Social engineering** via CEO intel — Doddy Faizal identity
+3. **Sejoli plugin** — Indonesian membership plugin, check known vulns
+4. **LiteSpeed Cache 7.8.1** — CVE-2024-28000 patched, but hash probe worth trying
+5. **Member area IDOR** — `/member-area/orders?id=3` returns 200 (needs member login to exploit fully)
+6. **Upload dir enumeration** — 22 folders exposed, scan for sensitive files
+
+*Last updated: 2026-08-02*

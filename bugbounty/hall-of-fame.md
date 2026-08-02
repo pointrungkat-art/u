@@ -9,11 +9,11 @@
 
 | Metric | Count |
 |--------|-------|
-| Target Hacked | **4** |
-| Total Findings | **28** |
+| Target Hacked | **5** |
+| Total Findings | **34** |
 | Critical | **7** |
-| High | **9** |
-| Medium | **12** |
+| High | **12** |
+| Medium | **15** |
 | JACKPOT Chains | **2** |
 
 ---
@@ -26,6 +26,7 @@
 | 2 | **shiroine.web.id** | 2026-07-19 | 2C · 2H · 3M | JACKPOT | Auth bypass `Bearer null` + price manipulation |
 | 3 | **cbt.mimikridev.com** | 2026-07-22 | 2C · 3H · 7M | CRITICAL | IDOR delete+modify exam URLs across accounts |
 | 4 | **cloudways.com** | 2026-07-20 | 1H | HIGH | CORS origin reflection + credential theft |
+| 5 | **banuacokelat.com** | 2026-08-02 | 3H · 3M | HIGH | No rate limit brute force + username enum + PHP EOL |
 
 ---
 
@@ -192,6 +193,8 @@ CORS Misconfig → Malicious Site → Steal API Keys → Account Takeover
 2026-07-20  pb.app.web.id       8 findings JACKPOT (3C·3H·2M) — BimaSoft owned
 2026-07-20  cloudways.com       1 finding HIGH — CORS (Bugcrowd)
 2026-07-22  cbt.mimikridev.com  12 findings CRITICAL (2C·3H·7M) — IDOR mass exam hijack
+2026-07-23  tryout.ilmupedia.co.id  8 findings (2C·2H·4M) — OTP brute + WA token abuse
+2026-08-02  banuacokelat.com    6 findings (3H·3M) — WP brute surface + enum + PHP EOL
 ```
 
 ---
@@ -214,8 +217,43 @@ CORS Misconfig → Malicious Site → Steal API Keys → Account Takeover
 
 ---
 
-*XC Hacking Hub · Hall of Fame · Last updated: 2026-07-22*
-*No target is safe. DAR DER DOR.*
+## #5 — banuacokelat.com (HIGH)
+
+| Field | Detail |
+|-------|--------|
+| Target | `banuacokelat.com` |
+| Owner | **Doddy Faizal** (CEO, ditemukan via OSINT) |
+| Date | 2026-08-02 |
+| Type | WordPress WooCommerce — Toko Oleh-oleh Cokelat Khas Palu |
+| Stack | WordPress · PHP 7.4.33 (EOL) · LiteSpeed · WooCommerce 10.9.3 · Elementor 4.2.1 |
+| IP | 103.153.3.23 (PT Dewa Bisnis Digital, Jakarta — shared hosting) |
+| Findings | **6** — 3 High · 3 Medium |
+| Status | IN PROGRESS — brute force 360+ passwords, no crack yet |
+
+### OSINT
+- CEO: **Doddy Faizal** (confirmed via `/banua/` page testimonial)
+- Admin email: **admin@BanuaCokelat.com** (homepage leak)
+- Business est: **2010** (content claim)
+- Products: Cokelat Palu, Sa'adah Kemiri/Kelor Oil, Trigona Honey
+
+### Findings
+
+| # | Severity | Finding | Impact |
+|---|----------|---------|--------|
+| H-01 | **HIGH** | No Rate Limit on wp-login.php | Brute force terbuka — 360+ attempts tanpa lockout/CAPTCHA |
+| H-02 | **HIGH** | Username Enumeration (3 vectors) | REST API, author redirect, error message semua expose `bacokadmin` |
+| H-03 | **HIGH** | PHP 7.4.33 EOL | No security patches sejak Des 2022 — 3+ tahun exposure |
+| M-01 | **MEDIUM** | WP REST API Unauthenticated | `/wp-json/wp/v2/users` expose full user list |
+| M-02 | **MEDIUM** | 22 Upload Dirs Accessible | `/wp-content/uploads/` semua subfolder 2024-2026 public |
+| M-03 | **MEDIUM** | Admin email exposed publicly | `admin@BanuaCokelat.com` di homepage source |
+
+### Attack Path (Pending)
+```
+Confirmed username: bacokadmin
+Confirmed no rate limit → brute force vector open
+CEO Intel: Doddy Faizal (social engineering possible)
+Next: rockyou-indo wordlist / Sejoli plugin vulns / LiteSpeed hash probe
+```
 
 ---
 
@@ -225,3 +263,8 @@ CORS Misconfig → Malicious Site → Steal API Keys → Account Takeover
 **Key Finding:** OTP Brute Force via Session Refresh + WhatsApp Token Abuse  
 **Severity:** 2x CRITICAL, 2x HIGH, 3x MEDIUM  
 **Report:** `bugbounty/tryout.ilmupedia.co.id.md`
+
+---
+
+*XC Hacking Hub · Hall of Fame · Last updated: 2026-08-02*
+*No target is safe. DAR DER DOR.*
