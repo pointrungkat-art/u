@@ -60,16 +60,37 @@ if not Core then error("[CheatDev] Core failed to load. Check internet.") end
 -- ── 2. Config (already loaded inside core, but expose here) ─────
 local Config = Core.Config
 
--- ── 3. Modules ──────────────────────────────────────────────────
+-- ── 3. Core Modules ─────────────────────────────────────────────
 local ESPMod  = load("modules/esp.lua")
 local MoveMod = load("modules/movement.lua")
 local CombMod = load("modules/combat.lua")
 local VisMod  = load("modules/visual.lua")
+local ADMod   = load("modules/antidetect.lua")
 
-local ESP     = ESPMod  and ESPMod(Core)
-local Move    = MoveMod and MoveMod(Core)
-local Combat  = CombMod and CombMod(Core)
-local Visual  = VisMod  and VisMod(Core)
+local ESP        = ESPMod  and ESPMod(Core)
+local Move       = MoveMod and MoveMod(Core)
+local Combat     = CombMod and CombMod(Core)
+local Visual     = VisMod  and VisMod(Core)
+local AntiDetect = ADMod   and ADMod(Core)
+
+-- ── 3b. Game-Specific Modules (auto-detect game) ────────────────
+-- Detect by PlaceId and load the right game module
+local GAME_MODULES = {
+    [2753915549]  = "games/bloxfruits.lua",  -- Blox Fruits
+    [142823291]   = "games/mm2.lua",         -- Murder Mystery 2
+    [286090429]   = "games/arsenal.lua",     -- Arsenal
+}
+local gameModPath = GAME_MODULES[game.PlaceId]
+local GameMod     = nil
+if gameModPath then
+    local gLoader = load(gameModPath)
+    if gLoader then
+        GameMod = gLoader(Core)
+        Core.Log("GAME", "🎮 Game module loaded: " .. gameModPath, "OK")
+    end
+else
+    Core.Log("GAME", "No game-specific module for PlaceId " .. tostring(game.PlaceId), "INFO")
+end
 
 -- ── 4. Script Forge ─────────────────────────────────────────────
 local rawTemplates = load("forge/templates.lua")
@@ -79,6 +100,9 @@ local Forge = ForgeBuilder and ForgeBuilder(Core, rawTemplates)
 -- ── 5. Dev Console ──────────────────────────────────────────────
 local DevConLoader = load("ui/devConsole.lua")
 local DevCon = DevConLoader and DevConLoader(Core, Forge)
+
+-- ── 5b. Verify Panel (key gate) ─────────────────────────────────
+local VerifyPanel = load("ui/verifyPanel.lua")
 
 -- ── 6. Main GUI ─────────────────────────────────────────────────
 local S   = Core.Services
@@ -258,6 +282,45 @@ local function buildGUI()
     toggle(scroll, "🍎 Auto Fruit",    Config.FRUIT.enabled, lo_(), function(v) Config.FRUIT.enabled=v end)
     button(scroll, "💀 TP Kill All",   lo_(), function() Move.TPKill.Run() end, Color3.fromRGB(80,20,20))
 
+    section(scroll,"ANTI-BAN 🛡️",     Color3.fromRGB(80,200,255), lo_())
+    toggle(scroll, "🛡️ Anti-Detect",  Config.ANTIDETECT.enabled, lo_(), function(v)
+        if v then AntiDetect and AntiDetect.Enable()
+        else AntiDetect and AntiDetect.Disable() end
+    end)
+    toggle(scroll, "⚡ Speed Desync",  Config.ANTIDETECT.speedDesync, lo_(), function(v) Config.ANTIDETECT.speedDesync=v end)
+    toggle(scroll, "🔒 Anti-Kick",     Config.ANTIDETECT.antiKick,    lo_(), function(v) Config.ANTIDETECT.antiKick=v end)
+    toggle(scroll, "🌐 Remote Hook",   Config.ANTIDETECT.remoteHook,  lo_(), function(v) Config.ANTIDETECT.remoteHook=v end)
+
+    -- Game-specific section (jika game module loaded)
+    if GameMod then
+        local gameName = gameModPath and gameModPath:match("games/(%w+)%.lua") or "Game"
+        section(scroll, "🎮 " .. gameName:upper(), Color3.fromRGB(255,220,50), lo_())
+        toggle(scroll, "✅ Enable " .. gameName, false, lo_(), function(v)
+            if v then GameMod.Enable() else GameMod.Disable() end
+        end)
+        -- Blox Fruits specific
+        if gameName == "bloxfruits" then
+            toggle(scroll, "🍎 Fruit ESP",    Config.BLOX_FRUITS.fruitESP,    lo_(), function(v) Config.BLOX_FRUITS.fruitESP=v end)
+            toggle(scroll, "🌾 Auto Farm",     Config.BLOX_FRUITS.autoFarm,    lo_(), function(v)
+                Config.BLOX_FRUITS.autoFarm=v
+                if v then GameMod.StartFarm() else GameMod.StopFarm() end
+            end)
+            toggle(scroll, "🌊 Sea Beast ESP", Config.BLOX_FRUITS.seaBeastESP, lo_(), function(v) Config.BLOX_FRUITS.seaBeastESP=v end)
+            button(scroll, "🍎 Auto Collect Fruit", lo_(), function() GameMod.StartCollect() end, Color3.fromRGB(40,80,20))
+        -- MM2 specific
+        elseif gameName == "mm2" then
+            toggle(scroll, "🎭 Role ESP",     Config.MM2.roleESP,     lo_(), function(v) Config.MM2.roleESP=v end)
+            toggle(scroll, "🔪 Weapon ESP",   Config.MM2.weaponESP,   lo_(), function(v) Config.MM2.weaponESP=v end)
+            toggle(scroll, "💰 Coin ESP",     Config.MM2.coinESP,     lo_(), function(v) Config.MM2.coinESP=v end)
+            toggle(scroll, "🚨 Murder Alert", Config.MM2.murderAlert, lo_(), function(v) Config.MM2.murderAlert=v end)
+        -- Arsenal specific
+        elseif gameName == "arsenal" then
+            toggle(scroll, "👁️ Player ESP",  Config.ARSENAL.playerESP,   lo_(), function(v) Config.ARSENAL.playerESP=v end)
+            toggle(scroll, "📊 Kill UI",      Config.ARSENAL.killUI,      lo_(), function(v) Config.ARSENAL.killUI=v end)
+            toggle(scroll, "⚠️ Win Alert",    Config.ARSENAL.warnLastKill,lo_(), function(v) Config.ARSENAL.warnLastKill=v end)
+        end
+    end
+
     section(scroll,"SCRIPT FORGE 🔥",  COL.FIRE,     lo_())
     local forgeTemplates = {
         "ESP_QUICK","CHAMS","SPEED_HACK","NOCLIP","FLY_HACK","INF_JUMP",
@@ -306,9 +369,11 @@ end)
 
 -- ── Main Loop ────────────────────────────────────────────────────
 S.RunService.RenderStepped:Connect(function(dt)
-    if ESP  then Core.Utils.SafeCall(ESP.Update) end
+    if ESP           then Core.Utils.SafeCall(ESP.Update) end
     if Combat and Combat.Aim then Core.Utils.SafeCall(Combat.Aim.Update) end
     if Visual and Visual.Radar then Core.Utils.SafeCall(Visual.Radar.Update) end
+    if AntiDetect    then Core.Utils.SafeCall(AntiDetect.Update) end
+    if GameMod       then Core.Utils.SafeCall(GameMod.Update) end
 end)
 
 -- ── Boot ─────────────────────────────────────────────────────────
@@ -324,7 +389,20 @@ Core.Log("BOOT","📌 CList() → All templates", "INFO")
 Core.Log("BOOT","══════════════════════════════════════════", "OK")
 
 task.wait(0.8)
-buildGUI()
-DevCon.Open()
 
-return { Core=Core, Forge=Forge, GUI=GUI, DevCon=DevCon }
+-- ── Verify Panel → Main GUI ──────────────────────────────────────
+if VerifyPanel then
+    VerifyPanel(Core, function(passed)
+        if passed then
+            buildGUI()
+            task.wait(0.3)
+            DevCon.Open()
+        end
+    end)
+else
+    -- Fallback: no verify panel → langsung build
+    buildGUI()
+    DevCon.Open()
+end
+
+return { Core=Core, Forge=Forge, GUI=GUI, DevCon=DevCon, AntiDetect=AntiDetect, GameMod=GameMod }

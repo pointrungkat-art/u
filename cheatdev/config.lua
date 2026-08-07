@@ -144,6 +144,52 @@ return {
         hitmark  = true,
     },
 
+    -- ── Anti-Ban / Anti-Detect ────────────────────────────────────
+    ANTIDETECT = {
+        enabled     = false,
+        speedDesync = true,     -- WalkSpeed=16 di server, BodyVelocity actual
+        remoteHook  = true,     -- block kick/ban RemoteEvent
+        antiKick    = true,     -- hook LP:Kick() call
+        sanityClamp = true,     -- clamp speed/health ke range aman
+        sigRandom   = false,    -- randomise cheat signatures (aggressive)
+        tpSteps     = 5,        -- jumlah steps interpolasi teleport
+    },
+
+    -- ── Blox Fruits ───────────────────────────────────────────────
+    BLOX_FRUITS = {
+        enabled      = false,
+        fruitESP     = true,
+        autoFarm     = false,
+        autoCollect  = false,
+        seaBeastESP  = false,
+        autoQuest    = false,
+        farmRadius   = 2000,
+        farmDelay    = 0.3,
+        fruitMaxDist = 3000,
+        targetStat   = "Fruit",  -- Melee | Defense | Sword | Gun | Fruit
+    },
+
+    -- ── Murder Mystery 2 ─────────────────────────────────────────
+    MM2 = {
+        enabled     = false,
+        roleESP     = true,
+        weaponESP   = true,
+        coinESP     = false,
+        murderAlert = true,
+        alertRadius = 40,
+    },
+
+    -- ── Arsenal ───────────────────────────────────────────────────
+    ARSENAL = {
+        enabled     = false,
+        playerESP   = true,
+        killUI      = true,
+        weaponBoard = false,
+        silentAim   = false,
+        warnLastKill= true,
+        hitboxSize  = 8,
+    },
+
     DEVMODE = {
         logLevel    = "ALL",    -- ALL | INFO | WARN | ERR
         hotkeys = {
