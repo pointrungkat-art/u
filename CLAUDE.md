@@ -259,7 +259,11 @@ Target    = "Head" -- "Head" / "HumanoidRootPart"
 | `tools/xc.py` | 🔥 **XC Tool Hub** — runner semua hacking tools |
 | `tools/ipfind.py` | 🎯 **IP Finder** — real IP hunter, CF bypass, history, geo, ports |
 | `tools/recon.py` | Full recon — DNS, HTTP, WAF, tech fingerprint |
-| `tools/stress.py` | Server stress test — HTTP flood, L4, slowloris, amplify |
+| `tools/stress.py` | 💥 **Stress Tester v2.0** — L7·POST·Slowloris·RUDY·TLS Exhaust·H2 Rapid Reset·Cache Bypass·L4·UDP Amplify |
+| `tools/cors.py` | CORS Misconfiguration Tester — origin reflection, preflight, credentials leak |
+| `tools/headers.py` | Security Headers Auditor — CSP, HSTS, cookies, dangerous headers check |
+| `tools/js_hunt.py` | 🔍 **JS Secret Harvester** — extract API keys, tokens, endpoints dari JS files |
+| `tools/verify.py` | Tool Health Checker — syntax verify + help output test semua tools |
 | `tools/ssti.py` | SSTI hunter + RCE payload generator |
 | `tools/cmdi.py` | Command injection fuzzer |
 | `tools/jwt.py` | JWT attacks — alg:none, brute, kid |
